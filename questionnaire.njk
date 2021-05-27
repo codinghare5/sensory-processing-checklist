@@ -1,0 +1,180 @@
+---
+layout: layouts/base.njk
+permalink: /questionnaire/
+templateClass: tmpl-post
+eleventyNavigation:
+  key: Questionnaire
+  order: 2
+---
+
+<nav>
+  <div class="nav nav-tabs" id="nav-tab" role="tablist">
+{% for sense in questions %}
+    <button 
+        class="nav-link {% if loop.first %}active{% endif %}" 
+        id="nav-{{ sense.sense | lower }}-tab" 
+        data-bs-toggle="tab" 
+        data-bs-target="#nav-{{ sense.sense | lower }}" 
+        type="button" 
+        role="tab" aria-controls="nav-{{ sense.sense | lower }}" aria-selected="{% if loop.first %}true{% else %}false{% endif %}">
+            {{ sense.sense }}
+    </button>
+{% endfor %}
+  </div>
+</nav>
+<div class="tab-content" id="nav-tabContent" style="margin-top: 42px;">
+{% for sense in questions %}
+  <div class="tab-pane fade {% if loop.first %}show active{% endif %}" 
+    id="nav-{{ sense.sense | lower }}" 
+    role="tabpanel" 
+    aria-labelledby="nav-{{ sense.sense | lower }}-tab">
+    <div class="row">
+      <div class="col-sm-3 border border-1 rounded">
+        <div class="accordion" id="accordionExample-{{ sense.sense | lower }}">
+        {% set outerLoop = loop %}
+        {% for meta in sense.metacategories %}
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="headingOne">
+                <button class="accordion-button{% if not outerLoop.first and not loop.first %} collapsed{% endif %}" 
+                  type="button" 
+                  data-bs-toggle="collapse" 
+                  data-bs-target="#collapse-{{ sense.sense | lower }}-{{ loop.index }}" 
+                  aria-expanded="{% if outerLoop.first and loop.first %}true{% else %}false{% endif %}" 
+                  aria-controls="collapse-{{ sense.sense | lower }}-{{ loop.index }}">
+                  {{ meta.name }}
+                </button>
+              </h2>
+              <div id="collapse-{{ sense.sense | lower }}-{{ loop.index }}" 
+                class="accordion-collapse collapse{% if outerLoop.first and loop.first %} show{% endif %}" 
+                aria-labelledby="headingOne" 
+                data-bs-parent="#accordionExample-{{ sense.sense | lower }}">
+                <div class="accordion-body">
+                  <strong>This is the {{ loop.index }} item's accordion body.</strong>
+                </div>
+              </div>
+            </div>
+        {% endfor %}
+        </div>
+      </div>
+      <div class="col-sm-9 border border-1 rounded">
+        {% for meta in sense.metacategories %}
+        {# <p style="margin-left: 10px;">Outer loop id: {{ outerLoop.index }}</p> #}
+        <div id="collapse-{{ sense.sense | lower }}-{{ loop.index }}" 
+            class="accordion-collapse collapse{% if outerLoop.first and loop.first %} show{% endif %}" 
+            aria-labelledby="headingOne" 
+            data-bs-parent="#accordionExample-{{ sense.sense | lower }}">
+          <div class="accordion-body">
+          {% for item in meta.categories %}
+            <div class="accordion" id="accordionCategory">
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="headingOne">
+                  <button class="accordion-button" 
+                    type="button" 
+                    data-bs-toggle="collapse" 
+                    data-bs-target="#collapse{{ loop.index }}" 
+                    aria-expanded="{% if outerLoop.first and loop.first %}true{% else %}false{% endif %}" 
+                    aria-controls="collapse{{ loop.index }}">
+                    {{ item.category }}
+                  </button>
+                </h2>
+                <div id="collapse{{ loop.index }}" 
+                  class="accordion-collapse collapse{% if outerLoop.first and loop.first %} show{% endif %}"
+                  aria-labelledby="heading{{ loop.index }}" 
+                  data-bs-parent="#accordionCategory">
+            {% for question in item.questions %}
+                  <div class="accordion-body">
+                    <strong>{{ question }}</strong>
+                  </div>
+            {% endfor %}
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+{% endfor %}
+</div>
+{# {% for sense in questions %}
+  {% for meta in sense.metacategories %}
+  <p style="margin-left: 50px;">Meta name: {{ meta.name | lower }}</p>
+    {% for item in meta.categories %}
+    <p style="margin-left: 100px;">Cat: {{ item.category | lower }}</p>
+      {% for question in item.questions %}
+      <p style="margin-left: 150px;">Q: {{ question }}</p>
+      {% endfor %}
+    {% endfor %}
+  {% endfor %}
+{% endfor %} #}
+
+<div class="accordion" 
+  id="accordionExample">
+  {# collapseOne #}
+  <div class="accordion-item">
+    <h2 class="accordion-header" 
+      id="headingOne">
+      <button class="accordion-button" 
+      type="button"
+      data-bs-toggle="collapse" 
+      data-bs-target="#collapseOne" 
+      aria-expanded="true" 
+      aria-controls="collapseOne">
+        Accordion Item #1
+      </button>
+    </h2>
+    <div id="collapseOne" 
+      class="accordion-collapse collapse show" 
+      aria-labelledby="headingOne" 
+      data-bs-parent="#accordionExample">
+      <div class="accordion-body">
+        <strong>This is the first item's accordion body.</strong>
+      </div>
+    </div>
+  </div>
+  {# end collapseOne #}
+  <div class="accordion-item">
+    <h2 class="accordion-header" 
+      id="headingTwo">
+      <button class="accordion-button collapsed" 
+        type="button" 
+        data-bs-toggle="collapse" 
+        data-bs-target="#collapseTwo" 
+        aria-expanded="false" 
+        aria-controls="collapseTwo">
+        Accordion Item #2
+      </button>
+    </h2>
+    <div id="collapseTwo" 
+      class="accordion-collapse collapse" 
+      aria-labelledby="headingTwo" 
+      data-bs-parent="#accordionExample">
+      <div class="accordion-body">
+        <strong>This is the second item's accordion body.</strong>
+      </div>
+    </div>
+  </div>
+  <div class="accordion-item">
+    <h2 class="accordion-header" 
+      id="headingThree">
+      <button class="accordion-button collapsed" 
+        type="button" 
+        data-bs-toggle="collapse" 
+        data-bs-target="#collapseThree" 
+        aria-expanded="false" 
+        aria-controls="collapseThree">
+        Accordion Item #3
+      </button>
+    </h2>
+    <div id="collapseThree" 
+      class="accordion-collapse collapse" 
+      aria-labelledby="headingThree" 
+      data-bs-parent="#accordionExample">
+      <div class="accordion-body">
+        <strong>This is the third item's accordion body.</strong>
+      </div>
+    </div>
+  </div>
+</div>

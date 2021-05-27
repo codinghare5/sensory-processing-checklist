@@ -42,9 +42,7 @@ a[href]:visited {
 main {
   padding: 1rem;
 }
-main :first-child {
-  margin-top: 0;
-}
+
 header {
   border-bottom: 1px dashed var(--lightgray);
 }
@@ -244,4 +242,35 @@ a[href].direct-link:focus:visited,
 :hover > a[href].direct-link,
 :hover > a[href].direct-link:visited {
   color: #aaa;
+}
+
+section > button {
+  display: block;
+}
+
+div.tab-pane > article {
+  display: block;
+  border: lightgray 1px solid;
+  margin-top: -7px;
+  border-radius: 4px;
+  padding: 50px;
+  background-color: hsla(219, 48%, 69%, 1.0);
+}
+
+div.tab-pane > article > h2 {
+  color: hsla(290, 49%, 27%, 1.0) !important;
+  margin-bottom: 50px;
+  font-weight: 900;
+}
+
+div.tab-pane > article > h4 {
+  margin-bottom: 25px;
+}
+
+div.tab-pane > article > div > div > .col {
+  margin: 25px;
+}
+
+.progress-bar-purple {
+  background-color: purple !important;
 }

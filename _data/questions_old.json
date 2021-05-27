@@ -1,0 +1,151 @@
+{
+    "sense": "vision",
+    "categories": [
+    {
+        "category": "Gestalt Perception",
+        "questions": [
+            "Notices every tiny change in the environment", 
+            "Resists any change (all senses)",
+            "Doesn’t recognise a familiar environment if approached from a different direction",
+            "Is easily distracted by other visual stimuli in the environment (movement, objects, a piece of fluff, etc.",
+            "Ritualistic behaviour"
+        ]
+    },
+    {
+        "category": "Inability to stop feeling a change",
+        "questions": ["Keeps ‘seeing’ a visual stimulus after it’s gone"]
+    },
+    {
+        "category": "Fragmented",
+        "questions": [
+            "Resists any change",
+            "Selects for attention minor aspects of objects in the environment instead of the whole thing (e.g., a wheel rather than a whole toy car)",
+            "Gets lost easily",
+            "Doesn’t recognise people in unfamiliar clothes"
+        ]
+    },
+    {
+        "category": "Distorted",
+        "questions": [
+            "Fears heights, stairs, escalators",
+            "Hesitates going up or down steps",
+            "Difficulty judging spatial relationships in the environment; bumps into people, objects",
+            "Appears startled when approached suddenly",
+            "Compulsive repetitive hand, head or body movement that fluctuates between near and far",
+            "Hits/rubs eyes when distressed (+hyper-, fragmentation, etc.)"
+        ]
+    },
+    {
+        "category": "Delayed",
+        "questions":[
+            "Response to visual stimuli is delayed (e.g., fails to close eyes when the light is switched on)",
+            "Any experiences are perceived as new and unfamiliar, regardless of the number of times they have experienced the same thing (across all sensory modalities)"
+        ]
+    },
+    {
+        "category": "Intensity: hyper",
+        "questions":[
+            "Constantly looks at minute particles, picks up smallest pieces of fluff",
+            "Dislikes bright lights",
+            "Is frightened by sharp lashes of light, lightning, etc.",
+            "Looks down most of the time",
+            "Covers, closes or squints eyes at bright light"
+        ]
+    },
+    {
+        "category": "Intensity: hypo",
+        "questions":[
+            "Is attracted to lights",
+            "Looks intensely at objects and people",
+            "Moves/flicks/waves fingers or objects in front of eyes",
+            "Is fascinated with reflections, bright coloured objects",
+            "Runs a hand around the edge of an object",
+            "Perimeter hugging"
+        ]
+    },
+    {
+        "category": "Sensitivity to Disturbance",
+        "questions":[
+            "Squints or closes eyes in bright lights",
+            "Gets easily frustrated/tired under fluorescent lights",
+            "Gets frustrated with certain colours"
+        ]
+    },
+    {
+        "category": "Fascination",
+        "questions":["Is fascinated with coloured and shining objects"]
+    },
+    {
+        "category": "Fluctuation",
+        "questions":["May respond differently (pleasure – indifference – stress) to the same visual stimuli (lights, colours, visual patterns, etc.)"]
+    },
+    {
+        "category": "Vulnerability to Overload",
+        "questions":[
+            "Sudden outbursts of self-abuse/meltdowns or withdrawal in response to visual stimuli",
+            "Tires very easily, especially when in bright places"
+        ]
+    },
+    {
+        "category": "Systems Shutdown",
+        "questions":[
+            "Appears to be a mindless follower",
+            "Surprises with knowing ‘unknown’ information (+auditory)",
+            "Becomes disoriented in bright places",
+            "Doesn’t notice when people come into the room",
+            "Sometimes doesn’t react to visual stimuli"
+        ]
+    },
+    {
+        "category": "Sensory Agnosia",
+        "questions":["Feels/acts blind"]
+    },
+    {
+        "category": "Mono-processing",
+        "questions":["When looking at something, doesn’t seem to hear/feel being touched/smell, or to know the position of the body in space/what body is doing"]
+    },
+    {
+        "category": "Peripheral Perception",
+        "questions": ["Avoids direct eye contact"]
+    },
+    {
+        "category": "Compensating",
+        "questions":["Smells, licks, touches or taps objects to recognise them"]
+    },
+    {
+        "category": "Merging with Stimuli",
+        "questions":[ "Seems to be absorbed (merged) with lights, colours, patterns"]
+    },
+    {
+        "category": "Daydreaming",
+        "questions":["Seems to know what other people (who are not present) are doing"]
+    },
+    {
+        "category": "Synaethesia",
+        "questions":[
+            "Covers/rubs/blinks, etc. eyes in response to a sound/touch/smell/taste/movement",
+            "Complains about (is frustrated with) the ‘wrong’ colours of letters/numbers, etc. on coloured blocks, etc."
+        ]
+    },
+    {
+        "category": "Perceptual Memory",
+        "questions":[
+            "Displays a good visual memory; remembers routes and places",
+            "Memorises enormous amounts of information at a glance",
+            "Reactions are triggered by lights, colours, patterns"
+        ]
+    },
+    {
+        "category": "Perceptual Thinking",
+        "questions":[
+            "Easily solves jigsaw puzzles",
+            "Learns nouns first", 
+            "Has difficulties with adverbs and prepositions",
+            "Often poor at mathematics",
+            "Is a good synthesiser",
+            "Provides solutions but is unable to explain how they have been reached",
+            "Develops own methods of problem-solving"
+        ]
+    }
+    ]
+}

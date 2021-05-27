@@ -1,0 +1,55 @@
+---
+layout : layouts/base.njk
+templateClass : tmpl-home
+---
+<h1>JSON here, responding:</h1>
+<div id="json">
+
+</div>
+<br><br><br><br><br>
+{{ content | safe }}
+
+<script>
+    const dataURL = 'https://raw.githubusercontent.com/codinghare5/json-file/main/questions.json';
+
+    function printData(sense, categories) {
+        // create h2 tag to hold sense name
+        var h2Sense = document.createElement('h2');
+        // append json converted to string to h2
+        h2Sense.innerHTML = JSON.stringify(sense);
+        // grab tag witg id=json
+        var divAllSenses = document.getElementById('json');
+        divAllSenses.appendChild(h2Sense);
+        // loop categories, create new category obj and => return {...}
+        categories.map(category => {
+            // create h2 for category name
+            var h3Category = document.createElement('h3');
+            // destructure category object to it's name and list of questions so
+            // { category becames a name and we create new list with questions }
+            const { category: name, questions } = category;
+            // console.log(name, questions); // this was just to test how it goes
+            // stringify category name and append to created above h3
+            // as you remember it doesnt exist inside the body yet, but
+            h3Category.innerHTML = JSON.stringify(name);
+            // now it will
+            divAllSenses.appendChild(h3Category);
+            // we have got a list of questions from that category, so
+            // lets loop and print them out
+            questions.map(question => {
+                var buttonQuestionHTML = document.createElement('button');
+                buttonQuestionHTML.innerHTML = JSON.stringify(question);
+                divAllSenses.appendChild(buttonQuestionHTML);
+                divAllSenses.innerHTML += '\n';
+            })
+        })
+    }
+
+    async function fetchData() {
+        request = await fetch(dataURL).then(request => request.json());
+        const { sense, categories } = request;
+        //console.log(sense, categories);
+        printData(sense, categories);
+    }
+
+    fetchData();
+</script>

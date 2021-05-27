@@ -1,5 +1,44 @@
 ---
-layout: layouts/base.njk
-templateClass: tmpl-home
+layout : layouts/base.njk
+templateClass : tmpl-home
 ---
-{{ content | safe }}
+
+<nav>
+  <div class="nav nav-tabs" id="nav-tab" role="tablist">
+{% for sense in questions %}
+    <button 
+        class="nav-link {% if loop.first %}active{% endif %}" 
+        id="nav-{{ sense.sense | lower }}-tab" 
+        data-bs-toggle="tab" 
+        data-bs-target="#nav-{{ sense.sense | lower }}" 
+        type="button" 
+        role="tab" aria-controls="nav-{{ sense.sense | lower }}" aria-selected="{% if loop.first %}true{% else %}false{% endif %}">
+            {{ sense.sense }}
+    </button>
+{% endfor %}
+  </div>
+</nav>
+<div class="tab-content mt-5" id="nav-tabContent">
+{% for sense in questions %}
+    <div class="tab-pane fade {% if loop.first %}show active{% endif %}" 
+        id="nav-{{ sense.sense | lower }}" 
+        role="tabpanel" 
+        aria-labelledby="nav-{{ sense.sense | lower }}-tab">
+    {% for item in sense.categories %}
+        <section>
+            <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-{{ sense.sense | lower }}-{{loop.index}}" aria-expanded="false" aria-controls="collapseExample">
+                {{ item.category }}
+            </button>
+            <div class="collapse" id="collapse-{{ sense.sense | lower }}-{{loop.index}}">
+            {% for question in item.questions %}
+                <div class="card card-body">
+                    {{ question }}
+                </div>
+            {% endfor %}
+            </div>
+        </section>
+    {% endfor %}
+    </div>
+{% endfor %}
+</div>
+{# {{ content | safe }} #}

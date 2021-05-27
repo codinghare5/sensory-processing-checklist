@@ -1,0 +1,567 @@
+[
+{
+    "sense": "Vision",
+    "metacategories":
+    [
+        {
+            "name": "Sensory Experience 1",
+            "categories": [
+            {
+                "category": "Gestalt Perception",
+                "index": 1,
+                "questions": [
+                    "Notices every tiny change in the environment", 
+                    "Resists any change (all senses)",
+                    "Doesn’t recognise a familiar environment if approached from a different direction",
+                    "Is easily distracted by other visual stimuli in the environment (movement, objects, a piece of fluff, etc.",
+                    "Ritualistic behaviour"
+                ]
+            },
+            {
+                "category": "Inability to stop feeling a change",
+                "index": 2,
+                "questions": ["Keeps ‘seeing’ a visual stimulus after it’s gone"]
+            },
+            {
+                "category": "Fragmented",
+                "index": 3,
+                "questions": [
+                    "Resists any change",
+                    "Selects for attention minor aspects of objects in the environment instead of the whole thing (e.g., a wheel rather than a whole toy car)",
+                    "Gets lost easily",
+                    "Doesn’t recognise people in unfamiliar clothes"
+                ]
+            },
+            {
+                "category": "Distorted",
+                "index": 4,
+                "questions": [
+                    "Fears heights, stairs, escalators",
+                    "Hesitates going up or down steps",
+                    "Difficulty judging spatial relationships in the environment; bumps into people, objects",
+                    "Appears startled when approached suddenly",
+                    "Compulsive repetitive hand, head or body movement that fluctuates between near and far",
+                    "Hits/rubs eyes when distressed (+hyper-, fragmentation, etc.)"
+                ]
+            },
+            {
+                "category": "Delayed",
+                "index": 5,
+                "questions":[
+                    "Response to visual stimuli is delayed (e.g., fails to close eyes when the light is switched on)",
+                    "Any experiences are perceived as new and unfamiliar, regardless of the number of times they have experienced the same thing (across all sensory modalities)"
+                ]
+            },
+            {
+                "category": "Intensity: hyper",
+                "index": 6,
+                "questions":[
+                    "Constantly looks at minute particles, picks up smallest pieces of fluff",
+                    "Dislikes bright lights",
+                    "Is frightened by sharp lashes of light, lightning, etc.",
+                    "Looks down most of the time",
+                    "Covers, closes or squints eyes at bright light"
+                ]
+            },
+            {
+                "category": "Intensity: hypo",
+                "index": 7,
+                "questions":[
+                    "Is attracted to lights",
+                    "Looks intensely at objects and people",
+                    "Moves/flicks/waves fingers or objects in front of eyes",
+                    "Is fascinated with reflections, bright coloured objects",
+                    "Runs a hand around the edge of an object",
+                    "Perimeter hugging"
+                ]
+            }
+            ]
+        },
+        {
+            "name": "Sensory Experience 2",
+            "categories": [
+            {
+                "category": "Sensitivity to Disturbance",
+                "index": 8,
+                "questions":[
+                    "Squints or closes eyes in bright lights",
+                    "Gets easily frustrated/tired under fluorescent lights",
+                    "Gets frustrated with certain colours"
+                ]
+            },
+            {
+                "category": "Fascination",
+                "index": 9,
+                "questions":["Is fascinated with coloured and shining objects"]
+            },
+            {
+                "category": "Fluctuation",
+                "index": 10,
+                "questions":["May respond differently (pleasure – indifference – stress) to the same visual stimuli (lights, colours, visual patterns, etc.)"]
+            },
+            {
+                "category": "Vulnerability to Overload",
+                "index": 11,
+                "questions":[
+                    "Sudden outbursts of self-abuse/meltdowns or withdrawal in response to visual stimuli",
+                    "Tires very easily, especially when in bright places"
+                ]
+            },
+            {
+                "category": "Systems Shutdown",
+                "index": 12,
+                "questions":[
+                    "Appears to be a mindless follower",
+                    "Surprises with knowing ‘unknown’ information (+auditory)",
+                    "Becomes disoriented in bright places",
+                    "Doesn’t notice when people come into the room",
+                    "Sometimes doesn’t react to visual stimuli"
+                ]
+            },
+            {
+                "category": "Sensory Agnosia",
+                "index": 13,
+                "questions":["Feels/acts blind"]
+            }
+        ]
+        },
+        {
+            "name": "Perceptual Styles",
+            "categories": [
+            {
+                "category": "Mono-processing",
+                "index": 14,
+                "questions":["When looking at something, doesn’t seem to hear/feel being touched/smell, or to know the position of the body in space/what body is doing"]
+            },
+            {
+                "category": "Peripheral Perception",
+                "index": 15,
+                "questions": ["Avoids direct eye contact"]
+            },
+            {
+                "category": "Compensating",
+                "index": 16,
+                "questions":["Smells, licks, touches or taps objects to recognise them"]
+            },
+            {
+                "category": "Merging with Stimuli",
+                "index": 17,
+                "questions":[ "Seems to be absorbed (merged) with lights, colours, patterns"]
+            },
+            {
+                "category": "Daydreaming",
+                "index": 18,
+                "questions":["Seems to know what other people (who are not present) are doing"]
+            }
+        ]
+        },
+        {
+            "name": "Other",
+            "categories": [  
+            {
+                "category": "Synaethesia",
+                "index": 19,
+                "questions":[
+                    "Covers/rubs/blinks, etc. eyes in response to a sound/touch/smell/taste/movement",
+                    "Complains about (is frustrated with) the ‘wrong’ colours of letters/numbers, etc. on coloured blocks, etc."
+                ]
+            },
+            {
+                "category": "Perceptual Memory",
+                "index": 20,
+                "questions":[
+                    "Displays a good visual memory; remembers routes and places",
+                    "Memorises enormous amounts of information at a glance",
+                    "Reactions are triggered by lights, colours, patterns"
+                ]
+            },
+            {
+                "category": "Perceptual Thinking",
+                "index": 21,
+                "questions":[
+                    "Easily solves jigsaw puzzles",
+                    "Learns nouns first", 
+                    "Has difficulties with adverbs and prepositions",
+                    "Often poor at mathematics",
+                    "Is a good synthesiser",
+                    "Provides solutions but is unable to explain how they have been reached",
+                    "Develops own methods of problem-solving"
+                ]
+            }
+        ]
+        }
+    ]
+},
+{
+    "sense": "Hearing",
+    "metacategories": 
+    [
+        {
+            "name": "Sensory Experience 1",
+            "categories": [
+            {
+                "category": "Gestalt Perception",
+                "index": 1,
+                "questions": [
+                    "Gets easily frustrated when trying to do something in a noisy, crowded room", 
+                    "Doesn’t seem to understand instructions if more than one person is talking"
+                ]
+            },
+            {
+                "category": "Inability to stop feeling a change",
+                "index": 2,
+                "questions": ["Keeps ‘hearing’ the sound (e.g., an alarm clock after it’s been switched of)"]
+            },
+            {
+                "category": "Fragmented",
+                "index": 3,
+                "questions": ["Hears (with meaning) a few words instead of the whole sentence"]
+            },
+            {
+                "category": "Distorted",
+                "index": 4,
+                "questions": [
+                    "Pronunciation problems",
+                    "Unable to distinguish between some sounds",
+                    "Hits ears when distressed"
+                ]
+            },
+            {
+                "category": "Delayed",
+                "index": 5,
+                "questions":[
+                    "Response to sounds, questions, instructions is delayed",
+                    "Echolalia in monotonous, high-pitched, parrot-like voice"
+                ]
+            },
+            {
+                "category": "Intensity: hyper",
+                "index": 6,
+                "questions":[
+                    "Covers ears at some sounds",
+                    "Is a very light sleeper",
+                    "Is frightened by animals",
+                    "Dislikes thunderstorms, the sea, crowds",
+                    "Dislikes having hair cut",
+                    "Avoids sounds and noises",
+                    "Distracted/disturbed by sounds that others are unaware of (e.g., humming of electric appliances)",
+                    "Makes repetitive noises to block out other sounds"
+                ]
+            },
+            {
+                "category": "Intensity: hypo",
+                "index": 7,
+                "questions":[
+                    "Bangs objects, doors",
+                    "Likes vibration",
+                    "Likes excessively loud music, TV, etc.",
+                    "Likes kitchen and bathroom",
+                    "Likes traffic, crowds",
+                    "Is attracted by sounds, noises",
+                    "Tears paper, crumples paper in the hand",
+                    "Makes loud rhythmic noises"
+                ]
+            }
+        ]
+        },
+        {
+            "name": "Sensory Experience 2",
+            "categories": [ 
+            {
+                "category": "Sensitivity to Disturbance",
+                "index": 8,
+                "questions":[
+                    "Gets frustrated with certain sounds",
+                    "Tries to destroy/break objects producing sounds (clock, telephone, musical toy, etc.)"
+                ]
+            },
+            {
+                "category": "Fascination",
+                "index": 9,
+                "questions":["Is fascinated with certain sounds"]
+            },
+            {
+                "category": "Fluctuation",
+                "index": 10,
+                "questions":[ "May respond differently (pleasure – indifference – distress) to the same auditory stimuli (sounds, noises)"]
+            },
+            {
+                "category": "Vulnerability to Overload",
+                "index": 11,
+                "questions":[
+                    "Sudden outbursts of self-abuse/tantrums or withdrawal in response to auditory stimuli",
+                    "Tires very easily, especially when in noisy places"
+                ]
+            },
+            {
+                "category": "Systems Shutdown",
+                "index": 12,
+                "questions":[
+                    "Appears to be a mindless follower",
+                    "Surprises with knowing ‘unknown’ information",
+                    "Becomes disoriented in noisy places",
+                    "Sometimes doesn’t react to any sound",
+                    "Doesn’t respond when name is called"
+                ]
+            },
+            {
+                "category": "Sensory Agnosia",
+                "index": 13,
+                "questions":[
+                    "Feels/acts deaf",
+                    "Ritualistic behaviour + vision"
+                ]
+            }
+        ]
+        },
+        {
+            "name": "Perceptual Styles",
+            "categories": [
+            {
+                "category": "Mono-processing",
+                "index": 14,
+                "questions":["When istening, doesn’t seem to see/feel touch (or can’t define texture or location of touch)/smell, or know position of the body in space, or body movements"]
+            },
+            {
+                "category": "Peripheral Perception",
+                "index": 15,
+                "questions": ["Reacts to instructions better when they are ‘addressed to the wall’"]
+            },
+            {
+                "category": "Compensating",
+                "index": 16,
+                "questions":["Looks for the source of the sound"]
+            },
+            {
+                "category": "Merging with Stimuli",
+                "index": 17,
+                "questions":[ "Seems to be absorbed (merged) with sounds"]
+            },
+            {
+                "category": "Daydreaming",
+                "index": 18,
+                "questions":["Seems to be able to ‘read’ thoughts, feelings, etc. of others"]
+            }
+        ]
+        },
+        {
+            "name": "Other",
+            "categories": [
+            {
+                "category": "Synaethesia",
+                "index": 19,
+                "questions":[
+                    "Covers/hits ears in response to lights, colours/touch, texture/smell/taste/movement",
+                    "Complains about (is frustrated with) a sound in response to colours/textures/touch/scent/flavour/movement"
+                ]
+            },
+            {
+                "category": "Perceptual Memory",
+                "index": 20,
+                "questions":[
+                    "Displays a good auditory memory (for nursery rhymes, songs, etc.)",
+                    "Reactions are triggered by sounds/words",
+                    "Uses idiosyncratic routinised responses",
+                    "Uses songs, commercials, etc. to respond",
+                    "Cannot keep track of conversation"
+                ]
+            },
+            {
+                "category": "Perceptual Thinking",
+                "index": 21,
+                "questions":["Interprets, manipulates and organises ‘sound pictures’"]
+            }
+        ]
+        }
+    ]
+},
+{
+    "sense": "Touch",
+    "metacategories": 
+    [
+        {
+            "name": "Sensory Experience 1",
+            "categories": [
+            {
+                "category": "Gestalt Perception",
+                "index": 1,
+                "questions": ["Unable to distinguish between tactile stimuli of different intensity (e.g., light and rough touch)"]
+            },
+            {
+                "category": "Inability to stop feeling a change",
+                "index": 2,
+                "questions": [
+                    "Keeps feeling tactile sensation longer",
+                    "Insists on wearing the same clothes",
+                    "ants to wear shorts and t-shirts all year round",
+                    "Wants to wear long-sleeve shirts and trousers all year round to avoid having skin exposed",
+                    "Distressed when nails are cut"
+                ]
+            },
+            {
+                "category": "Fragmented",
+                "index": 3,
+                "questions": [
+                    "Complains about parts of the clothes",
+                    "Some parts of the body may be hypersensitive while others are hyposensitive – e.g., hypersensitive to wearing anything on the wrists (e.g., watch, bracelet) but hyposensitive to wearing, e.g., shoes (doesn’t realise any problems from tight shoes until notices blisters or blood)"
+                ]
+            },
+            {
+                "category": "Distorted",
+                "index": 4,
+                "questions": ["Hits/bites self when distressed)"]
+            },
+            {
+                "category": "Delayed",
+                "index": 5,
+                "questions":["Response to tactile stimuli is delayed"]
+            },
+            {
+                "category": "Intensity: hyper",
+                "index": 6,
+                "questions":[
+                    "As a baby, didn’t like to be held or cuddled; arched back, cried or pulled away",
+                    "Resists being touched",
+                    "Refuses to wear new or stiff clothes, turtleneck jumpers, hats, belts, bracelets, etc.",
+                    "Distressed by clothes rubbing on skin, tags, seams in socks",
+                    "Strips",
+                    "Dislikes brushing teeth",
+                    "Dislikes bathing/showering",
+                    "Dislikes having hair washed/brushed",
+                    "Refuses to walk barefoot on grass or sand",
+                    "Over-reacts to heat/cold/pain",
+                    "Avoids using hands",
+                    "Avoids getting ‘messy’",
+                    "Dislikes food of certain texture",
+                    "Over-reacts to minor cuts, scrapes, insect bites",
+                    "Avoids standing in close proximity (especially in lines) to other people"
+                ]
+            },
+            {
+                "category": "Intensity: hypo",
+                "index": 7,
+                "questions":[
+                    "Likes pressure, tight clothes",
+                    "Seeks pressure by crawling under heavy objects",
+                    "Hugs tightly",
+                    "Enjoys rough and tumble play",
+                    "Is not bothered by cuts or bruises",
+                    "Low reaction to pain and temperature",
+                    "Prone to self-injury: pinching, biting, banging head against the wall, etc.",
+                    "Enjoys messy play",
+                    "Unable to identify which part of body was touched if not looking",
+                    "(In extreme cases) doesn’t feel the body",
+                    "A messy dresser"
+                ]
+            }
+        ]
+        },
+        {
+            "name": "Sensory Experience 2",
+            "categories": [
+            {
+                "category": "Sensitivity to Disturbance",
+                "index": 8,
+                "questions":[
+                    "Cannot tolerate certain fabrics (clothes, bedding) and textures, including food",
+                    "Eats only hot or only cold foods",
+                    "Gags with textured foods"
+                ]
+            },
+            {
+                "category": "Fascination",
+                "index": 9,
+                "questions":["Is fascinated with certain textures"]
+            },
+            {
+                "category": "Fluctuation",
+                "index": 10,
+                "questions":["May respond differently (pleasure – indifference – distress) to the same tactile stimuli (clothes, touch, heat, pain, etc.)"]
+            },
+            {
+                "category": "Vulnerability to Overload",
+                "index": 11,
+                "questions":["Sudden outbursts of self-abuse/tantrums or withdrawal in response to tactile stimuli"]
+            },
+            {
+                "category": "Systems Shutdown",
+                "index": 12,
+                "questions":[
+                    "Sometimes doesn’t react to any tactile stimuli",
+                    "Fails to define either texture or location of touch"
+                ]
+            },
+            {
+                "category": "Sensory Agnosia",
+                "index": 13,
+                "questions":[
+                    "Feels/acts numb",
+                    "Can’t interpret tactile sensations"
+                ]
+            }
+        ]
+        },
+        {
+            "name": "Perceptual Styles",
+            "categories": [
+            {
+                "category": "Mono-processing",
+                "index": 14,
+                "questions":[ "When absorbed with texture, or manipulating objects, doesn’t seem to see/hear/feel/taste, etc."]
+            },
+            {
+                "category": "Peripheral Perception",
+                "index": 15,
+                "questions": ["Can tolerate only ‘instrumental’ (not ‘social’)"]
+            },
+            {
+                "category": "Compensating",
+                "index": 16,
+                "questions":["Taps/smells/licks/uses vision to identify objects (e.g., when retrieving from a bag)"]
+            },
+            {
+                "category": "Merging with Stimuli",
+                "index": 17,
+                "questions":[
+                    "Seems to be absorbed (merged) with certain textures",
+                    "Seems to feel pain of others",
+                    "Echoemotica"
+                ]
+            },
+            {
+                "category": "Daydreaming",
+                "index": 18,
+                "questions":["Complains about being touched/hot/cold, etc. in the absence of the stimuli"]
+            }
+        ]
+        },
+        {
+            "name": "Other",
+            "categories": [
+            {
+                "category": "Synaethesia",
+                "index": 19,
+                "questions":[
+                    "Reports seeing colours, hearing sound, etc. when being touched",
+                    "Complains about (is frustrated with) feeling being touched when being looked at",
+                    "Complains about (is frustrated with) backache, etc./heat/cold in colourful/noisy/crowded places"
+                ]
+            },
+            {
+                "category": "Perceptual Memory",
+                "index": 20,
+                "questions":[
+                    "Displays a good tactile memory",
+                    "Reactions are triggered by textures/touch/temperature"
+                ]
+            },
+            {
+                "category": "Perceptual Thinking",
+                "index": 21,
+                "questions":["Learning through touching objects, developing ‘tactile concepts’"]
+            }
+        ]
+        }
+    ]
+}
+]
