@@ -11,7 +11,7 @@ eleventyNavigation:
   <div class="nav nav-tabs" id="nav-tab" role="tablist">
 {% for sense in questions %}
     <button 
-        class="nav-link {% if loop.first %}active{% endif %}" 
+        class="nav-link{% if loop.first %} active{% endif %}" 
         id="nav-{{ sense.sense | lower }}-tab" 
         data-bs-toggle="tab" 
         data-bs-target="#nav-{{ sense.sense | lower }}" 
@@ -27,7 +27,7 @@ eleventyNavigation:
 
 <div class="tab-content" id="nav-tabContent" style="margin-top: 42px;">
 {% for sense in questions %}
-  <div class="tab-pane fade" 
+  <div class="tab-pane fade{% if loop.first %} show active{% endif %}" 
     id="nav-{{ sense.sense | lower }}" 
     role="tabpanel" 
     aria-labelledby="nav-{{ sense.sense | lower }}-tab">
@@ -53,7 +53,7 @@ eleventyNavigation:
       {# END items in sidebar #}
 
       {# this is the body inside accordion #}
-      <div class="col-sm-9">
+      <div class="col-sm-9 border border-1">
         {% for meta in sense.metacategories %}
         {# <p style="margin-left: 10px;">Meta name: {{ meta.name | lower }}</p> #}
         <div id="collapse-{{ sense.sense | lower }}-{{ loop.index }}" 
@@ -112,7 +112,7 @@ eleventyNavigation:
   {% endfor %}
 {% endfor %} #}
 
-<div class="accordion" id="accordionExample">
+{# <div class="accordion" id="accordionExample">
   <div class="accordion-item">
     <h2 class="accordion-header" id="headingOne">
       <button class="accordion-button" 
@@ -147,4 +147,4 @@ eleventyNavigation:
       </div>
     </div>
   </div>
-</div>
+</div> #}
