@@ -25,37 +25,6 @@ eleventyNavigation:
 {% endmacro %}
 
 
-{% macro print_categories(sense, categories, the_loop) %}
-  {% for item in categories %}
-    <div class="accordion-item">
-      <h2 class="accordion-header" id="heading-{{ sense.sense | lower }}-{{ loop.index }}-{{ item.index }}">
-        <button class="accordion-button collapsed" 
-          type="button" 
-          data-bs-toggle="collapse" 
-          data-bs-target="#body-{{ sense.sense | lower }}-{{ loop.index }}-{{ item.index }}" 
-          aria-expanded="false" 
-          aria-controls="body-{{ sense.sense | lower }}-{{ loop.index }}-{{ item.index }}">
-          {{ item.category }}
-        </button>
-      </h2>
-      <div id="body-{{ sense.sense | lower }}-{{ loop.index }}-{{ item.index }}" 
-        class="accordion-collapse collapse" 
-        aria-labelledby="headingOne"
-          {# 3. set the parent with the correct id from the outer loop #}
-          {#     eg. vision-4 #}
-          {#     senses are unique and metacategory number is enought for the accordion to work #}
-        data-bs-parent="#{{ sense.sense | lower}}-{{ the_loop.index }}">
-        {% for question in item.questions %}
-          <div class="accordion-body">
-            <strong>{{ question }}</strong>
-          </div>
-        {% endfor %}
-      </div>
-    </div>
-  {% endfor %}
-{% endmacro %}
-
-
 {% macro print_body(sense, metacategories) %}
   {% for meta in metacategories %}
   {# <p style="margin-left: 10px;">Meta name: {{ meta.name | lower }}</p> #}
@@ -85,6 +54,79 @@ eleventyNavigation:
   {% endfor %}
 {% endmacro %}
 
+
+{% macro print_categories(sense, categories, the_loop) %}
+  {% for item in categories %}
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="heading-{{ sense.sense | lower }}-{{ loop.index }}-{{ item.index }}">
+        <button class="accordion-button collapsed" 
+          type="button" 
+          data-bs-toggle="collapse" 
+          data-bs-target="#body-{{ sense.sense | lower }}-{{ loop.index }}-{{ item.index }}" 
+          aria-expanded="false" 
+          aria-controls="body-{{ sense.sense | lower }}-{{ loop.index }}-{{ item.index }}">
+          {{ item.category }}
+        </button>
+      </h2>
+      <div id="body-{{ sense.sense | lower }}-{{ loop.index }}-{{ item.index }}" 
+        class="accordion-collapse collapse" 
+        aria-labelledby="headingOne"
+          {# 3. set the parent with the correct id from the outer loop #}
+          {#     eg. vision-4 #}
+          {#     senses are unique and metacategory number is enought for the accordion to work #}
+        data-bs-parent="#{{ sense.sense | lower}}-{{ the_loop.index }}">
+        {# START print out questions #}
+        {% call print_questions(sense, item.questions, item.index) %}
+        {% endcall %}
+        {# END print out questions #}
+      </div>
+    </div>
+  {% endfor %}
+{% endmacro %}
+
+
+{% macro print_questions(sense, questions, cat_index) %}
+  {% for question in questions %}
+    <div class="accordion-body">
+      {{ question }}
+      {# use class=row to spread radio inputs #}
+      <div class="row row-cols-auto justify-content-center">
+        {# Radio - Was True #}
+        <div class="form-check form-check-inline col">
+          <input class="form-check-input" type="radio" 
+            name="{{ sense.sense | lower }}-{{ cat_index }}-{{ loop.index }}" 
+            id="{{ sense.sense | lower }}-{{ cat_index }}-{{ loop.index }}-wastrue" 
+            value="wastrue">
+          <label class="form-check-label" for="{{ sense.sense | lower }}-{{ cat_index }}-{{ loop.index }}-wastrue">Was true</label>
+        </div>
+        {# Radio - True #}
+        <div class="form-check form-check-inline col">
+          <input class="form-check-input" type="radio" 
+            name="{{ sense.sense | lower }}-{{ cat_index }}-{{ loop.index }}" 
+            id="{{ sense.sense | lower }}-{{ cat_index }}-{{ loop.index }}-true" 
+            value="true">
+          <label class="form-check-label" for="{{ sense.sense | lower }}-{{ cat_index }}-{{ loop.index }}-true">True</label>
+        </div>
+        {# Radio - False #}
+        <div class="form-check form-check-inline col">
+          <input class="form-check-input" type="radio" 
+          name="{{ sense.sense | lower }}-{{ cat_index }}-{{ loop.index }}" 
+          id="{{ sense.sense | lower }}-{{ cat_index }}-{{ loop.index }}-false" 
+          value="false">
+          <label class="form-check-label" for="{{ sense.sense | lower }}-{{ cat_index }}-{{ loop.index }}-false">False</label>
+        </div>
+        {# Radio - Not Sure #}
+        <div class="form-check form-check-inline col">
+          <input class="form-check-input" type="radio" 
+          name="{{ sense.sense | lower }}-{{ cat_index }}-{{ loop.index }}" 
+          id="{{ sense.sense | lower }}-{{ cat_index }}-{{ loop.index }}-notsure" 
+          value="notsure">
+          <label class="form-check-label" for="{{ sense.sense | lower }}-{{ cat_index }}-{{ loop.index }}-notsure">Not sure</label>
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+{% endmacro %}
 
 {% macro print_tab_content(json_file_name) %}
   {% for sense in json_file_name %}
