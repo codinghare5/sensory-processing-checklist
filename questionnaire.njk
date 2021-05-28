@@ -7,6 +7,7 @@ eleventyNavigation:
   order: 2
 ---
 
+{# START navigation between tabs #}
 <nav>
   <div class="nav nav-tabs" id="nav-tab" role="tablist">
 {% for sense in questions %}
@@ -24,16 +25,22 @@ eleventyNavigation:
 {% endfor %}
   </div>
 </nav>
+{# END navigation between tabs #}
 
+{# START of the tab, main container #}
+{# this part should occure only once, so it is outside of the loop #}
 <div class="tab-content" id="nav-tabContent" style="margin-top: 42px;">
 {% for sense in questions %}
+  {# START the tab's contents #}
   <div class="tab-pane fade{% if loop.first %} show active{% endif %}" 
     id="nav-{{ sense.sense | lower }}" 
     role="tabpanel" 
     aria-labelledby="nav-{{ sense.sense | lower }}-tab">
+    {# very important - it is the unique id of the parent #}
+    {# START main accordion, as a row #}
     <div class="accordion row" id="accordionExample-{{ sense.sense | lower }}">
       {% set outerLoop = loop %}
-      {# items in sidebar #}
+      {# START items in the sidebar, left column, responsive #}
       <div class="col-sm-3">
         {% for meta in sense.metacategories %}
           <div class="accordion-item ">
@@ -52,17 +59,27 @@ eleventyNavigation:
       </div>
       {# END items in sidebar #}
 
-      {# this is the body inside accordion #}
+      {# this is the body inside accordion, the right colun, responsive #}
       <div class="col-sm-9 border border-1">
         {% for meta in sense.metacategories %}
         {# <p style="margin-left: 10px;">Meta name: {{ meta.name | lower }}</p> #}
+        {# this whole part collapses on sidebar button/parent click #}
+        {# id= data-bs-target/aria-controls of the sidebar buttons #}
         <div id="collapse-{{ sense.sense | lower }}-{{ loop.index }}" 
             class="accordion-collapse collapse col-sm-9" 
-            aria-labelledby="bodyAccorcionHeading" 
+            aria-labelledby="bodyAccorcionHeading"
+            {# points out to id of the accordion parent from the sidebar #}
             data-bs-parent="#accordionExample-{{ sense.sense | lower }}">
           {# accordion wrapper for categories #}
           <div class="accordion-body">
+            {# 1. we are inside metacategories loop -> id= sense-loop.index #}
+            {#    and this is enought for the accordion below to be unique #}
+            {#    see No 2. for more details #}
             <div class="accordion" id="{{ sense.sense | lower}}-{{ loop.index }}">
+              {# 2. we need to pass loop.index one layer down #}
+              {#    for accordion's children to function properly #}
+              {#    so let's set new variable #}
+              {#    see No 3. for more details #}
               {% set metaLoop = loop %}
               {% for item in meta.categories %}
               {# <p style="margin-left: 20px;">Cat: {{ item.category | lower }}</p> #}
@@ -79,7 +96,10 @@ eleventyNavigation:
                   </h2>
                   <div id="body-{{ sense.sense | lower }}-{{ loop.index }}-{{ item.index }}" 
                     class="accordion-collapse collapse" 
-                    aria-labelledby="headingOne" 
+                    aria-labelledby="headingOne"
+                     {# 3. set the parent with the correct id from the outer loop #}
+                     {#     eg. vision-4 #}
+                     {#     senses are unique and metacategory number is enought for the accordion to work #}
                     data-bs-parent="#{{ sense.sense | lower}}-{{ metaLoop.index }}">
                     {% for question in item.questions %}
                       <div class="accordion-body">
@@ -96,11 +116,15 @@ eleventyNavigation:
       </div>
       {# END this is the body inside accordion #}
     </div>
+    {# END main accordion #}
   </div>
+  {# END the tab's contents #}
 {% endfor %}
 </div>
+{# END of the tab #}
 
-{# {% for sense in questions %}
+{# Main loop, good for testing the json file
+{% for sense in questions %}
   {% for meta in sense.metacategories %}
   <p style="margin-left: 50px;">Meta name: {{ meta.name | lower }}</p>
     {% for item in meta.categories %}
@@ -110,9 +134,11 @@ eleventyNavigation:
       {% endfor %}
     {% endfor %}
   {% endfor %}
-{% endfor %} #}
+{% endfor %} 
+#}
 
-{# <div class="accordion" id="accordionExample">
+{# Demo Accordion, for testing purposes
+<div class="accordion" id="accordionExample">
   <div class="accordion-item">
     <h2 class="accordion-header" id="headingOne">
       <button class="accordion-button" 
