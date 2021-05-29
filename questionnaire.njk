@@ -160,6 +160,46 @@ eleventyNavigation:
 {% endmacro %}
 
 
+{%- macro create_id(sense) -%}
+{%- set items = ["nav-", sense, "-tab"] -%}
+{{ caller() }}{{ items | lower | join("") }}
+{%- endmacro -%}
+
+
+{% macro string_join_dash(string) %}
+{# 1.a find forward slash #}
+{% set re = r/\//g %}
+{# 2.a leave letters and whitespace (there is a space after Z to leave whitespace) #}
+{% set re2 = r/[^a-zA-Z ]+/g %}
+{# 1.b to replace it with whitespace #}
+{% set newstr = string.replace(re, ' ') %}
+{# 2.b. and replace everything else with an empty string #}
+{% set newstr = newstr.replace(re2, '') %}
+{% set words = newstr | lower %}
+{# make a list from a string, there are only words and whitespace left #}
+{% set words_list = words.split(" ") %}
+{% set words_dash = words_list.join("-") %}
+{{ words_dash }}
+{% endmacro %}
+
+
+{% macro string_to_array(string) %}
+{# 1.a find forward slash #}
+{% set re = r/\//g %}
+{# 2.a leave letters and whitespace (there is a space after Z to leave whitespace) #}
+{% set re2 = r/[^a-zA-Z ]+/g %}
+{# 1.b to replace it with whitespace #}
+{% set newstr = string.replace(re, ' ') %}
+{# 2.b. and replace everything else with an empty string #}
+{% set newstr = newstr.replace(re2, '') %}
+{% set words = newstr | lower %}
+{# make a list from a string, there are only words and whitespace left #}
+{% set words_list = words.split(" ") %}
+{# {% set words_dash = words_list.join("-") %} #}
+{{ words_list }}
+{% endmacro %}
+
+
 {# START navigation between tabs #}
 <nav>
   <div class="nav nav-tabs" id="nav-tab" role="tablist">
