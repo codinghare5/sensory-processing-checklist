@@ -46,6 +46,24 @@ module.exports = function(eleventyConfig) {
     return (tags || []).filter(tag => ["all", "nav", "post", "posts"].indexOf(tag) === -1);
   })
 
+  // Create an array of words from a string
+  eleventyConfig.addFilter("stringToList", string => {
+    // any type of a sentence, it leaves lower letter words
+    // 1.a find forward slashes
+    var re = /\//g;
+    // 2.a leave letters and whitespace (there is a space after Z to leave whitespace)
+    var re2 = /[^a-zA-Z ]+/g;
+    // 1.b to replace it with whitespace
+    var newstr = string.replace(re, ' ');
+    // 2.b. and replace everything else with an empty string 
+    var newstr = newstr.replace(re2, '');
+    var words = newstr.toLowerCase();
+    // make a list from a string, there are only words and whitespace left 
+    var words_list = words.split(" ");
+    // {% set words_dash = words_list.join("-") %} 
+    return words_list;
+  })
+
   // Create an array of all tags
   eleventyConfig.addCollection("tagList", function(collection) {
     let tagSet = new Set();

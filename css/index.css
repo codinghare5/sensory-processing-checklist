@@ -274,3 +274,16 @@ div.tab-pane > article > div > div > .col {
 .progress-bar-purple {
   background-color: purple !important;
 }
+
+.col-sm-9 > .accordion-collapse {
+  padding: 0 !important;
+}
+
+.col-sm-9 > .accordion-collapse > .accordion-body {
+  padding: 0 !important;
+}
+
+.accordion-item > .accordion-collapse > .accordion-body {
+  padding: 0 0 1rem 0 !important;
+  margin: 1.25rem;
+}
