@@ -287,3 +287,7 @@ div.tab-pane > article > div > div > .col {
   padding: 0 0 1rem 0 !important;
   margin: 1.25rem;
 }
+
+.nav-item {
+  margin-left: 1em;
+}
