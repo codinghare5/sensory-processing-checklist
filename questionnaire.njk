@@ -91,10 +91,18 @@ eleventyNavigation:
       {{ question }}
       {# use class=row to spread radio inputs #}
       <div class="row row-cols-auto justify-content-center">
+        {# Radio - Not Sure #}
+        <div class="form-check form-check-inline col">
+          <input class="form-check-input" type="radio" 
+          name="{{ sense.sense | lower }}-{{ cat_index }}-{{ loop.index }}-notsure" 
+          id="{{ sense.sense | lower }}-{{ cat_index }}-{{ loop.index }}-notsure" 
+          value="notsure">
+          <label class="form-check-label" for="{{ sense.sense | lower }}-{{ cat_index }}-{{ loop.index }}-notsure">Not sure</label>
+        </div>
         {# Radio - Was True #}
         <div class="form-check form-check-inline col">
           <input class="form-check-input" type="radio" 
-            name="{{ sense.sense | lower }}-{{ cat_index }}-{{ loop.index }}" 
+            name="{{ sense.sense | lower }}-{{ cat_index }}-{{ loop.index }}-wastrue" 
             id="{{ sense.sense | lower }}-{{ cat_index }}-{{ loop.index }}-wastrue" 
             value="wastrue">
           <label class="form-check-label" for="{{ sense.sense | lower }}-{{ cat_index }}-{{ loop.index }}-wastrue">Was true</label>
@@ -114,14 +122,6 @@ eleventyNavigation:
           id="{{ sense.sense | lower }}-{{ cat_index }}-{{ loop.index }}-false" 
           value="false">
           <label class="form-check-label" for="{{ sense.sense | lower }}-{{ cat_index }}-{{ loop.index }}-false">False</label>
-        </div>
-        {# Radio - Not Sure #}
-        <div class="form-check form-check-inline col">
-          <input class="form-check-input" type="radio" 
-          name="{{ sense.sense | lower }}-{{ cat_index }}-{{ loop.index }}" 
-          id="{{ sense.sense | lower }}-{{ cat_index }}-{{ loop.index }}-notsure" 
-          value="notsure">
-          <label class="form-check-label" for="{{ sense.sense | lower }}-{{ cat_index }}-{{ loop.index }}-notsure">Not sure</label>
         </div>
       </div>
     </div>
@@ -147,7 +147,7 @@ eleventyNavigation:
         {# END items in sidebar #}
 
         {# this is the body inside accordion, the right colun, responsive #}
-        <div class="col-sm-9 border border-1">
+        <div class="col-sm-9">
           {% call print_body(sense, sense.metacategories) %}
           {% endcall %}
         </div>
