@@ -59,6 +59,12 @@ table th {
   padding-right: 1em;
 }
 
+.active-btn {
+  color: var(--navy);
+  background-color: yellow;
+  border-color: red;
+}
+
 pre,
 code {
   font-family: Consolas, Menlo, Monaco, "Andale Mono WT", "Andale Mono", "Lucida Console", "Lucida Sans Typewriter", "DejaVu Sans Mono", "Bitstream Vera Sans Mono", "Liberation Mono", "Nimbus Mono L", "Courier New", Courier, monospace;

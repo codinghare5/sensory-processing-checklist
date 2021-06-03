@@ -74,7 +74,7 @@ eleventyNavigation:
         </div> <!-- end row for checkboxes -->
       </div> <!-- end container for checkboxes -->
 
-      <!-- -->
+      <!-- Three sets of radio buttons, two with just one item -->
       <h4>1. Lorem ipsum dolor sit amet consectetur, adipisicing elit?</h4>
       <div class="container">
       {% set option = "O2" %}
@@ -113,6 +113,29 @@ eleventyNavigation:
         </div>
       </div> <!-- end row -->
       </div> <!-- end container for checkboxes -->
+
+      <!-- buttons and javascript -->
+      {% set options = [ {"label": "Was True", "id": "was-true"},
+                         {"label": "True Now", "id": "true-now"},
+                         {"label": "Not Sure", "id": "not-sure"},
+                         {"label": "False", "id": "false"}] %}
+      {% set questionName = "vision-01-02" %}
+      <h4>1. Lorem ipsum dolor sit amet consectetur, adipisicing elit?</h4>
+      <div class="container">
+       <div class="row row-cols-auto justify-content-center">
+        <!-- create buttons -->
+        <form id="{{ questionName }}">
+          {% for item in options %}
+            <button class="questionButton px-2 m-1 {% if item.id == "false" %} active-btn {% endif %}" 
+                              id="{{ questionName }}-{{ item.id }}" name="{{ questionName }}"
+                              type="button" value="{{ item.id }}">
+              {{ item.label }}
+            </button>
+          {% endfor %}
+        </form>
+       </div> <!-- end row -->
+      </div> <!-- end container-->
+
     </article>  
   </div>
 
@@ -164,3 +187,42 @@ eleventyNavigation:
     <div class="progress-bar w-75 progress-bar-striped progress-bar-purple" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
   </div>
 </div>
+
+<script>
+  // grab all the buttons with class 'questionButton'
+  const questionButtons = document.querySelectorAll(".questionButton")
+  console.log('there are ' + questionButtons.length + ' question buttons')
+
+  // loop through buttons setting an event listener
+  for (i=0 ; i<questionButtons.length ; i++) {
+    questionButtons[i].addEventListener('click', function() {
+      console.log(this.getAttribute("id"));
+      const buttons = document.getElementById(this.getAttribute("name")).getElementsByTagName("button");
+      const falsebutton = buttons[3];
+      const notsurebutton = buttons[2]
+      const truebutton = buttons[1];
+      const wastruebutton = buttons[0];
+
+      if (this.classList.contains("active-btn")) 
+        this.classList.remove("active-btn");
+      else {
+        if (this === falsebutton) {
+          for (j=0; j<buttons.length - 1 ; j++)
+            buttons[j].classList.remove("active-btn");
+        }
+        else {
+          falsebutton.classList.remove("active-btn")
+          if (this === notsurebutton) {
+            truebutton.classList.remove("active-btn");
+            wastruebutton.classList.remove("active-btn");
+          }
+          else 
+            notsurebutton.classList.remove("active-btn")
+        }
+        this.classList.add("active-btn"); 
+      }  
+    });
+  }
+
+  console.log('added event listeners')
+</script>
