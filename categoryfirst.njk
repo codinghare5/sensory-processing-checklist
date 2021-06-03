@@ -1,0 +1,37 @@
+---
+layout: layouts/base.njk
+permalink: /categoryfirst/
+templateClass: tmpl-post
+eleventyNavigation:
+  key: CategoryFirst
+  order: 6
+---
+<h2> Meta Categories First </h2>
+<!-- first create an amended data structure -->
+{% set data = [] %}
+{#<pre>{{questions[0].metacategories | dump(2) | safe }}</pre>#}
+{#{% for metacats in questions[0].metacategories %}
+    {{metacats.name}}
+    {% set data = (data.push({"name": metacats.name, "index": loop.index}), data) %}
+{% endfor %} #}
+{% for metacats in questions[0].metacategories %} <!-- (vision) -->
+    {% set metaindex = loop.index - 1%}
+
+    {% set categorydata = [] %}
+    {% for cat in metacats.categories %}
+        {% set catindex = loop.index -1 %}
+
+        {% set sensedata = [] %}
+        {% for sense in questions %}
+            {% set sqs = questions[loop.index-1].metacategories[metaindex].categories[catindex].questions %}
+            {#{{sqs|dump(2)|safe}}#}
+            {% set sensedata = (sensedata.push({"sense": sense.sense, "questions": sqs}), sensedata) %}
+        {% endfor %}
+
+        {% set categorydata = (categorydata.push({"category": cat.category, "index": cat.index, "senses": sensedata}),categorydata) %}
+    {% endfor %} 
+
+    {% set data = (data.push({"name": metacats.name, "categories": categorydata}), data) %} 
+{% endfor %} 
+    
+<pre>{{data | dump(2) | safe}}</pre>

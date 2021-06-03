@@ -46,6 +46,15 @@ module.exports = function(eleventyConfig) {
     return (tags || []).filter(tag => ["all", "nav", "post", "posts"].indexOf(tag) === -1);
   })
 
+  //Filter to add an attribute to an existing dictionary
+  // usage:
+  //  {% set myDict = {"key1": 0, "key2": 0, "key3": 0}%}
+  //  {% set myDict = myDict|setAttribute('key2', 123) %}
+  eleventyConfig.addFilter('setAttribute', function(dictionary, key, value) {
+    dictionary[key] = value;
+    return dictionary;
+});
+
   // Create an array of words from a string
   eleventyConfig.addFilter("stringToList", string => {
     // any type of a sentence, it leaves lower letter words
