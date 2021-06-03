@@ -48,6 +48,8 @@ eleventyNavigation:
     aria-labelledby="home-tab">
     <article>
       <h2>Sensory Processing Checklist</h2>
+
+      <!-- straight forward checkboxes -->
       <h4>1. Lorem ipsum dolor sit amet consectetur, adipisicing elit?</h4>
       <div class="container">
         <div class="row">
@@ -69,10 +71,51 @@ eleventyNavigation:
             <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio4" value="option4" checked>
             <label class="form-check-label" for="inlineRadio4">Not sure</label>
           </div>
+        </div> <!-- end row for checkboxes -->
+      </div> <!-- end container for checkboxes -->
+
+      <!-- -->
+      <h4>1. Lorem ipsum dolor sit amet consectetur, adipisicing elit?</h4>
+      <div class="container">
+      {% set option = "O2" %}
+        <div class="row row-cols-auto justify-content-center">
+        {# Radio - Not Sure #}
+        <div class="form-check form-check-inline col">
+          <input class="form-check-input" type="radio" 
+          name="{{ option }}-notsure" 
+          id="{{ option }}-notsure" 
+          value="notsure">
+          <label class="form-check-label" for="{{ option }}-notsure">Not sure</label>
         </div>
-      </div>
-    </article>
-    </div>
+        {# Radio - Was True #}
+        <div class="form-check form-check-inline col">
+          <input class="form-check-input" type="radio" 
+            name="{{ option }}-wastrue" 
+            id="{{ option }}-wastrue" 
+            value="wastrue">
+          <label class="form-check-label" for="{{ option }}-wastrue">Was true</label>
+        </div>
+        {# Radio - True #}
+        <div class="form-check form-check-inline col">
+          <input class="form-check-input" type="radio" 
+            name="{{ option }}" 
+            id="{{ option }}-true" 
+            value="true">
+          <label class="form-check-label" for="{{ option }}-true">True</label>
+        </div>
+        {# Radio - False #}
+        <div class="form-check form-check-inline col">
+          <input class="form-check-input" type="radio" 
+          name="{{ option }}" 
+          id="{{ option }}-false" 
+          value="false" checked>
+          <label class="form-check-label" for="{{ option }}-false">False</label>
+        </div>
+      </div> <!-- end row -->
+      </div> <!-- end container for checkboxes -->
+    </article>  
+  </div>
+
   <div class="tab-pane fade" 
     id="profile" 
     role="tabpanel" 
