@@ -1,0 +1,60 @@
+---
+layout: layouts/base.njk
+permalink: /recursive/
+templateClass: tmpl-post
+eleventyNavigation:
+  key: Recursive
+  order: 7
+---
+
+<div class="root">
+</div>
+
+{% macro rec(obj) %}
+{% if obj | is_object %}
+    {% for k in obj %}
+        {% if k.hasOwnProperty('name') %}
+            <pre>{{k['name'] | dump(2) | safe}}</pre>
+        {% else %}
+            <pre>{{k | dump(2) | safe}}</pre>
+        {% endif %}
+        {% if k.hasOwnProperty('items') %}
+            {# <pre>{{k['items'] | dump(2) | safe}}</pre> #}
+            {{ rec(k['items']) }}
+        {% endif %}
+    {% endfor %}
+{% else %}
+    {# obj is not an instance of an Object so obj here is a value #}
+    {{obj | log}}
+{% endif %}
+{% endmacro %}
+
+{% call rec(meta3) %}
+{% endcall %}
+
+
+{# 
+{% for sense in questions %}
+    {% for meta in sense.metacategories %}
+    <p style="margin-left: 50px;">Meta name: {{ meta.name | lower }}</p>
+        {% for item in meta.categories %}
+        <p style="margin-left: 100px;">Cat: {{ item.category | lower }}</p>
+            {% for question in item.questions %}
+            <p style="margin-left: 150px;">Q: {{ question }}</p>
+            {% endfor %}
+        {% endfor %}
+    {% endfor %}
+{% endfor %}
+
+{% for metacategory in meta %}
+    <p style="margin-left: 0px;">Meta name: {{ metacategory.name | lower }}</p>
+    {% for category in metacategory.categories %}
+    <p style="margin-left: 50px;">Category name: {{ category.category | lower }}</p>
+        {% for sense in category.senses %}
+        <p style="margin-left: 100px;">Sense: {{ sense.sense | lower }}</p>
+            {% for question in sense.questions %}
+            <p style="margin-left: 150px;">Q: {{ question }}</p>
+            {% endfor %}
+        {% endfor %}
+    {% endfor %}
+{% endfor %}  #}
