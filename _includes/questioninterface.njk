@@ -128,7 +128,7 @@
       {# use class=row to spread radio inputs #}
       <div class="row row-cols-auto justify-content-center">
         {% for opt in  questionOptions %}
-          <div class="form-check form-check-inline col">
+          <div class="form-check form-check-inline col border border-1">
             <input class="form-check-input" type="checkbox" 
               name="{{ questionName }}-{{opt.id}}" 
               id="{{ questionName }}-{{opt.id}}" 
