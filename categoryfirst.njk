@@ -6,7 +6,7 @@ eleventyNavigation:
   key: CategoryFirst
   order: 6
 ---
-<h2> Meta Categories First </h2>
+<!--<h2> Meta Categories First </h2> -->
 <!-- first create an amended data structure -->
 {% set data = [] %}
 {#<pre>{{questions[0].metacategories | dump(2) | safe }}</pre>#}
@@ -14,7 +14,7 @@ eleventyNavigation:
     {{metacats.name}}
     {% set data = (data.push({"name": metacats.name, "index": loop.index}), data) %}
 {% endfor %} #}
-{% for metacats in questions[0].metacategories %} <!-- (vision) -->
+{% for metacats in questions[0].metacategories %} {#(vision)#}
     {% set metaindex = loop.index - 1%}
 
     {% set categorydata = [] %}
@@ -33,5 +33,12 @@ eleventyNavigation:
 
     {% set data = (data.push({"name": metacats.name, "categories": categorydata}), data) %} 
 {% endfor %} 
+
+{#<pre>{{data | dump(3) | safe}}</pre>#}
+
+{% set struct = {"top": "metacategory", "side": "category", "body": "sense"} %}
+
+{% include "questioninterface.njk" %}
+
     
-<pre>{{data | dump(2) | safe}}</pre>
+
