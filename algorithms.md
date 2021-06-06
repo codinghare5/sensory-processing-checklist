@@ -84,6 +84,32 @@ Note that if we store the answers to a questions set as an array (collect Questi
 
 Then when we read in the saved file, we just need to loop through it, grab the appropriate question set and set the answers. To save repeated searching for a question set, we could save the question set in the file with just 0 or null for the array - then we can loop through the question sets as long as everything is in the correct order.
 
+## Form Submission
+We can have a button to submit the form, but it does not have to be a submit button: it can just be an ordinary button.
+
+When this button is clicked we 
+```
+Create header information
+Create an array of question sets for the json file
+
+GATHER an array of QuestionSet
+LOOP through the question sets
+  GATHER an array of questions from QuestionSet (may be only one)
+  CREATE array to put question answer codes in (or get the array)
+  LOOP through each question (not needed if array is in QuestionSet)
+    insert code into array of answer code
+  
+  SUM question codes // no point adding in an array of 0
+  PUSH question set to array of question sets
+
+WRITE as JSON file using appropriate dialog to save a file
+```
+
+It is probably best to create the array of question codes when it comes to saving the results.
+
+  
+
+
 ## Toggling between views
 It should not be difficult to enable toggling between views (Sense first or metacategory first) while keeping the answers to the questions intact.
 
