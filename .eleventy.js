@@ -53,7 +53,7 @@ module.exports = function(eleventyConfig) {
   eleventyConfig.addFilter('setAttribute', function(dictionary, key, value) {
     dictionary[key] = value;
     return dictionary;
-});
+  });
 
   // Create an array of words from a string
   eleventyConfig.addFilter("stringToList", string => {
@@ -71,6 +71,18 @@ module.exports = function(eleventyConfig) {
     var words_list = words.split(" ");
     // {% set words_dash = words_list.join("-") %} 
     return words_list;
+  })
+
+  eleventyConfig.addFilter('is_object', function(obj) {
+    return typeof obj == 'object';
+  });
+
+  eleventyConfig.addFilter('entries', function(obj) {
+    return obj.entries();
+  });
+
+  eleventyConfig.addFilter('log', value => {
+    console.log(value);
   })
 
   // Create an array of all tags
