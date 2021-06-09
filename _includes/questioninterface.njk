@@ -181,7 +181,7 @@
     {# END the tab's contents #}
   {% endfor %}
     <div class="col-12">
-      <button class="btn btn-primary" type="submit">Submit form</button>
+      <button class="btn btn-primary" type="button">Save</button>
     </div>
 {% endmacro %}
 
@@ -290,7 +290,7 @@
       
       var newvalue;
       if (!this.checked) {
-        console.log(this.checked);
+        //console.log(this.checked);
         if (this == falsebutton) { // if false button do nothing else
           falsebutton.checked=true;
         } else {
@@ -306,26 +306,26 @@
         } 
       }
       else { // the button was not active
-        console.log(this.checked);
+        //console.log(this.checked);
         if (this === falsebutton) {
-          console.log("It is false button.");
+          //console.log("It is false button.");
           formwrapper.setAttribute("value",0);
           for (j=0; j<buttons.length - 1 ; j++)
             buttons[j].checked=false;
         }
         else {
-          console.log("It is NOT false button.");
+          //console.log("It is NOT false button.");
           falsebutton.checked=false;
           if (this === notsurebutton) {
-            console.log("It is not-sure button.");
+            //console.log("It is not-sure button.");
             truebutton.checked=false;
             wastruebutton.checked=false;
             formwrapper.setAttribute("value",1);
           }
           else { // button is either wastruebutton or nowtruebutton
-            console.log("First two buttons.");
+            //console.log("First two buttons.");
             if (notsurebutton.checked){
-              console.log("It is not-sure button.");
+              //console.log("It is not-sure button.");
               notsurebutton.checked=false;
               falsebutton.checked=false;
               currentvalue = 0;
