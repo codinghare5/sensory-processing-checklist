@@ -1,9 +1,9 @@
 
 
-{% set questionOptions = [ {"label": "Was True", "id": "was-true"},
-                          {"label": "True Now", "id": "true-now"},
-                          {"label": "Not Sure", "id": "not-sure"},
-                          {"label": "False", "id": "false"}] %}
+{% set questionOptions = [ {"label": "Was True", "id": "was-true", "value": 2},
+                          {"label": "True Now", "id": "true-now", "value": 3},
+                          {"label": "Not Sure", "id": "not-sure", "value": 1},
+                          {"label": "False", "id": "false", "value": 0}] %}
 
 <!-- set macros to return the text -->
 {% macro get_text(item, locat) %}
@@ -123,17 +123,18 @@
 {% macro print_questions(senseid, questionarray, catindex) %}
   {% for question in questionarray %}
     {% set questionName = senseid + '-' + catindex + '-' + loop.index %}
-    <div class="accordion-body" id="{{ questionName}}">
+    <div class="accordion-body" id="{{ questionName}}" value="0">
       {{ question }}
       {# use class=row to spread radio inputs #}
       <div class="row row-cols-auto justify-content-center">
         {% for opt in  questionOptions %}
           <div class="form-check form-check-inline col border border-1">
             <input class="form-check-input" type="checkbox" 
-              name="{{ questionName }}-{{opt.id}}" 
+              name="{{ questionName }}-{{ opt.id }}" 
               id="{{ questionName }}-{{opt.id}}" 
-              value="{{ opt.id }}" {% if opt.id === "false" %} checked {% endif %}>
+              value="{{ opt.value }}"{% if opt.id == "false" %} checked="checked"{% endif %}>
             <label class="form-check-label" for="{{ questionName }}-{{ opt.id }}">{{ opt.label }}</label>
+            {# {{ opt.label }} #}
           </div>
         {% endfor %}
       </div> <!-- end row -->
@@ -179,6 +180,9 @@
     </div>
     {# END the tab's contents #}
   {% endfor %}
+    <div class="col-12">
+      <button class="btn btn-primary" type="submit">Submit form</button>
+    </div>
 {% endmacro %}
 
 
@@ -189,36 +193,36 @@
 
 
 {% macro string_join_dash(string) %}
-{# 1.a find forward slash #}
-{% set re = r/\//g %}
-{# 2.a leave letters and whitespace (there is a space after Z to leave whitespace) #}
-{% set re2 = r/[^a-zA-Z ]+/g %}
-{# 1.b to replace it with whitespace #}
-{% set newstr = string.replace(re, ' ') %}
-{# 2.b. and replace everything else with an empty string #}
-{% set newstr = newstr.replace(re2, '') %}
-{% set words = newstr | lower %}
-{# make a list from a string, there are only words and whitespace left #}
-{% set words_list = words.split(" ") %}
-{% set words_dash = words_list.join("-") %}
-{{ words_dash }}
+  {# 1.a find forward slash #}
+  {% set re = r/\//g %}
+  {# 2.a leave letters and whitespace (there is a space after Z to leave whitespace) #}
+  {% set re2 = r/[^a-zA-Z ]+/g %}
+  {# 1.b to replace it with whitespace #}
+  {% set newstr = string.replace(re, ' ') %}
+  {# 2.b. and replace everything else with an empty string #}
+  {% set newstr = newstr.replace(re2, '') %}
+  {% set words = newstr | lower %}
+  {# make a list from a string, there are only words and whitespace left #}
+  {% set words_list = words.split(" ") %}
+  {% set words_dash = words_list.join("-") %}
+  {{ words_dash }}
 {% endmacro %}
 
 
 {% macro string_to_array(string) %}
-{# 1.a find forward slash #}
-{% set re = r/\//g %}
-{# 2.a leave letters and whitespace (there is a space after Z to leave whitespace) #}
-{% set re2 = r/[^a-zA-Z ]+/g %}
-{# 1.b to replace it with whitespace #}
-{% set newstr = string.replace(re, ' ') %}
-{# 2.b. and replace everything else with an empty string #}
-{% set newstr = newstr.replace(re2, '') %}
-{% set words = newstr | lower %}
-{# make a list from a string, there are only words and whitespace left #}
-{% set words_list = words.split(" ") %}
-{# {% set words_dash = words_list.join("-") %} #}
-{{ words_list }}
+  {# 1.a find forward slash #}
+  {% set re = r/\//g %}
+  {# 2.a leave letters and whitespace (there is a space after Z to leave whitespace) #}
+  {% set re2 = r/[^a-zA-Z ]+/g %}
+  {# 1.b to replace it with whitespace #}
+  {% set newstr = string.replace(re, ' ') %}
+  {# 2.b. and replace everything else with an empty string #}
+  {% set newstr = newstr.replace(re2, '') %}
+  {% set words = newstr | lower %}
+  {# make a list from a string, there are only words and whitespace left #}
+  {% set words_list = words.split(" ") %}
+  {# {% set words_dash = words_list.join("-") %} #}
+  {{ words_list }}
 {% endmacro %}
 
 
@@ -249,11 +253,97 @@
 
 {# START of the tab, main container #}
 {# this part should occure only once, so it is outside of the loop #}
-<div class="tab-content" id="nav-tabContent" style="margin-top: 42px;">
-  {% call print_tab_content(data) %}
-  {% endcall %}
-</div>
+<form class="form">
+  <div class="tab-content" id="nav-tabContent" style="margin-top: 42px;">
+    {% call print_tab_content(data) %}
+    {% endcall %}
+  </div>
+<form>
 {# END of the tab #}
+
+
+<script>
+  document.querySelector('form.form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    let x = document.querySelector('form.form').elements;
+    console.log(x);
+  });
+
+  // grab all the buttons with class 'questionButton'
+  const questionButtons = document.querySelectorAll(".form-check-input")
+  console.log('there are ' + questionButtons.length + ' question buttons')
+
+  // loop through buttons setting an event listener
+  for (i=0 ; i<questionButtons.length ; i++) {
+    questionButtons[i].addEventListener('change', function() {
+      console.log(this.getAttribute("id"));
+      
+      const formwrapper = this.parentElement.parentElement.parentElement;
+      var currentvalue = formwrapper.getAttribute("value");
+      const thisvalue = this.getAttribute("value");
+      const buttons = formwrapper.getElementsByTagName("input");
+      const falsebutton = buttons[3];
+      const notsurebutton = buttons[2]
+      const truebutton = buttons[1];
+      const wastruebutton = buttons[0];
+      //console.log(buttons);
+      
+      var newvalue;
+      if (!this.checked) {
+        console.log(this.checked);
+        if (this == falsebutton) { // if false button do nothing else
+          falsebutton.checked=true;
+        } else {
+          //this.removeAttribute('checked');
+          newvalue = +currentvalue - +thisvalue; //+thisvalue converts thisvalue to an int
+          if (newvalue == 0){ // no buttons are active
+            falsebutton.checked=true;
+            formwrapper.setAttribute("value",0);
+          }
+          else { // one other button is active (can't be more than one)
+            formwrapper.setAttribute("value",newvalue);
+          }
+        } 
+      }
+      else { // the button was not active
+        console.log(this.checked);
+        if (this === falsebutton) {
+          console.log("It is false button.");
+          formwrapper.setAttribute("value",0);
+          for (j=0; j<buttons.length - 1 ; j++)
+            buttons[j].checked=false;
+        }
+        else {
+          console.log("It is NOT false button.");
+          falsebutton.checked=false;
+          if (this === notsurebutton) {
+            console.log("It is not-sure button.");
+            truebutton.checked=false;
+            wastruebutton.checked=false;
+            formwrapper.setAttribute("value",1);
+          }
+          else { // button is either wastruebutton or nowtruebutton
+            console.log("First two buttons.");
+            if (notsurebutton.checked){
+              console.log("It is not-sure button.");
+              notsurebutton.checked=false;
+              falsebutton.checked=false;
+              currentvalue = 0;
+            }
+            newvalue = +currentvalue + +thisvalue;
+            console.log('currentvalue: ' + currentvalue + ' thisvalue: ' + thisvalue + ' newvalue: ' + newvalue);
+            formwrapper.setAttribute("value",newvalue)
+          }
+        }
+        //this.setAttribute("checked", "checked");
+      } 
+      console.log('form value:' + formwrapper.getAttribute("value"));
+    }); // end function definition
+  } // end loop through buttons
+
+  console.log('added event listeners')
+</script>
+
 
 {# Main loop, good for testing the json file
 {% for sense in questions %}
