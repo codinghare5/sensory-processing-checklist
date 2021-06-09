@@ -36,11 +36,14 @@ The issue is that with buttons the status has not been changed when clicked and 
 
 With checkboxes, the status has been changed. So you have to work out what to do based on the change.
 
+### changed to not checked
 FalseButton: On change: if now false it was true. But if it was true then no other checkboxes were checked. If now false no checkboxes are checked. This is not allowed to change checked back to true. In other words FalseButton.checked has to stay true.
 
 Notsure: On change if now false it was true. Only NotSure was checked. Now it is not checked so we have to check FalseButton.
 
 If currentvalue - this value > 0 then either WasTrue or TrueNow is clicked and thisButton is also either TrueNow or WasTrue. We are in the situation where the original status was that both WasTrue and TrueNow were checked. So all we have to do is set currentvalue to currentvalue - thisvalue.
+
+### changed to checked
 
 ## Gathering Question Data
 Questions come in sets, effectively labeled by sense and category index. We could keep track of the status as a set or as individual questions - or both.
