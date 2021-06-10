@@ -125,12 +125,12 @@ code {
 
 /* Header */
 .home {
-  padding: 0 1rem;
+  padding: 1rem 1rem;
   float: left;
-  margin: 1rem 0; /* 16px /16 */
   font-size: 1em; /* 16px /16 */
+  margin: 0 !important;
 }
-.home :link:not(:hover) {
+.home :link {
   text-decoration: none;
 }
 
@@ -143,7 +143,6 @@ code {
 }
 .nav-item {
   display: inline-block;
-  margin-right: 1em;
 }
 .nav-item a[href]:not(:hover) {
   text-decoration: none;
@@ -151,6 +150,9 @@ code {
 .nav-item-active {
   font-weight: 700;
   text-decoration: underline;
+}
+.nav-link {
+  padding: .5rem .9rem !important;
 }
 
 /* Posts list */
@@ -281,19 +283,42 @@ div.tab-pane > article > div > div > .col {
   background-color: purple !important;
 }
 
-.col-sm-9 > .accordion-collapse {
+/* Sidebar and body */
+.col-md-9 > .accordion-collapse {
   padding: 0 !important;
 }
 
-.col-sm-9 > .accordion-collapse > .accordion-body {
+.col-md-9 > .accordion-collapse > .accordion-body {
   padding: 0 !important;
+}
+/* Sidebar and body END */
+
+/* Accorion fix */
+.accordion-collapse > .accordion-body .row {
+  margin-top: 0.75rem;
 }
 
 .accordion-item > .accordion-collapse > .accordion-body {
-  padding: 0 0 1rem 0 !important;
+  padding: 0 !important;
   margin: 1.25rem;
 }
+/* Accorion fix END */
 
-.nav-item {
-  margin-left: 1em;
+/* Question input fix */
+.form-check .form-check-input {
+  margin: .25em .5em .25em 0;
+}
+.form-check {
+  padding-left: 0.75em !important;
+}
+
+/* Navmenu */
+@media (max-width: 768px) {
+  .navbar-collapse {
+    margin-left: 0 !important;
+  }
+
+  div.col-md-9 {
+    padding-top: 0.5em !important;
+  }
 }
