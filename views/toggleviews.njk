@@ -25,61 +25,6 @@ eleventyNavigation:
                           {"label": "Not Sure", "id": "not-sure", "value": 1},
                           {"label": "False", "id": "false", "value": 0}] %}
 
-<div class="accordion" id="body_accordion">
-    {% for sense in questions %}
-        {% for metacat in sense.metacategories %}
-            {% for cat in metacat.categories %}   
-                <div class="accordion-item">
-                    {% set base_id = sense.sense + '-' + cat.index %}
-
-                    {# create accordion header #}
-                    <h2 class="accordion-header" id="groupheading-{{ base_id }}">
-                        <button class="accordion-button collapsed" type="button"
-                                id="accordion-header-btn-{{base_id}}" 
-                                data-bs-toggle="collapse" 
-                                data-bs-target="#collapse-{{ base_id }}" 
-                                aria-expanded="false" 
-                                aria-controls="collapse-{{ base_id }}">
-                            {{ sense.sense }}: {{ cat.category }}
-                        </button>
-                    </h2>
-
-                    {# create accordion body #}
-                    <div id="collapse-{{ base_id }}" class="accordion-collapse collapse" 
-                            aria-labelledby="groupheading-{{base_id}}"
-                            data-bs-parent="#body_accordion">
-
-                        {# START print out questions #}
-                        <div class="accordion-body" id="body-{{ base_id }}">
-                            {% for question in cat.questions %}
-                                {% set questionName = base_id + '-' + loop.index %}
-                                <fieldset id="{{ questionName }}" value=0>
-                                    <legend class="fs-5">{{ question }}</legend>
-                                    {# use class=row to spread radio inputs #}
-                                    <div class="row row-cols-auto justify-content-center">
-                                        {% for opt in  questionOptions %}
-                                            <div class="form-check form-check-inline col border border-1 rounded">
-                                                <input class="form-check-input" type="checkbox" 
-                                                            name="{{ questionName }}-{{ opt.id }}" 
-                                                            question_id="{{ questionName }}"
-                                                            id="{{ questionName }}-{{opt.id}}" 
-                                                            value="{{ opt.value }}"
-                                                            {% if opt.id == "false" %} checked="checked"{% endif %}>
-                                                <label class="form-check-label fs-5" for="{{ questionName }}-{{ opt.id }}">
-                                                    {{ opt.label }}
-                                                </label>
-                                            </div>
-                                        {% endfor %}
-                                    </div> <!-- end row of checkboxes-->
-                                </fieldset>
-                            {% endfor %} {# end question loop #}
-                        </div> <!-- end accordion body -->
-                    </div> <!-- end accordion collapse -->
-                </div> <!-- end accordion item -->
-            {% endfor %} {# end category loop #}
-        {% endfor %} {# end metacategory loop #}
-    {% endfor %} {# end sense loop #}
-</div> <!-- end accordion -->
 
 {# create the interface #}
 
@@ -98,6 +43,32 @@ eleventyNavigation:
 
   {{ text }}
 {% endmacro%}
+
+{# note that a lot of comments have been removed. See questioninterface.njk for explanations#}
+{% macro print_body(data, topidpart, sidearray) %}
+    {% for sideitem in sidearray %}
+        {% if data.side === "category" %}
+            {% set sideindex = sideitem.index %}
+            {% set bodyarray = sideitem.senses %}
+        {% else %}
+            {% set sideindex = loop.index %}
+            {% set bodyarray = sideitem.categories %}
+        {% endif %}
+
+       <div id="collapse-{{ topidpart }}-{{ sideindex }}" 
+                    class="accordion-collapse collapse" 
+                    aria-labelledby="bodyAccordionHeading"
+                    data-bs-parent="#side-accordion-{{ topidpart }}">
+
+            {# accordion wrapper for categories #}
+            <div class="accordion-body">
+                <p>Some body text</p>
+            </div>  
+        </div> {# end collapse#}
+
+    {% endfor %}
+{% endmacro %}
+
 
 {% macro print_tab_content(data) %}
     {% for topitem in data.json %}
@@ -150,11 +121,11 @@ eleventyNavigation:
                     </div>
                 {% endfor %} {# END items in sidebar #}
 
-                {# this is the body inside accordion, the right colun, responsive 
-                <div class="col-sm-9">
-                {% call print_body(idpart, sidearray) %}
-                {% endcall %}
-                </div> #} {# END this is the body inside accordion #}
+                {# this is the body inside accordion, the right colun, responsive #}
+                <div class="col-md-9">
+                    {% call print_body(data, idpart, sidearray) %}
+                    {% endcall %}
+                </div>  {# END this is the body inside accordion #}
             </div> {# END main accordion #}
         </div> {# END the tab's contents #}
     {% endfor %}  {# this view #}
@@ -200,40 +171,40 @@ eleventyNavigation:
     {% endfor %}
 </nav>
 
+{% for sense in questions %}
+    {% for metacat in sense.metacategories %}
+        {% for cat in metacat.categories %}   
+            {% set base_id = sense.sense + '-' + cat.index %}
 
+            {% for question in cat.questions %}
+                {% set questionName = base_id + '-' + loop.index %}
+                <fieldset id="{{ questionName }}" value=0>
+                    <legend class="fs-5">{{ question }}</legend>
+                    {# use class=row to spread radio inputs #}
+                    <div class="row row-cols-auto justify-content-center">
+                        {% for opt in  questionOptions %}
+                            <div class="form-check form-check-inline col border border-1 rounded">
+                                <input class="form-check-input" type="checkbox" 
+                                            name="{{ questionName }}-{{ opt.id }}" 
+                                            question_id="{{ questionName }}"
+                                            id="{{ questionName }}-{{opt.id}}" 
+                                            value="{{ opt.value }}"
+                                            {% if opt.id == "false" %} checked="checked"{% endif %}>
+                                <label class="form-check-label fs-5" for="{{ questionName }}-{{ opt.id }}">
+                                    {{ opt.label }}
+                                </label>
+                            </div>
+                        {% endfor %}
+                    </div> <!-- end row of checkboxes-->
+                </fieldset>
+            {% endfor %} {# end question loop #}
 
-
-
-
-
-{# now create the sidebar accordions: metacategory (body is category) or category (body is sense) #}
-
-{# metacategory first #}
-<div class="accordion" id="sidebar-accordion-metacategory">
-</div>
-
-
-
-
-
-
-
-
-
-
+        {% endfor %} {# end category loop #}
+    {% endfor %} {# end metacategory loop #}
+{% endfor %} {# end sense loop #}
 
 <script>
 
-    // set body accordion to display:none for now
-    bodyaccordion = document.getElementById("body_accordion");
-    bodyaccordion.style.display = "none";
-
-    
-    const senseSidebar = document.getElementById("sense-sidebar");
-    const metacategorySidebar = document.getElementById("metacategory-sidebar");
-  
-
- 
     // set up default view: sensesfirst
     var togglestatus = "sensesfirst";
     const sensesTopTabs = document.getElementById("sense-first");
@@ -257,7 +228,7 @@ eleventyNavigation:
         }
     });
 
-  // grab all the buttons with class 'questionButton'
+  // grab all the buttons with class 'form-check-input'
   const questionButtons = document.querySelectorAll(".form-check-input")
   console.log('there are ' + questionButtons.length + ' question buttons')
 
