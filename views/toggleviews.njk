@@ -1,0 +1,178 @@
+---
+layout: layouts/base.njk
+title: Toggle Views
+eleventyNavigation:
+  key: Toggle Views
+  parent: Views
+  order: 3
+---
+
+{# First create buttons to toggle views #}
+<button type="button"  id="togglebutton" class="fs-3 px-5 bg-info"> 
+    View Category First
+</button>
+
+{# Create a list of groups of questions 
+        these are the same irrespective of the view #}
+
+{% set questionOptions = [ {"label": "Was True", "id": "was-true", "value": 2},
+                          {"label": "True Now", "id": "true-now", "value": 3},
+                          {"label": "Not Sure", "id": "not-sure", "value": 1},
+                          {"label": "False", "id": "false", "value": 0}] %}
+
+{% for sense in questions %}
+    {% for metacat in sense.metacategories %}
+        {% for cat in metacat.categories %}
+            <div class="accordion" id="body_accordion">
+                <div class="accordion-item">
+                    {% set base_id = sense.sense + '-' + cat.index %}
+
+                    {# create accordion header #}
+                    <h2 class="accordion-header" id="groupheading-{{ base_id }}">
+                        <button class="accordion-button collapsed" type="button" 
+                                data-bs-toggle="collapse" 
+                                data-bs-target="#collapse-{{ base_id }}" 
+                                aria-expanded="false" 
+                                aria-controls="collapse-{{ base_id }}">
+                            {{ sense.sense }}: {{ cat.category }}
+                        </button>
+                    </h2>
+
+                    {# create accordion body #}
+                    <div id="collapse-{{ base_id }}" class="accordion-collapse collapse" 
+                            aria-labelledby="groupheading-{{base_id}}"
+                            data-bs-parent="#body_accordion">
+
+                        {# START print out questions #}
+                        <div class="accordion-body" id="body-{{ base_id }}">
+                            {% for question in cat.questions %}
+                                {% set questionName = base_id + '-' + loop.index %}
+                                <fieldset id="{{ questionName }}" value=0>
+                                    <legend class="fs-5">{{ question }}<legend>
+                                    {# use class=row to spread radio inputs #}
+                                    <div class="row row-cols-auto justify-content-center">
+                                        {% for opt in  questionOptions %}
+                                            <div class="form-check form-check-inline col border border-1">
+                                                <input class="form-check-input" type="checkbox" 
+                                                            name="{{ questionName }}-{{ opt.id }}" 
+                                                            question_id="{{ questionName }}"
+                                                            id="{{ questionName }}-{{opt.id}}" 
+                                                            value="{{ opt.value }}"
+                                                            {% if opt.id == "false" %} checked="checked"{% endif %}>
+                                                <label class="form-check-label" for="{{ questionName }}-{{ opt.id }}">
+                                                    {{ opt.label }}
+                                                </label>
+                                            </div>
+                                        {% endfor %}
+                                    </div> <!-- end row of checkboxes-->
+                                    </legend>
+                                </fieldset>
+                            {% endfor %} {# end question loop #}
+                        </div> <!-- end accordion body -->
+                    </div> <!-- end accordion collapse -->
+                </div> <!-- end accordion item -->
+            </div> <!-- end accordion -->
+        {% endfor %} {# end category loop #}
+    {% endfor %} {# end metacategory loop #}
+{% endfor %} {# end sense loop #}
+
+
+
+
+
+
+
+
+
+
+<script>
+    // Get toggle button and assign a function
+    var togglestatus = "sensesfirst";
+    togglebutton = document.getElementById("togglebutton");
+    togglebutton.addEventListener('click', function() {
+        if (togglestatus === "sensesfirst") {
+            togglestatus = "categoryfirst";
+            togglebutton.innerHTML = "View Category First";
+        }
+        else {
+            togglestatus = "sensesfirst";
+            togglebutton.innerHTML = "View Senses First";
+        }
+    });
+
+  // grab all the buttons with class 'questionButton'
+  const questionButtons = document.querySelectorAll(".form-check-input")
+  console.log('there are ' + questionButtons.length + ' question buttons')
+
+  // loop through buttons setting an event listener
+  for (i=0 ; i<questionButtons.length ; i++) {
+    questionButtons[i].addEventListener('change', function() {
+      console.log(this.id + ' ' + this.getAttribute("question_id"));
+      
+      const formwrapper = document.getElementById(this.getAttribute("question_id"));
+      var currentvalue = formwrapper.getAttribute("value");
+      const thisvalue = this.getAttribute("value");
+      const buttons = formwrapper.getElementsByTagName("input");
+      const falsebutton = buttons[3];
+      const notsurebutton = buttons[2]
+      const truebutton = buttons[1];
+      const wastruebutton = buttons[0];
+      //console.log(buttons);
+      
+      var newvalue;
+      if (!this.checked) {
+        //console.log(this.checked);
+        if (this == falsebutton) { // if false button do nothing else
+          falsebutton.checked=true;
+        } else {
+          //this.removeAttribute('checked');
+          newvalue = +currentvalue - +thisvalue; //+thisvalue converts thisvalue to an int
+          if (newvalue == 0){ // no buttons are active
+            falsebutton.checked=true;
+            formwrapper.setAttribute("value",0);
+          }
+          else { // one other button is active (can't be more than one)
+            formwrapper.setAttribute("value",newvalue);
+          }
+        } 
+      }
+      else { // the button was not active
+        //console.log(this.checked);
+        if (this === falsebutton) {
+          //console.log("It is false button.");
+          formwrapper.setAttribute("value",0);
+          for (j=0; j<buttons.length - 1 ; j++)
+            buttons[j].checked=false;
+        }
+        else {
+          //console.log("It is NOT false button.");
+          falsebutton.checked=false;
+          if (this === notsurebutton) {
+            //console.log("It is not-sure button.");
+            truebutton.checked=false;
+            wastruebutton.checked=false;
+            formwrapper.setAttribute("value",1);
+          }
+          else { // button is either wastruebutton or nowtruebutton
+            //console.log("First two buttons.");
+            if (notsurebutton.checked){
+              //console.log("It is not-sure button.");
+              notsurebutton.checked=false;
+              falsebutton.checked=false;
+              currentvalue = 0;
+            }
+            newvalue = +currentvalue + +thisvalue;
+            console.log('currentvalue: ' + currentvalue + ' thisvalue: ' + thisvalue + ' newvalue: ' + newvalue);
+            formwrapper.setAttribute("value",newvalue)
+          }
+        }
+        //this.setAttribute("checked", "checked");
+      } 
+      console.log('form value:' + formwrapper.getAttribute("value"));
+    }); // end function definition
+  } // end loop through buttons
+
+  console.log('added event listeners')
+</script>
+
+
