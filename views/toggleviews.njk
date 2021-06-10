@@ -44,6 +44,38 @@ eleventyNavigation:
   {{ text }}
 {% endmacro%}
 
+{% macro print_categories(data, topidpart, bodyarray, sideindex) %}
+    {% for bodyitem in bodyarray %}
+        {% if data.body === "category" %}
+            {% set bodyindex = bodyitem.index %}
+        {% else %}
+            {% set bodyindex = loop.index %}
+        {% endif %}
+
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="heading-{{ topidpart }}-{{ sideindex }}-{{ bodyindex }}">
+                <button class="accordion-button collapsed" 
+                            type="button" 
+                            data-bs-toggle="collapse" 
+                            data-bs-target="#collapse-{{ topidpart }}-{{ sideindex }}-{{ bodyindex }}" 
+                            aria-expanded="false" 
+                            aria-controls="collapse-{{ topidpart }}-{{ sideindex }}-{{ bodyindex }}">
+                    {{ get_text(bodyitem, data.body) }}
+                </button>
+            </h2>
+        </div>
+
+        <div id="collapse-{{ topidpart }}-{{ sideindex }}-{{ bodyindex }}" 
+                    class="accordion-collapse collapse" 
+                    aria-labelledby="bodyaccordion"
+                    data-bs-parent="#{{ topidpart }}-{{ sideindex }}">
+            <div class="accordion-body">
+                <p>some body text</p>
+            </div>
+        </div>
+
+    {% endfor %}
+{% endmacro %}
 
 {% macro print_tab_content(data) %}
     {% for topitem in data.json %}
@@ -69,8 +101,10 @@ eleventyNavigation:
                 {% for item in sidearray %}
                     {% if data.side === "category" %}
                         {% set sideindex = item.index %}
+                        {% set bodyarray = item.senses %}
                     {% else %}
                         {% set sideindex = loop.index %}
+                        {% set bodyarray = item.categories %}
                     {% endif %}
 
                     {% set base_id = idpart + '-' + sideindex %}
@@ -95,7 +129,10 @@ eleventyNavigation:
                                 
                             {# this is the body inside accordion, the right colun, responsive #}
                             <div class="accordion-body">
-                                <p>Some body text</p> 
+                                <div class="accordion" id="{{ idpart }}-{{ sideindex }}">
+                                    {% call print_categories(data, idpart, bodyarray, sideindex) %}
+                                    {% endcall %}
+                                </div> 
                             </div>  {# END this is the body inside accordion #}
                         </div> {# end collapse#}
                     </div> {# end col #}
