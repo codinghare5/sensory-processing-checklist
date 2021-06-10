@@ -31,8 +31,8 @@
                     {% else %} <!-- there are children -->
                         {% if entry.parentType == 'dummy'%} <!-- empty parent page with no content -->
                             <li class="nav-item dropdown
-                                {% if entry.url == page.url %} active fw-bold
-                                {% endif %}"
+                                {%- if entry.url == page.url -%} active fw-bold
+                                {%- endif %}"
                                 {% if entry.url == page.url %} aria-current="page"
                                 {% endif %}>    
                                 <div class="nav-link dropdown-toggle text-decoration-none" 
@@ -42,15 +42,17 @@
                                 </div>
                         {% else %} <!-- parent-type = 'index' (hopefully - can actually just mark dummy pages) -->
                             <li class="nav-item dropdown d-flex
-                                {% if entry.url == page.url %} active fw-bold
-                                {% endif %}"
+                                {%- if entry.url == page.url %} active fw-bold
+                                {%- endif -%}"
                                 {% if entry.url == page.url %} aria-current="page"
-                                {% endif %}>    
-                                <div class="nav-link dropdown-toggle text-decoration-none" 
+                                {% endif %}>
+                                    <a class="nav-link" href="{{ entry.url | url }}">
+                                        {{ entry.title }}
+                                    </a>
+                                    <div class="nav-link dropdown-toggle" id="navbarMenuLink" 
                                         role="button"  data-bs-toggle="dropdown" 
-                                        aria-expanded="false">  
-                                    {{ entry.title }}
-                                </div>
+                                        aria-expanded="false" href="#">  
+                                    </div>
                         {% endif %} <!-- Finished dealing with top menu item, but still need to deal with children -->
                     
                                 <!-- deal with children for both types of dropdown menu item -->
@@ -74,3 +76,30 @@
         </div>
     </div>
 </nav>
+
+
+{# {% else %} <!-- there are children -->
+    {% if entry.parentType == 'dummy'%} <!-- empty parent page with no content -->
+        <li class="nav-item dropdown border
+            {% if entry.url == page.url %} active fw-bold" aria-current="page" 
+            {% else %} " 
+            {% endif %}>    
+            <div class="nav-link dropdown-toggle text-decoration-none" 
+                    role="button"  data-bs-toggle="dropdown" 
+                    aria-expanded="false" >  
+                {{ entry.title }}
+            </div>
+    {% else %} <!-- parent-type = 'index' (hopefully - can actually just mark dummy pages) -->
+        <li class="nav-item dropdown border d-flex
+        {% if entry.url == page.url %} active fw-bold text-decoration-underline" aria-current="page" 
+        {% else %} " 
+        {% endif %}>
+            <a class="nav-link pe-1 border-end" href="{{ entry.url | url }}">
+                {{ entry.title }}
+            </a>
+
+            <div class="nav-link dropdown-toggle ps-1" id="navbarMenuLink" 
+                role="button"  data-bs-toggle="dropdown" 
+                aria-expanded="false" href="#">  
+            </div>
+    {% endif %} <!-- Finished dealing with top menu item, but still need to deal with children --> #}

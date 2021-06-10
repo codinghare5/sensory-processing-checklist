@@ -144,6 +144,10 @@ code {
 .nav-item {
   display: inline-block;
 }
+#navbarMenuLink {
+  margin-left: -0.6rem;
+  padding: 0.5rem 0.9rem 0 0 !important;
+}
 .nav-item a[href]:not(:hover) {
   text-decoration: none;
 }
