@@ -5,11 +5,12 @@ permalink: /algorithms/
 templateClass: tmpl-home
 eleventyNavigation:
   key: Algorithms
-  order: 7
+  parent: About
+  order: 1
 ---
 # Algorithms
 ## Code to indicate question status
-This is subject to consultation with Olga Bogdashina
+Olga has confirmed the behaviour of these buttons is what she wants.
 - False: 0
 - Not Sure: 1
 - Was True: 2
@@ -33,15 +34,13 @@ This is a suggestion for discussion
 ```
 
 ## Gathering Question Data
-Questions come in sets, effectively labeled by sense and category index. We could keep track of the status as a set or as individual questions - or both.
+Questions come in sets, effectively labeled by sense and category index. We could keep track of the status for individual questions.
 
 My code to ensure the correct behaviour for the questions requires that there is a wrapper around each question. I did this via <form> but <fieldset> would be an appropriate tag as a wrapper. This should have an id that matches the name of the checkboxes (or buttons). That way, the name of the button can be used to find the right fieldset and thus obtain all the buttons in the fieldset.
 
 There is nothing to stop us adding a value to the field set tag which indicates the status of the questions. This status can be calculated and set using the function that activates when a button is clicked. We just need to add and subtract when we uncheck/check buttons/checkboxes.
 
 We need a wrapper around the set of questions - around the accordion body. This could be a fieldset too with an appropriate class so they are easy to collect.
-
-If having a value set to an array in html is not too difficult, this fieldset could have a value that is set to an array of question status codes. The appropriate code could be set at the same as dealing with a clicked answer: we could update the array of values. But I am not sure this is efficient. It might be better to create this at the end. But this might be too intensive to compute and it may be better to do it at the end.
 
 Suggested code (not tested). 
 
@@ -66,10 +65,10 @@ Suggested code (not tested).
           <div class="row row-cols-auto justify-content-center">
             {% for opt in  questionOptions %}
               //code to generate button/checkboxes 
-              // name of all buttons/checkboxes should {{questionName}}
-              //        Same as the id in the fieldset.
-              //        Then the name can be used to grab the fieldset and thus the 
-              //            rest of the buttons
+              //id for checkboxes: senseid-catindex-questionindex-opt.id
+              // checkboxes should have an attribute of btn_label="{{opt.id}}"
+              // Then questionName should be equal to this.id - this.btn_label
+              // and you can get the questionwrapper from questionName.
             {% endfor %}
           </div>
         </fieldset>

@@ -4,7 +4,7 @@ title: About the Sensory Processing Checklist
 templateClass: tmpl-post
 eleventyNavigation:
   key: About
-  order: 3
+  order: 2
 ---
 
 ## Instruction for the Sensory Proessing Checklist
