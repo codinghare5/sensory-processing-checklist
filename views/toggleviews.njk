@@ -7,11 +7,13 @@ eleventyNavigation:
   order: 3
 ---
 
-
 {# First create buttons to toggle views #}
-<button type="button"  id="togglebutton" class="fs-3 px-5 bg-info"> 
-    View Category First
-</button>
+<div class="container mb-5">
+    <button type="button"  id="togglebutton" class="fs-3 px-5 bg-info"> 
+        View Category First
+    </button>
+    <button class="bg-info fs-3 ms-5" type="button">Save</button>
+</div>
 
 
 
@@ -56,7 +58,7 @@ eleventyNavigation:
                                     {# use class=row to spread radio inputs #}
                                     <div class="row row-cols-auto justify-content-center">
                                         {% for opt in  questionOptions %}
-                                            <div class="form-check form-check-inline col border border-1">
+                                            <div class="form-check form-check-inline col border border-1 rounded">
                                                 <input class="form-check-input" type="checkbox" 
                                                             name="{{ questionName }}-{{ opt.id }}" 
                                                             question_id="{{ questionName }}"
@@ -97,32 +99,104 @@ eleventyNavigation:
   {{ text }}
 {% endmacro%}
 
+{% macro print_tab_content(data) %}
+    {% for topitem in data.json %}
+
+        {% if data.top === "sense" %}
+            {% set idpart = topitem.sense | lower %}
+            {% set sidearray = topitem.metacategories %}
+        {% else %}
+            {% set idpart = "metacategory" + loop.index %}
+            {% set sidearray = topitem.categories %}
+        {% endif %}
+    
+        {# START the tab's contents #}
+        <div class="tab-pane fade{% if loop.first %} show active{% endif %}" 
+                    id="nav-{{ idpart }}" 
+                    role="tabpanel" 
+                    aria-labelledby="nav-{{ idpart }}-tab">
+
+            {# very important - it is the unique id of the parent #}
+            {# START main accordion, as a row #}
+            <div class="accordion row" id="side-accordion-{{ idpart }}">
+                {# START items in the sidebar, left column, responsive #}
+                {% for item in sidearray %}
+                    {% if data.side === "category" %}
+                        {% set sideindex = item.index %}
+                    {% else %}
+                        {% set sideindex = loop.index %}
+                    {% endif %}
+
+                    {% set base_id = idpart + '-' + sideindex %}
+                    <div class="accordion-item ">
+                        <h2 class="accordion-header" id="heading-{{base_id}}">
+                            <button class="accordion-button collapsed" 
+                                        type="button" 
+                                        data-bs-toggle="collapse" 
+                                        data-bs-target="#collapse-{{ base_id }}" 
+                                        aria-expanded="false" 
+                                        aria-controls="collapse-{{ base_id }}">
+                                {{ get_text(item,data.side) }}
+                            </button>
+                        </h2>
+                        <div id="collapse-{{ base_id }}" class="accordion-collapse collapse" 
+                        aria-labelledby="groupheading-{{ base_id }}"
+                        data-bs-parent="#side_accordion-{{ idpart }}">
+
+                            {# START print out questions #}
+                            <div class="accordion-body" id="body-{{ base_id }}">
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %} {# END items in sidebar #}
+
+                {# this is the body inside accordion, the right colun, responsive 
+                <div class="col-sm-9">
+                {% call print_body(idpart, sidearray) %}
+                {% endcall %}
+                </div> #} {# END this is the body inside accordion #}
+            </div> {# END main accordion #}
+        </div> {# END the tab's contents #}
+    {% endfor %}  {# this view #}
+{% endmacro %}
+
 {# now create the top tabs - senses #}
 <nav>
     {% for data in datalist %}
-        <div id="{{ data.top }}-first">
-            <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                {% for topitem in data.json %}
-                    {% if data.top === "sense" %}
-                        {% set idpart = topitem.sense | lower %}
-                    {% else %}
-                        {% set idpart = "metacategory" + loop.index %}
-                    {% endif %}
+        <div class="container" id="{{ data.top }}-first">
+            <div class="row">
+                <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                    {% for topitem in data.json %}
+                        {% if data.top === "sense" %}
+                            {% set idpart = topitem.sense | lower %}
+                        {% else %}
+                            {% set idpart = "metacategory" + loop.index %}
+                        {% endif %}
 
-                    <button class="nav-link{% if loop.first %} active{% endif %}" 
-                            id="nav-{{ idpart }}-tab" 
-                            data-bs-toggle="tab" 
-                            data-bs-target="#nav-{{ idpart }}" 
-                            type="button" 
-                            role="tab" 
-                            aria-controls="nav-{{ idpart }}" 
-                            aria-selected="{% if loop.first %}true{% else %}false{% endif %}">
-                        {{ get_text(topitem, data.top) }}
-                    </button>
-                    
-                {% endfor %}
-            </div>
-        </div>
+                        <button class="nav-link{% if loop.first %} active{% endif %}" 
+                                id="nav-{{ idpart }}-tab" 
+                                data-bs-toggle="tab" 
+                                data-bs-target="#nav-{{ idpart }}" 
+                                type="button" 
+                                role="tab" 
+                                aria-controls="nav-{{ idpart }}" 
+                                aria-selected="{% if loop.first %}true{% else %}false{% endif %}">
+                            {{ get_text(topitem, data.top) }}
+                        </button>
+                        
+                    {% endfor %}
+                </div>
+            </div> {# end row #}
+
+            <div class="row">
+                {# START of the tab, main container #}
+                {# this part should occure only once, so it is outside of the loop #}
+                <div class="tab-content {{data.top}}-sidebar col-md-3" id="nav-tabContent">
+                        {% call print_tab_content(data) %}
+                        {% endcall %}
+                </div>
+            </div> {# end row #}
+        </div> <!-- end of container for view -->
     {% endfor %}
 </nav>
 
@@ -147,20 +221,27 @@ eleventyNavigation:
 
 
 
+
 <script>
 
     // set body accordion to display:none for now
     bodyaccordion = document.getElementById("body_accordion");
     bodyaccordion.style.display = "none";
 
+    
+    const senseSidebar = document.getElementById("sense-sidebar");
+    const metacategorySidebar = document.getElementById("metacategory-sidebar");
+  
+
+ 
     // set up default view: sensesfirst
     var togglestatus = "sensesfirst";
-    var sensesTopTabs = document.getElementById("sense-first");
-    var metacategoryTopTabs = document.getElementById("metacategory-first");
+    const sensesTopTabs = document.getElementById("sense-first");
+    const metacategoryTopTabs = document.getElementById("metacategory-first");
     metacategoryTopTabs.style.display = "none";
 
     // Get toggle button and assign a function
-    togglebutton = document.getElementById("togglebutton");
+    const togglebutton = document.getElementById("togglebutton");
     togglebutton.addEventListener('click', function() {
         if (togglestatus === "sensesfirst") {
             togglestatus = "categoryfirst";
