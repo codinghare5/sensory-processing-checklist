@@ -105,20 +105,20 @@ eleventyNavigation:
                     aria-labelledby="nav-{{ idpart }}-tab">
 
             {# very important - it is the unique id of the parent #}
-            {# START main accordion, as a row #}
+            {# START main accordion for sidebar, as a row #}
+            {# create sidebare items #}
             <div class="accordion row" id="side-accordion-{{ idpart }}">
-                {# START items in the sidebar, left column, responsive #}
-                {% for item in sidearray %}
-                    {% if data.side === "category" %}
-                        {% set sideindex = item.index %}
-                        {% set bodyarray = item.senses %}
-                    {% else %}
-                        {% set sideindex = loop.index %}
-                        {% set bodyarray = item.categories %}
-                    {% endif %}
+                <div class="col col-md-3">  
+                    {# START items in the sidebar, left column, responsive #}
+                    {% for item in sidearray %}
+                        {% if data.side === "category" %}
+                            {% set sideindex = item.index %}
+                        {% else %}
+                            {% set sideindex = loop.index %}
+                        {% endif %}
 
-                    {% set base_id = idpart + '-' + sideindex %}
-                    <div class="col col-md-3">
+                        {% set base_id = idpart + '-' + sideindex %}
+                    
                         <div class="accordion-item ">
                             <h2 class="accordion-header" id="heading-{{base_id}}">
                                 <button class="accordion-button collapsed" type="button" 
@@ -130,9 +130,23 @@ eleventyNavigation:
                                 </button>
                             </h2>
                         </div>
-                    </div>
+                    {% endfor %}
+                </div> {# end col-md-3 #}
 
-                    <div class="col col-md-9">
+                {# Now create accordion collapse in the RHS #}
+                {# This is means looping through sidearray again #}
+                <div class="col col-md-9">
+                    {% for item in sidearray %}
+                        {% if data.side === "category" %}
+                            {% set sideindex = item.index %}
+                            {% set bodyarray = item.senses %}
+                        {% else %}
+                            {% set sideindex = loop.index %}
+                            {% set bodyarray = item.categories %}
+                        {% endif %}
+
+                        {% set base_id = idpart + '-' + sideindex %}
+
                         <div id="collapse-{{ base_id }}" class="accordion-collapse collapse" 
                                     aria-labelledby="heading-{{ base_id }}"
                                     data-bs-parent="#side-accordion-{{ idpart }}">
@@ -145,9 +159,9 @@ eleventyNavigation:
                                 </div> 
                             </div>  {# END this is the body inside accordion #}
                         </div> {# end collapse#}
-                    </div> {# end col #}
+                    {% endfor %}
+                </div> {# end col #}
 
-                {% endfor %}
             </div> {# END main accordion #}
         </div> {# END the tab's contents #}
     {% endfor %}  {# this view #}
@@ -214,19 +228,19 @@ eleventyNavigation:
                                 senseindex="{{senseindex - 1 }}" catindex="{{cat.index - 1 }}">
                     {% for question in cat.questions %}
                         {% set questionName = base_id + '-' + loop.index %}
-                        <fieldset id="{{ questionName }}" value=0>
-                            <legend class="fs-5">{{ question }}</legend>
+                        <fieldset class="pb-3" id="{{ questionName }}" value=0>
+                            <legend class="fs-6">{{ question }}</legend>
                             {# use class=row to spread radio inputs #}
                             <div class="row row-cols-auto justify-content-center">
                                 {% for opt in  questionOptions %}
                                     <div class="form-check form-check-inline col border border-1 rounded">
-                                        <input class="form-check-input" type="checkbox" 
+                                        <input class="form-check-input ps-2" type="checkbox" 
                                                     name="{{ questionName }}-{{ opt.id }}" 
                                                     question_id="{{ questionName }}"
                                                     id="{{ questionName }}-{{opt.id}}" 
                                                     value="{{ opt.value }}"
                                                     {% if opt.id == "false" %} checked="checked"{% endif %}>
-                                        <label class="form-check-label fs-5" for="{{ questionName }}-{{ opt.id }}">
+                                        <label class="form-check-label fs-6" for="{{ questionName }}-{{ opt.id }}">
                                             {{ opt.label }}
                                         </label>
                                     </div>
