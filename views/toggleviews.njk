@@ -264,16 +264,16 @@ eleventyNavigation:
     //      createArray(3, 2) creates 2D array, first dimension length 3, second dimension length 2
     //      createArray(3,3,3,3) creates a 4D array where all dimensions have length 3
     function createArray(length) {
-    var arr = new Array(length || 0),
-        i = length;
+        var arr = new Array(length || 0),
+            i = length;
 
-    if (arguments.length > 1) {
-        var args = Array.prototype.slice.call(arguments, 1);
-        while(i--) arr[length-1 - i] = createArray.apply(this, args);
+        if (arguments.length > 1) {
+            var args = Array.prototype.slice.call(arguments, 1);
+            while(i--) arr[length-1 - i] = createArray.apply(this, args);
+        }
+
+        return arr;
     }
-
-    return arr;
-}
 
 
     // set up default view: sensesfirst
@@ -286,16 +286,16 @@ eleventyNavigation:
     const numberOfCategories = 21;
     const questionAccordionList = document.querySelectorAll(".QuestionAccordionBody");
     console.log('number of senses: ' + sensesTopTabs.getAttribute("ntopitems"))
-    questionArray = createArray(+sensesTopTabs.getAttribute("ntopitems"), +numberOfCategories);
+    questionArray = createArray(sensesTopTabs.getAttribute("ntopitems"), +numberOfCategories);
 
-    if (questionAccordionList.length != sensesTopTabs.length * +numberOfCategories)
+    if (questionAccordionList.length != +sensesTopTabs.ntopitems * +numberOfCategories)
         console.log("ERROR number of questions sets does not equal number of senses + number of categories")
 
     for (i=0 ; i<questionAccordionList.length; i++){
         question = questionAccordionList[i];
         senseindex = question.getAttribute("senseindex");
         catindex = question.getAttribute("catindex");
-        console.log('coords for question set ' + i + ' are [' + senseindex + ',' + catindex + ']');
+        //console.log('coords for question set ' + i + ' are [' + senseindex + ',' + catindex + ']');
         questionArray[senseindex][catindex] = question;
     }
 
@@ -406,6 +406,52 @@ eleventyNavigation:
       //console.log('form value:' + formwrapper.getAttribute("value"));
     }); // end function definition
   } // end loop through buttons
+
+
+    // create a structure for question answers
+    function createJsonAnswers(questionArray) {
+        jsonstruct = {"type": "SPCR", "version": 1, "questionStatus": []};
+
+        function Status(senseindex,catindex,values){
+            this.senseindex = senseindex;
+            this.categoryindex = catindex;
+            this.values = values;
+        }
+
+        for (i=0 ; i<questionArray.length ; i++){
+            for (j=0 ; j<questionArray[i].length ; j++){
+                questionAccordion = questionArray[i][j];
+                senseindex = questionAccordion.getAttribute("senseindex");
+                catindex = questionAccordion.getAttribute("catindex");
+                console.log('coords:'+ senseindex + ' ' + catindex);
+
+                // grab fieldsets
+                questions = questionAccordion.getElementsByTagName("fieldset");
+                console.log('number of questions:' + questions.length);
+
+                //create array of question values
+                values = [];
+                sum = 0;
+                for (k=0 ; k<questions.length ; k++){
+                    value = questions[k].getAttribute("value");
+                    values[k] = +value;
+                    sum += +value;
+                }
+                console.log("values: " + values);
+                if (sum == 0)
+                    values = 0;
+                console.log("values: " + values);
+
+                qstatus = new Status(senseindex,catindex,values);
+                console.log(qstatus.senseindex + ' ' + qstatus.categoryindex + ' ' +   qstatus.answers);
+                console.log(JSON.stringify(qstatus));
+                jsonstruct.questionStatus.push(qstatus);
+            }
+        }
+
+        return jsonstruct;
+    }
+    console.log(JSON.stringify(createJsonAnswers(questionArray)));
 
   console.log('added event listeners')
 </script>
