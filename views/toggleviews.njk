@@ -7,26 +7,26 @@ eleventyNavigation:
   order: 3
 ---
 
-{# First create buttons to toggle views #}
+{# First create buttons #}
 <div class="container mb-5">
+    {# button to toggle views#}
     <button type="button"  id="togglebutton" class="fs-3 px-5 bg-info"> 
-        View Category First
+        View Senses First
     </button>
+    {# button to save question answers #}
     <button class="bg-info fs-3 ms-5" type="button">Save</button>
+    {# button to show results #}
+    <button class="bg-info fs-3 ms-5" type="button">Show Results</button>
 </div>
 
 
-
-{# Create a list of groups of questions 
-        these are the same irrespective of the view #}
-
-{% set questionOptions = [ {"label": "Was True", "id": "was-true", "value": 2},
-                          {"label": "True Now", "id": "true-now", "value": 3},
-                          {"label": "Not Sure", "id": "not-sure", "value": 1},
-                          {"label": "False", "id": "false", "value": 0}] %}
-
-
 {# create the interface #}
+
+{# create and index from sense name to index #}
+{% set senselookup = [] %}
+{% for sense in questions %}
+    {% set senselookup = (senselookup.push( {"{{sense.sense}}": loop.index} ), senselookup) %}
+{% endfor %}
 
 {% set datalist = [{"json": questions, "top": "sense", "side": "metacategory", "body": "category"},
                    {"json": meta, "top": "metacategory", "side": "category", "body": "sense"}] %}
@@ -44,12 +44,18 @@ eleventyNavigation:
   {{ text }}
 {% endmacro%}
 
-{% macro print_categories(data, topidpart, bodyarray, sideindex) %}
+{% macro print_categories(data, topidpart, bodyarray, senseindex, sideindex) %}
     {% for bodyitem in bodyarray %}
         {% if data.body === "category" %}
             {% set bodyindex = bodyitem.index %}
         {% else %}
             {% set bodyindex = loop.index %}
+        {% endif %}
+        {% if data.top === "sense"%}
+          {% set catindex = bodyindex %}
+        {% else %} {# struct.top === metacategory #}
+          {% set senseindex = bodyindex %}
+          {% set catindex = sideindex %}
         {% endif %}
 
         <div class="accordion-item">
@@ -66,12 +72,13 @@ eleventyNavigation:
         </div>
 
         <div id="collapse-{{ topidpart }}-{{ sideindex }}-{{ bodyindex }}" 
-                    class="accordion-collapse collapse" 
+                    senseindex="{{ senseindex - 1 }}" catindex="{{ catindex - 1 }}"
+                    class="accordion-collapse collapse QuestionCollapse-{{data.top}}" 
                     aria-labelledby="bodyaccordion"
                     data-bs-parent="#{{ topidpart }}-{{ sideindex }}">
-            <div class="accordion-body">
+            {#<div class="accordion-body">
                 <p>some body text</p>
-            </div>
+            </div>#}
         </div>
 
     {% endfor %}
@@ -83,10 +90,13 @@ eleventyNavigation:
         {% if data.top === "sense" %}
             {% set idpart = topitem.sense | lower %}
             {% set sidearray = topitem.metacategories %}
+            {% set senseindex = loop.index%}
         {% else %}
             {% set idpart = "metacategory" + loop.index %}
             {% set sidearray = topitem.categories %}
+            {% set senseindex = -1 %} {# holding value #}
         {% endif %}
+
     
         {# START the tab's contents #}
         <div class="tab-pane fade{% if loop.first %} show active{% endif %}" 
@@ -130,7 +140,7 @@ eleventyNavigation:
                             {# this is the body inside accordion, the right colun, responsive #}
                             <div class="accordion-body">
                                 <div class="accordion" id="{{ idpart }}-{{ sideindex }}">
-                                    {% call print_categories(data, idpart, bodyarray, sideindex) %}
+                                    {% call print_categories(data, idpart, bodyarray, senseindex, sideindex) %}
                                     {% endcall %}
                                 </div> 
                             </div>  {# END this is the body inside accordion #}
@@ -143,10 +153,11 @@ eleventyNavigation:
     {% endfor %}  {# this view #}
 {% endmacro %}
 
+
 {# now create the top tabs - senses #}
 <nav>
     {% for data in datalist %}
-        <div class="container" id="{{ data.top }}-first">
+        <div class="container" id="{{ data.top }}-first" style="display:none" ntopitems="{{ data.json | length }}">
             <div class="row">
                 <div class="nav nav-tabs" id="nav-tab" role="tablist">
                     {% for topitem in data.json %}
@@ -184,61 +195,129 @@ eleventyNavigation:
 </nav>
 
 
-{% for sense in questions %}
-    {% for metacat in sense.metacategories %}
-        {% for cat in metacat.categories %}   
-            {% set base_id = sense.sense + '-' + cat.index %}
+{# Create a list of groups of questions 
+        these are the same irrespective of the view #}
 
-            <div class="accordion-body" id={{base_id}}
-                {% for question in cat.questions %}
-                    {% set questionName = base_id + '-' + loop.index %}
-                    <fieldset id="{{ questionName }}" value=0>
-                        <legend class="fs-5">{{ question }}</legend>
-                        {# use class=row to spread radio inputs #}
-                        <div class="row row-cols-auto justify-content-center">
-                            {% for opt in  questionOptions %}
-                                <div class="form-check form-check-inline col border border-1 rounded">
-                                    <input class="form-check-input" type="checkbox" 
-                                                name="{{ questionName }}-{{ opt.id }}" 
-                                                question_id="{{ questionName }}"
-                                                id="{{ questionName }}-{{opt.id}}" 
-                                                value="{{ opt.value }}"
-                                                {% if opt.id == "false" %} checked="checked"{% endif %}>
-                                    <label class="form-check-label fs-5" for="{{ questionName }}-{{ opt.id }}">
-                                        {{ opt.label }}
-                                    </label>
-                                </div>
-                            {% endfor %}
-                        </div> <!-- end row of checkboxes-->
-                    </fieldset>
-                {% endfor %} {# end question loop #}
-            </div>
-        {% endfor %} {# end category loop #}
-    {% endfor %} {# end metacategory loop #}
-{% endfor %} {# end sense loop #}
+{% set questionOptions = [ {"label": "Was True", "id": "was-true", "value": 2},
+                          {"label": "True Now", "id": "true-now", "value": 3},
+                          {"label": "Not Sure", "id": "not-sure", "value": 1},
+                          {"label": "False", "id": "false", "value": 0}] %}
+{# create question sets in the form of accordion-body #}
+<div class="container" id="questionset-container" style="display:none">
+    {% for sense in questions %}
+        {% set senseindex = loop.index %}
+        {% for metacat in sense.metacategories %}
+            {% for cat in metacat.categories %}   
+                {% set base_id = sense.sense + '-' + cat.index %}
+
+                <div class="accordion-body QuestionAccordionBody" id={{base_id}}
+                                senseindex="{{senseindex - 1 }}" catindex="{{cat.index - 1 }}">
+                    {% for question in cat.questions %}
+                        {% set questionName = base_id + '-' + loop.index %}
+                        <fieldset id="{{ questionName }}" value=0>
+                            <legend class="fs-5">{{ question }}</legend>
+                            {# use class=row to spread radio inputs #}
+                            <div class="row row-cols-auto justify-content-center">
+                                {% for opt in  questionOptions %}
+                                    <div class="form-check form-check-inline col border border-1 rounded">
+                                        <input class="form-check-input" type="checkbox" 
+                                                    name="{{ questionName }}-{{ opt.id }}" 
+                                                    question_id="{{ questionName }}"
+                                                    id="{{ questionName }}-{{opt.id}}" 
+                                                    value="{{ opt.value }}"
+                                                    {% if opt.id == "false" %} checked="checked"{% endif %}>
+                                        <label class="form-check-label fs-5" for="{{ questionName }}-{{ opt.id }}">
+                                            {{ opt.label }}
+                                        </label>
+                                    </div>
+                                {% endfor %}
+                            </div> <!-- end row of checkboxes-->
+                        </fieldset>
+                    {% endfor %} {# end question loop #}
+                </div>
+            {% endfor %} {# end category loop #}
+        {% endfor %} {# end metacategory loop #}
+    {% endfor %} {# end sense loop #}
+</div> {# end container #}
+
 
 <script>
 
+    // create array script copied from internet
+    // usage:
+    //      createArray() creates empty 1D array
+    //      createArray(2) creates 1D array of length 2
+    //      createArray(3, 2) creates 2D array, first dimension length 3, second dimension length 2
+    //      createArray(3,3,3,3) creates a 4D array where all dimensions have length 3
+    function createArray(length) {
+    var arr = new Array(length || 0),
+        i = length;
+
+    if (arguments.length > 1) {
+        var args = Array.prototype.slice.call(arguments, 1);
+        while(i--) arr[length-1 - i] = createArray.apply(this, args);
+    }
+
+    return arr;
+}
+
+
     // set up default view: sensesfirst
-    var togglestatus = "sensesfirst";
+    var togglestatus = "categoryfirst";
     const sensesTopTabs = document.getElementById("sense-first");
     const metacategoryTopTabs = document.getElementById("metacategory-first");
-    metacategoryTopTabs.style.display = "none";
+    metacategoryTopTabs.style.display = "block";
+
+    // create 2D array of questions
+    const numberOfCategories = 21;
+    const questionAccordionList = document.querySelectorAll(".QuestionAccordionBody");
+    console.log('number of senses: ' + sensesTopTabs.getAttribute("ntopitems"))
+    questionArray = createArray(+sensesTopTabs.getAttribute("ntopitems"), +numberOfCategories);
+
+    if (questionAccordionList.length != sensesTopTabs.length * +numberOfCategories)
+        console.log("ERROR number of questions sets does not equal number of senses + number of categories")
+
+    for (i=0 ; i<questionAccordionList.length; i++){
+        question = questionAccordionList[i];
+        senseindex = question.getAttribute("senseindex");
+        catindex = question.getAttribute("catindex");
+        console.log('coords for question set ' + i + ' are [' + senseindex + ',' + catindex + ']');
+        questionArray[senseindex][catindex] = question;
+    }
+
+    // attach questions
+    const sensesQuestionCollapseList = document.querySelectorAll(".QuestionCollapse-sense");
+    const metacategoryQuestionCollapseList = document.querySelectorAll(".QuestionCollapse-metacategory");
+    
+    function attachQuestions(questionCollapseList){
+        for (i=0 ; i<questionCollapseList.length ; i++){
+            accordionCollapse = questionCollapseList[i];
+            senseindex = accordionCollapse.getAttribute("senseindex");
+            catindex = accordionCollapse.getAttribute("catindex");
+
+            accordionCollapse.appendChild(questionArray[senseindex][catindex]);
+        }
+    }
+    attachQuestions(metacategoryQuestionCollapseList);
 
     // Get toggle button and assign a function
     const togglebutton = document.getElementById("togglebutton");
     togglebutton.addEventListener('click', function() {
-        if (togglestatus === "sensesfirst") {
-            togglestatus = "categoryfirst";
+        if (togglestatus === "categoryfirst") {
+            togglestatus = "sensesfirst";
             togglebutton.innerHTML = "View Category First";
             metacategoryTopTabs.style.display = "none";
             sensesTopTabs.style.display = "block";
+            console.log('attaching questions: senses')
+            attachQuestions(sensesQuestionCollapseList);
         }
         else {
-            togglestatus = "sensesfirst";
+            togglestatus = "categoryfirst";
             togglebutton.innerHTML = "View Senses First";
             sensesTopTabs.style.display = "none";
             metacategoryTopTabs.style.display = "block";
+            console.log('attaching questions: metacategory')
+            attachQuestions(metacategoryQuestionCollapseList);
         }
     });
 
@@ -249,7 +328,7 @@ eleventyNavigation:
   // loop through buttons setting an event listener
   for (i=0 ; i<questionButtons.length ; i++) {
     questionButtons[i].addEventListener('change', function() {
-      console.log(this.id + ' ' + this.getAttribute("question_id"));
+      //console.log(this.id + ' ' + this.getAttribute("question_id"));
       
       const formwrapper = document.getElementById(this.getAttribute("question_id"));
       var currentvalue = formwrapper.getAttribute("value");
@@ -304,13 +383,13 @@ eleventyNavigation:
               currentvalue = 0;
             }
             newvalue = +currentvalue + +thisvalue;
-            console.log('currentvalue: ' + currentvalue + ' thisvalue: ' + thisvalue + ' newvalue: ' + newvalue);
+            //console.log('currentvalue: ' + currentvalue + ' thisvalue: ' + thisvalue + ' newvalue: ' + newvalue);
             formwrapper.setAttribute("value",newvalue)
           }
         }
         //this.setAttribute("checked", "checked");
       } 
-      console.log('form value:' + formwrapper.getAttribute("value"));
+      //console.log('form value:' + formwrapper.getAttribute("value"));
     }); // end function definition
   } // end loop through buttons
 
