@@ -1,9 +1,11 @@
 <!-- collapsible nav bar with drop down list -->
-<nav class="navbar navbar-expand-lg ms-3 pb-4" role="navigation">
+<nav class="navbar navbar-expand-md" role="navigation">
     <div class="container-fluid">
-
+        <h1 class="home fs-5">
+            <a href="{{ '/' | url }}">{{ metadata.title }}</a>
+        </h1>
         <!-- button for collapse navigation -->
-        <button class="navbar-toggler navbar-light bg-light" type="button" 
+        <button class="navbar-toggler navbar-light" type="button" 
                 data-bs-toggle="collapse" 
                 data-bs-target="#navbarNav" aria-controls="navbarNav" 
                 aria-expanded="false" aria-label="Toggle navigation">
@@ -11,64 +13,93 @@
         </button>
 
         <!-- collapsible responsive nav bar -->
-        <div class="collapse navbar-collapse navbar-light bg-light rounded-pill" id="navbarNav">
+        <div class="collapse navbar-collapse navbar-light ms-5" id="navbarNav">
         {#- Read more about `eleventy-navigation` at https://www.11ty.dev/docs/plugins/navigation/ #}
         <!-- nav gives a horizontal menu when click the button navbar-nav gives you a vertical menu -->
-            <ul class="nav fs-5 ms-2">
+            <ul class="nav">
                 {% for entry in collections.all | eleventyNavigation %}
                     {% if not entry.children.length %}
-                        <li class="nav-item border
-                        {% if entry.url == page.url %} active fw-bold text-decoration-underline" aria-current="page" 
-                        {% else %} " 
-                        {% endif %}>
+                        <li class="nav-item
+                        {%- if entry.url == page.url -%} active fw-bold 
+                        {%- endif -%}"
+                        {%- if entry.url == page.url -%} aria-current="page" 
+                        {%- endif -%}>
                             <a class="nav-link" href="{{ entry.url | url }}">
                                 {{ entry.title }}
                             </a>
                         </li>
                     {% else %} <!-- there are children -->
                         {% if entry.parentType == 'dummy'%} <!-- empty parent page with no content -->
-                            <li class="nav-item dropdown border
-                                {% if entry.url == page.url %} active fw-bold" aria-current="page" 
-                                {% else %} " 
+                            <li class="nav-item dropdown
+                                {%- if entry.url == page.url -%} active fw-bold
+                                {%- endif %}"
+                                {% if entry.url == page.url %} aria-current="page"
                                 {% endif %}>    
                                 <div class="nav-link dropdown-toggle text-decoration-none" 
                                         role="button"  data-bs-toggle="dropdown" 
-                                        aria-expanded="false" >  
+                                        aria-expanded="false">  
                                     {{ entry.title }}
                                 </div>
                         {% else %} <!-- parent-type = 'index' (hopefully - can actually just mark dummy pages) -->
-                            <li class="nav-item dropdown border d-flex
-                            {% if entry.url == page.url %} active fw-bold text-decoration-underline" aria-current="page" 
-                            {% else %} " 
-                            {% endif %}>
-                                <a class="nav-link pe-1 border-end" href="{{ entry.url | url }}">
-                                    {{ entry.title }}
-                                </a>
-
-                                <div class="nav-link dropdown-toggle ps-1" id="navbarMenuLink" 
-                                    role="button"  data-bs-toggle="dropdown" 
-                                    aria-expanded="false" href="#">  
-                                </div>
+                            <li class="nav-item dropdown d-flex
+                                {%- if entry.url == page.url %} active fw-bold
+                                {%- endif -%}"
+                                {% if entry.url == page.url %} aria-current="page"
+                                {% endif %}>
+                                    <a class="nav-link" href="{{ entry.url | url }}">
+                                        {{ entry.title }}
+                                    </a>
+                                    <div class="nav-link dropdown-toggle" id="navbarMenuLink" 
+                                        role="button"  data-bs-toggle="dropdown" 
+                                        aria-expanded="false" href="#">  
+                                    </div>
                         {% endif %} <!-- Finished dealing with top menu item, but still need to deal with children -->
                     
-                        <!-- deal with children for both types of dropdown menu item -->
-                        <ul class="dropdown-menu bg-light border" aria-labelledby="navbarMenuLink">
-                            {% for child in entry.children %}
-                            <li {% if child.url == page.url %} class=" border active text-decoration-underline" 
+                                <!-- deal with children for both types of dropdown menu item -->
+                                <ul class="dropdown-menu" aria-labelledby="navbarMenuLink">
+                                    {% for child in entry.children %}
+                                    <li {% if child.url == page.url %}
+                                            class="active" 
                                             aria-current="page" 
-                                {% else %} class="border"
-                                {% endif %}>
-                                <a class="dropdown-item {% if child.url == page.url %} fw-bold {% endif %}" 
-                                                href="{{ child.url | url }}">
-                                {{ child.title }}
-                                </a>
+                                        {% endif %}>
+                                        <a class="dropdown-item{% if child.url == page.url %} fw-bold {% endif %}" 
+                                                        href="{{ child.url | url }}">
+                                        {{ child.title }}
+                                        </a>
+                                    </li>
+                                    {% endfor %}
+                                </ul>
                             </li>
-                            {% endfor %}
-                        </ul>
-                    </li>
                     {% endif %}
                 {%- endfor %}
             </ul>
         </div>
     </div>
 </nav>
+
+
+{# {% else %} <!-- there are children -->
+    {% if entry.parentType == 'dummy'%} <!-- empty parent page with no content -->
+        <li class="nav-item dropdown border
+            {% if entry.url == page.url %} active fw-bold" aria-current="page" 
+            {% else %} " 
+            {% endif %}>    
+            <div class="nav-link dropdown-toggle text-decoration-none" 
+                    role="button"  data-bs-toggle="dropdown" 
+                    aria-expanded="false" >  
+                {{ entry.title }}
+            </div>
+    {% else %} <!-- parent-type = 'index' (hopefully - can actually just mark dummy pages) -->
+        <li class="nav-item dropdown border d-flex
+        {% if entry.url == page.url %} active fw-bold text-decoration-underline" aria-current="page" 
+        {% else %} " 
+        {% endif %}>
+            <a class="nav-link pe-1 border-end" href="{{ entry.url | url }}">
+                {{ entry.title }}
+            </a>
+
+            <div class="nav-link dropdown-toggle ps-1" id="navbarMenuLink" 
+                role="button"  data-bs-toggle="dropdown" 
+                aria-expanded="false" href="#">  
+            </div>
+    {% endif %} <!-- Finished dealing with top menu item, but still need to deal with children --> #}

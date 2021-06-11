@@ -16,12 +16,7 @@
 
 <body>
   <header>
-    <h1 class="ms-4">
-      <a href="{{ '/' | url }}">{{ metadata.title }}</a>
-    </h1>
-
     {% include "navbar.njk" %}
-
   </header>
   <main {% if templateClass %} class="d-block {{ templateClass }}" {% endif %}>
     {{ content | safe }}

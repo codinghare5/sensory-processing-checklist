@@ -6,7 +6,22 @@ eleventyNavigation:
   parent: Views
   order: 2
 ---
-<!--<h2> Meta Categories First </h2> -->
+
+{# Heading and descripion #}
+<section class="mb-4 container-xl">
+    <div class="d-grid gap-2 mb-2">
+        <h2> Meta Categories First </h2>
+    </div>
+    {# Description #}
+    <p class="ms-3">
+        Lorem, ipsum dolor sit amet consectetur adipisicing elit. 
+        Ipsam molestias incidunt officia, fuga facilis a dolorem iusto, 
+        accusantium consectetur exercitationem voluptatum optio 
+        itaque magnam fugiat blanditiis inventore minus repellat officiis adipisci debitis, 
+        ducimus repellendus beatae animi? Optio mollitia illo iste.
+    </p>
+</section>
+
 <!-- first create an amended data structure -->
 {% set data = [] %}
 {#<pre>{{questions[0].metacategories | dump(2) | safe }}</pre>#}
@@ -37,8 +52,9 @@ eleventyNavigation:
 {#<pre>{{data | dump(3) | safe}}</pre>#}
 
 {% set struct = {"top": "metacategory", "side": "category", "body": "sense"} %}
-
-{% include "questioninterface.njk" %}
+<div class="d-grid container-xl">
+    {% include "questioninterface.njk" %}
+</div>
 
     
 

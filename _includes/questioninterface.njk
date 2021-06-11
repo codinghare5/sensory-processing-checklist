@@ -55,7 +55,7 @@
     {# this whole part collapses on sidebar button/parent click #}
     {# id= data-bs-target/aria-controls of the sidebar buttons #}
     <div id="collapse-{{ topidpart }}-{{ sideindex }}" 
-            class="accordion-collapse collapse col-sm-9" 
+            class="accordion-collapse collapse" 
             aria-labelledby="bodyAccorcionHeading"
             {# points out to id of the accordion parent from the sidebar #}
             data-bs-parent="#accordionExample-{{ topidpart }}">
@@ -128,7 +128,7 @@
       {# use class=row to spread radio inputs #}
       <div class="row row-cols-auto justify-content-center">
         {% for opt in  questionOptions %}
-          <div class="form-check form-check-inline col border border-1">
+          <div class="form-check form-check-inline col border border-1 rounded">
             <input class="form-check-input" type="checkbox" 
               name="{{ questionName }}-{{ opt.id }}" 
               id="{{ questionName }}-{{opt.id}}" 
@@ -163,14 +163,14 @@
       <div class="accordion row" id="accordionExample-{{ idpart }}">
         {% set outerLoop = loop %}
         {# START items in the sidebar, left column, responsive #}
-        <div class="col-sm-3">
+        <div class="col-md-3">
           {% call print_sidebar_items(idpart, sidearray) %}
           {% endcall %}
         </div>
         {# END items in sidebar #}
 
         {# this is the body inside accordion, the right colun, responsive #}
-        <div class="col-sm-9">
+        <div class="col-md-9">
           {% call print_body(idpart, sidearray) %}
           {% endcall %}
         </div>
@@ -254,7 +254,7 @@
 {# START of the tab, main container #}
 {# this part should occure only once, so it is outside of the loop #}
 <form class="form">
-  <div class="tab-content" id="nav-tabContent" style="margin-top: 42px;">
+  <div class="tab-content" id="nav-tabContent">
     {% call print_tab_content(data) %}
     {% endcall %}
   </div>
