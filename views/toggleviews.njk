@@ -228,8 +228,8 @@ eleventyNavigation:
                                 senseindex="{{senseindex - 1 }}" catindex="{{cat.index - 1 }}">
                     {% for question in cat.questions %}
                         {% set questionName = base_id + '-' + loop.index %}
-                        <fieldset id="{{ questionName }}" value=0>
-                            <legend class="fs-5">{{ question }}</legend>
+                        <fieldset class="pb-3" id="{{ questionName }}" value=0>
+                            <legend class="fs-6">{{ question }}</legend>
                             {# use class=row to spread radio inputs #}
                             <div class="row row-cols-auto justify-content-center">
                                 {% for opt in  questionOptions %}
@@ -240,7 +240,7 @@ eleventyNavigation:
                                                     id="{{ questionName }}-{{opt.id}}" 
                                                     value="{{ opt.value }}"
                                                     {% if opt.id == "false" %} checked="checked"{% endif %}>
-                                        <label class="form-check-label fs-5" for="{{ questionName }}-{{ opt.id }}">
+                                        <label class="form-check-label fs-6" for="{{ questionName }}-{{ opt.id }}">
                                             {{ opt.label }}
                                         </label>
                                     </div>
