@@ -129,6 +129,7 @@ code {
   float: left;
   font-size: 1em; /* 16px /16 */
   margin: 0 !important;
+  max-width: 150px;
 }
 .home :link {
   text-decoration: none;
@@ -140,6 +141,8 @@ code {
   list-style: none;
   float: left;
   margin-left: 1em;
+  font-weight: 900;
+  font-size: 1.3rem;
 }
 .nav-item {
   display: inline-block;
