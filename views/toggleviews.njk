@@ -108,7 +108,7 @@ eleventyNavigation:
             {# START main accordion for sidebar, as a row #}
             {# create sidebare items #}
             <div class="accordion row" id="side-accordion-{{ idpart }}">
-                <div class="col col-md-3">  
+                <div class="col-md-3">  
                     {# START items in the sidebar, left column, responsive #}
                     {% for item in sidearray %}
                         {% if data.side === "category" %}
@@ -135,7 +135,7 @@ eleventyNavigation:
 
                 {# Now create accordion collapse in the RHS #}
                 {# This is means looping through sidearray again #}
-                <div class="col col-md-9">
+                <div class="col-md-9">
                     {% for item in sidearray %}
                         {% if data.side === "category" %}
                             {% set sideindex = item.index %}
@@ -171,7 +171,7 @@ eleventyNavigation:
 {# now create the top tabs - senses #}
 <nav>
     {% for data in datalist %}
-        <div class="container" id="{{ data.top }}-first" style="display:none" ntopitems="{{ data.json | length }}">
+        <div class="container-xl" id="{{ data.top }}-first" style="display:none" ntopitems="{{ data.json | length }}">
             <div class="row">
                 <div class="nav nav-tabs" id="nav-tab" role="tablist">
                     {% for topitem in data.json %}
