@@ -14,9 +14,9 @@ eleventyNavigation:
         View Senses First
     </button>
     {# button to save question answers #}
-    <button class="bg-info fs-3 ms-5" type="button">Save</button>
+    <button class="bg-info fs-3 ms-5" id="savebutton" type="button">Save</button>
     {# button to show results #}
-    <button class="bg-info fs-3 ms-5" type="button">Show Results</button>
+    <button class="bg-info fs-3 ms-5" id="resultsbutton" type="button">Show Results</button>
 </div>
 
 
@@ -423,11 +423,11 @@ eleventyNavigation:
                 questionAccordion = questionArray[i][j];
                 senseindex = questionAccordion.getAttribute("senseindex");
                 catindex = questionAccordion.getAttribute("catindex");
-                console.log('coords:'+ senseindex + ' ' + catindex);
+                //console.log('coords:'+ senseindex + ' ' + catindex);
 
                 // grab fieldsets
                 questions = questionAccordion.getElementsByTagName("fieldset");
-                console.log('number of questions:' + questions.length);
+                //console.log('number of questions:' + questions.length);
 
                 //create array of question values
                 values = [];
@@ -437,14 +437,14 @@ eleventyNavigation:
                     values[k] = +value;
                     sum += +value;
                 }
-                console.log("values: " + values);
+                //console.log("values: " + values);
                 if (sum == 0)
                     values = 0;
-                console.log("values: " + values);
+                //console.log("values: " + values);
 
                 qstatus = new Status(senseindex,catindex,values);
-                console.log(qstatus.senseindex + ' ' + qstatus.categoryindex + ' ' +   qstatus.answers);
-                console.log(JSON.stringify(qstatus));
+                //console.log(qstatus.senseindex + ' ' + qstatus.categoryindex + ' ' +   qstatus.answers);
+                //console.log(JSON.stringify(qstatus));
                 jsonstruct.questionStatus.push(qstatus);
             }
         }
@@ -452,6 +452,24 @@ eleventyNavigation:
         return jsonstruct;
     }
     console.log(JSON.stringify(createJsonAnswers(questionArray)));
+
+    // get savebutton and add an event listener to save answers
+    savebutton = document.getElementById("savebutton");
+    savebutton.addEventListener('click', function(){
+        console.log("saving answers");
+        answers = JSON.stringify(createJsonAnswers(questionArray,null,4));
+        console.log(answers);
+
+        // download answers as a json file. The below is convoluted but 
+        // there does not seem to be a simpler way.
+        const a = document.createElement("a"); // create an empty link
+        file = new Blob([answers],{type: "text/plain"});
+        console.log(file);
+        a.href = URL.createObjectURL(file);
+        a.download = "answers.json"; //download to answers.json
+        a.click();
+        
+    });
 
   console.log('added event listeners')
 </script>
