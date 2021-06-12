@@ -11,7 +11,7 @@ eleventyNavigation:
 <div class="container mb-5">
     <div class="row">
         {# button to toggle views#}
-        <button type="button"  id="togglebutton" class="col-5 fs-4 px-5 bg-info rounded"> 
+        <button type="button"  id="togglebutton" class="col-5 fs-4 px-5 bg-info rounded">
             View Senses First
         </button>
         {# button to save question answers #}
@@ -219,7 +219,7 @@ eleventyNavigation:
                           {"label": "Not Sure", "id": "not-sure", "value": 1},
                           {"label": "False", "id": "false", "value": 0}] %}
 {# create question sets in the form of accordion-body #}
-{# <div class="container" id="questionset-container" style="display:none"> #}
+<div class="container" id="questionset-container" style="display:none">
     {% for sense in questions %}
         {% set senseindex = loop.index %}
         {% for metacat in sense.metacategories %}
@@ -254,7 +254,7 @@ eleventyNavigation:
             {% endfor %} {# end category loop #}
         {% endfor %} {# end metacategory loop #}
     {% endfor %} {# end sense loop #}
-{# </div> end container #}
+</div> {# end container #}
 
 
 <script>
@@ -290,8 +290,8 @@ eleventyNavigation:
     console.log('number of senses: ' + sensesTopTabs.getAttribute("ntopitems"))
     questionArray = createArray(sensesTopTabs.getAttribute("ntopitems"), +numberOfCategories);
 
-    if (questionAccordionList.length != +sensesTopTabs.ntopitems * +numberOfCategories)
-        console.log("ERROR number of questions sets does not equal number of senses + number of categories")
+    if (questionAccordionList.length != +sensesTopTabs.getAttribute("ntopitems") * +numberOfCategories)
+        console.log("ERROR number of questions sets does not equal number of senses * number of categories")
 
     for (i=0 ; i<questionAccordionList.length; i++){
         question = questionAccordionList[i];
