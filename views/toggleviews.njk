@@ -9,14 +9,16 @@ eleventyNavigation:
 
 {# First create buttons #}
 <div class="container mb-5">
-    {# button to toggle views#}
-    <button type="button"  id="togglebutton" class="fs-3 px-5 bg-info"> 
-        View Senses First
-    </button>
-    {# button to save question answers #}
-    <button class="bg-info fs-3 ms-5" id="savebutton" type="button">Save</button>
-    {# button to show results #}
-    <button class="bg-info fs-3 ms-5" id="resultsbutton" type="button">Show Results</button>
+    <div class="row">
+        {# button to toggle views#}
+        <button type="button"  id="togglebutton" class="col-5 fs-4 px-5 bg-info rounded"> 
+            View Senses First
+        </button>
+        {# button to save question answers #}
+        <button class="col-3 bg-info fs-4 rounded" type="button">Save</button>
+        {# button to show results #}
+        <button class="col-4 bg-info fs-4 rounded" type="button">Show Results</button>
+    </div>
 </div>
 
 
@@ -69,16 +71,16 @@ eleventyNavigation:
                     {{ get_text(bodyitem, data.body) }}
                 </button>
             </h2>
-        </div>
 
-        <div id="collapse-{{ topidpart }}-{{ sideindex }}-{{ bodyindex }}" 
-                    senseindex="{{ senseindex - 1 }}" catindex="{{ catindex - 1 }}"
-                    class="accordion-collapse collapse QuestionCollapse-{{data.top}}" 
-                    aria-labelledby="bodyaccordion"
-                    data-bs-parent="#{{ topidpart }}-{{ sideindex }}">
-            {#<div class="accordion-body">
-                <p>some body text</p>
-            </div>#}
+            <div id="collapse-{{ topidpart }}-{{ sideindex }}-{{ bodyindex }}" 
+                        senseindex="{{ senseindex - 1 }}" catindex="{{ catindex - 1 }}"
+                        class="accordion-collapse collapse QuestionCollapse-{{data.top}}" 
+                        aria-labelledby="bodyaccordion"
+                        data-bs-parent="#{{ topidpart }}-{{ sideindex }}">
+                {#<div class="accordion-body">
+                    <p>some body text</p>
+                </div>#}
+            </div>
         </div>
 
     {% endfor %}
@@ -169,10 +171,10 @@ eleventyNavigation:
 
 
 {# now create the top tabs - senses #}
-<nav>
-    {% for data in datalist %}
-        <div class="container-xl" id="{{ data.top }}-first" style="display:none" ntopitems="{{ data.json | length }}">
-            <div class="row">
+{% for data in datalist %}
+    <div class="container-xl" id="{{ data.top }}-first" style="display:none" ntopitems="{{ data.json | length }}">
+        <div class="row">
+            <nav>
                 <div class="nav nav-tabs" id="nav-tab" role="tablist">
                     {% for topitem in data.json %}
                         {% if data.top === "sense" %}
@@ -181,7 +183,7 @@ eleventyNavigation:
                             {% set idpart = "metacategory" + loop.index %}
                         {% endif %}
 
-                        <button class="nav-link{% if loop.first %} active{% endif %}" 
+                        <button class="nav-link col-xxl-{{ 12 / data.json | length }}{% if loop.first %} active{% endif %}" 
                                 id="nav-{{ idpart }}-tab" 
                                 data-bs-toggle="tab" 
                                 data-bs-target="#nav-{{ idpart }}" 
@@ -194,7 +196,8 @@ eleventyNavigation:
                         
                     {% endfor %}
                 </div>
-            </div> {# end row #}
+            </nav>
+        </div> {# end row #}
 
             <div class="row">
                 {# START of the tab, main container #}
@@ -203,10 +206,9 @@ eleventyNavigation:
                         {% call print_tab_content(data) %}
                         {% endcall %}
                 </div>
-            </div> {# end row #}
-        </div> <!-- end of container for view -->
-    {% endfor %}
-</nav>
+        </div> {# end row #}
+    </div> <!-- end of container for view -->
+{% endfor %}
 
 
 {# Create a list of groups of questions 
@@ -217,7 +219,7 @@ eleventyNavigation:
                           {"label": "Not Sure", "id": "not-sure", "value": 1},
                           {"label": "False", "id": "false", "value": 0}] %}
 {# create question sets in the form of accordion-body #}
-<div class="container" id="questionset-container" style="display:none">
+{# <div class="container" id="questionset-container" style="display:none"> #}
     {% for sense in questions %}
         {% set senseindex = loop.index %}
         {% for metacat in sense.metacategories %}
@@ -252,7 +254,7 @@ eleventyNavigation:
             {% endfor %} {# end category loop #}
         {% endfor %} {# end metacategory loop #}
     {% endfor %} {# end sense loop #}
-</div> {# end container #}
+{# </div> end container #}
 
 
 <script>
