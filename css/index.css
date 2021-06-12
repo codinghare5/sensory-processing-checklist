@@ -140,7 +140,7 @@ code {
   padding: 0;
   list-style: none;
   float: left;
-  margin-left: 1em;
+  margin: 0;
   font-weight: 600;
   font-size: 1.3rem;
 }
@@ -309,6 +309,10 @@ div.tab-pane > article > div > div > .col {
   padding: 0 !important;
   margin: 1.25rem;
 }
+
+.accordion-button {
+  font-size: 1.1rem;
+}
 /* Accorion fix END */
 
 /* Question input fix */
@@ -319,13 +323,34 @@ div.tab-pane > article > div > div > .col {
   padding-left: 0.75em !important;
 }
 
-/* Navmenu */
+/* Tablet and mobile gap between sidebar and body */
 @media (max-width: 768px) {
+  /* Navmenu */
   .navbar-collapse {
     margin-left: 0 !important;
   }
 
+  /* Tablet and mobile gap between sidebar and body */
   div.col-md-9 {
     padding-top: 0.5em !important;
+  }
+
+  /* Tabs */
+  button.nav-link {
+    width: 100%;
+    /* background-color: #fcfcfc !important; */
+    border-color: #dee2e6 !important;
+  }
+
+  button.nav-link:not(.active) {
+    border-color: #dee2e6 #dee2e6 #fff;
+  }
+  button.nav-link.active {
+    font-weight: 600;
+  }
+
+  /* Tablet and mobile gap between tabs and sidebar */
+  .row:nth-of-type(2) {
+    margin-top: 0.5em;
   }
 }
