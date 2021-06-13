@@ -7,7 +7,7 @@ eleventyNavigation:
   order: 3
 ---
 
-{# First create buttons #}
+{# First create context menu buttons #}
 <div class="container mb-5">
     <div class="row">
         {# button to toggle views#}
@@ -21,6 +21,27 @@ eleventyNavigation:
     </div>
 </div>
 
+{# create progress bar #}
+<div class="container-xl progress-bar bg-white mb-3">
+    <div class="row">
+        {% for metacat in meta %}
+            {% for category in metacat.categories %}
+                {% set catindex = category.index %}
+
+                <div class="col p-0">
+                    {% for sense in category.senses %}
+                        <div class="progress-item border border-1" 
+                                    style="width: auto; height:20px;"
+                                    senseindex="{{ loop.index - 1 }}"
+                                    catindex="{{ catindex - 1 }}">
+                        </div>
+                    {% endfor %}
+                </div>
+
+            {% endfor %}
+        {% endfor %}
+    </div>
+</div>
 
 {# create the interface #}
 
@@ -284,22 +305,41 @@ eleventyNavigation:
     const metacategoryTopTabs = document.getElementById("metacategory-first");
     metacategoryTopTabs.style.display = "block";
 
-    // create 2D array of questions
+    // create 2D array of questions and 2D array of progress-item
     const numberOfCategories = 21;
+    const numberOfSenses = sensesTopTabs.getAttribute("ntopitems")
+
+    // 2D array of questions 
     const questionAccordionList = document.querySelectorAll(".QuestionAccordionBody");
-    console.log('number of senses: ' + sensesTopTabs.getAttribute("ntopitems"))
-    questionArray = createArray(sensesTopTabs.getAttribute("ntopitems"), +numberOfCategories);
+    console.log('number of senses: ' + numberOfSenses)
+    const questionArray = createArray(+numberOfSenses, +numberOfCategories);
+
+    // 2D array of progress-item
+    const progressItemList = document.querySelectorAll(".progress-item");
+    const progressArray = createArray(+numberOfSenses, +numberOfCategories);
 
     if (questionAccordionList.length != +sensesTopTabs.getAttribute("ntopitems") * +numberOfCategories)
         console.log("ERROR number of questions sets does not equal number of senses * number of categories")
 
+    //fill progressArray
+    for (i=0 ; i<questionAccordionList.length; i++){
+        progressItem = progressItemList[i];
+        senseindex = progressItem.getAttribute("senseindex");
+        catindex = progressItem.getAttribute("catindex");
+        //console.log('coords for progress item' + i + ' are [' + senseindex + ',' + catindex + ']');
+        progressArray[senseindex][catindex] = progressItem;
+    }
+
+    // fill questionArray
     for (i=0 ; i<questionAccordionList.length; i++){
         question = questionAccordionList[i];
         senseindex = question.getAttribute("senseindex");
         catindex = question.getAttribute("catindex");
-        //console.log('coords for question set ' + i + ' are [' + senseindex + ',' + catindex + ']');
+        console.log('coords for question set ' + i + ' are [' + senseindex + ',' + catindex + ']');
         questionArray[senseindex][catindex] = question;
     }
+
+    
 
     // attach questions
     const sensesQuestionCollapseList = document.querySelectorAll(".QuestionCollapse-sense");
@@ -312,6 +352,16 @@ eleventyNavigation:
             catindex = accordionCollapse.getAttribute("catindex");
 
             accordionCollapse.appendChild(questionArray[senseindex][catindex]);
+
+            // attach event listener to question the $ notation is jQuery
+            str = '#' + accordionCollapse.id;
+            $(str).on('hidden.bs.collapse',function(){
+                console.log("collapse hidden function " + this.id);
+                senseindex = this.getAttribute("senseindex");
+                catindex = this.getAttribute("catindex");
+
+                progressArray[senseindex][catindex].style.background = "WhiteSmoke"; //LightGrey good alternative
+            });
         }
     }
     attachQuestions(metacategoryQuestionCollapseList);
@@ -337,6 +387,10 @@ eleventyNavigation:
         }
     });
 
+    // set up progress bar
+    // create 2D array of progress items
+
+// Set up behavior of checkboxes for questions
   // grab all the buttons with class 'form-check-input'
   const questionButtons = document.querySelectorAll(".form-check-input")
   console.log('there are ' + questionButtons.length + ' question buttons')
