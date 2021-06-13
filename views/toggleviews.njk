@@ -360,7 +360,37 @@ eleventyNavigation:
                 senseindex = this.getAttribute("senseindex");
                 catindex = this.getAttribute("catindex");
 
-                progressArray[senseindex][catindex].style.background = "WhiteSmoke"; //LightGrey good alternative
+                progressItem = progressArray[senseindex][catindex];
+                progressItem.style.background = "WhiteSmoke"; //LightGrey good alternative
+
+                // see if any questions have WasTrue and/or True checked
+                // if so, change background of progressItem to appropriate colour
+                questionset = this.getElementsByTagName("fieldset");
+                for (j=0 ; j<questionset.length ; j++) { 
+                    //console.log('value: ' + questionset[j].getAttribute("value"))                  
+                    if (+questionset[j].getAttribute("value") > 1){
+                        //console.log('setting colour');
+                        switch(senseindex) {
+                            case '0': progressItem.style.background = "Red";
+                                    break;
+                            case '1': progressItem.style.background = "Orange";
+                                    break;
+                            case '2': progressItem.style.background = "Yellow";
+                                    break;
+                            case '3': progressItem.style.background = "Green";
+                                    break;
+                            case '4': progressItem.style.background = "Blue";
+                                    break;
+                            case '5': progressItem.style.background = "Indigo";
+                                    break;
+                            case '6': progressItem.style.background = "Violet";
+                                    break;
+                            
+                        }
+                        break;
+                    }
+                }
+
             });
         }
     }
@@ -507,7 +537,7 @@ eleventyNavigation:
 
         return jsonstruct;
     }
-    console.log(JSON.stringify(createJsonAnswers(questionArray)));
+    //console.log(JSON.stringify(createJsonAnswers(questionArray)));
 
     // get savebutton and add an event listener to save answers
     savebutton = document.getElementById("savebutton");
