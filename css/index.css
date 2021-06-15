@@ -6,6 +6,7 @@
   --navy: #17050F;
   --blue: #082840;
   --white: #fff;
+  --bg-gray: #f8f9fa;
 }
 
 /* Global stylesheet */
@@ -40,7 +41,8 @@ a[href]:visited {
   color: var(--navy);
 }
 main {
-  padding: 1rem;
+  padding: 0;
+  background-color: var(--bg-gray);
 }
 
 header {
@@ -298,6 +300,86 @@ div.tab-pane > article > div > div > .col {
 .col-md-9 > .accordion-collapse > .accordion-body {
   padding: 0 !important;
 }
+
+.sidebar{
+  overflow: hidden;
+  width: 6rem;
+  margin-left: -6rem;
+  transition: all 0.4s;
+  text-align: center;
+  background: #fff;
+  box-shadow: 0 0.5rem 1rem rgb(0 0 0 / 15%);
+  z-index: 2;
+  color: #6c757d !important;
+}
+
+.sidebar.show {
+  margin-left: 0;
+}
+
+.sidebar-heading {
+  padding-right: .5rem;
+  padding-left: .5rem;
+  text-align: center;
+  margin-bottom: 0;
+  padding: 1.5rem;
+  color: #adb5bd;
+  font-size: .7875rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+}
+
+.list-unstyled {
+  padding-left: 0;
+  list-style: none;
+}
+
+.sidebar button {
+  display: block;
+  padding-right: 0.2rem;
+  padding-left: 0.2rem;
+  font-size: 1rem;
+  color: inherit;
+}
+
+.page-body {
+  overflow-x: hidden;
+  min-height: calc(100vh - 72px);
+  padding-top: 3rem;
+}
+
+.card {
+  border: none;
+  box-shadow: 0 0.5rem 1rem rgb(0 0 0 / 15%);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  word-wrap: break-word;
+  background-color: #fff;
+  background-clip: border-box;
+  border-radius: 1rem;
+}
+
+.card-header {
+  position: relative;
+  padding: 2rem 2rem;
+  border-bottom: none;
+  background-color: white;
+  box-shadow: 0 0.125rem 0.25rem rgb(0 0 0 / 8%);
+  z-index: 2;
+  margin-bottom: 0;
+}
+
+.card-header:first-child {
+  border-radius: calc(1rem - 1px) calc(1rem - 1px) 0 0;
+}
+
+.page-header {
+  margin-bottom: 3rem;
+}
+
 /* Sidebar and body END */
 
 /* Accorion fix */
