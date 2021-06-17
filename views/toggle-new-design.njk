@@ -7,19 +7,151 @@ eleventyNavigation:
   order: 4
 ---
 
+{# Legend:
+    BODY, Body - main part, page's content, the Body of the whole element
+
+    COLLAPSE CATEGORY - corresponding sidebar button and its collapsible element further down
+
+    CONSTANTS - nunjucks constants on top, javascript constants on the bottom
+
+    CONTENT - repeatable part of the body to be toggled by style:display
+
+    DISPLAY - part to be toggled with meta button, use style:display
+
+    END - there is very high probability, that an element ends here :)
+
+    page-body - class for the Body
+
+    part to be looped - for loop is being used for this part - DRY convention
+
+    QUESTION - question's contents go here
+
+    SIDEBAR, Sidebar - main part, page's sidebar, the Sidebar of the whole element
+
+    TODO - easly find something to do next, tag some feature
+
+    TOGGLE - part of the process of toggling the view between meta/senses
+
+ #}
+
+
+{# Nunjucks CONSTANTS #}
+
+{#  #}
+{% set datalist = [{"json": questions, "top": "sense", "side": "metacategory", "body": "category"},
+                   {"json": meta, "top": "metacategory", "side": "category", "body": "sense"}] %}
+
+{% set questionOptions = [ {"label": "Was True", "id": "was-true", "value": 2},
+                          {"label": "True Now", "id": "true-now", "value": 3},
+                          {"label": "Not Sure", "id": "not-sure", "value": 1},
+                          {"label": "False", "id": "false", "value": 0}] %}
+
+{# END Nunjucks CONSTANTS #}
+
+
+{# Nunjucks FUNCTIONS #}
+
+{# set macro to return the text #}
+{% macro get_text(item, locat) %}
+  {% if locat === "sense" %}
+    {% set text = item.sense %}
+  {% elseif locat === "metacategory" %}
+    {% set text = item.name %}
+  {% else%}
+    {% set text = item.category %}
+  {% endif %}
+
+  {{ text }}
+{% endmacro%}
+
+{# END Nunjucks FUNCTIONS #}
+
+
 <div class="d-flex align-items-stretch">
 {#  SIDEBAR #}
     <div class="sidebar py-3 flex-shrink-1 show" id="sidebar">
-        <h6 class="sidebar-heading">Main</h6>
+
+        <h6 class="sidebar-heading">Toggle View</h6>
         <ul class="list-unstyled">
             <li class="fs-4">
-                {# button to toggle views#}
+                {# TOGGLE button - toggle views on click #}
                 <i class="bi bi-toggles"></i>
                 <button type="button"  id="togglebutton" class="btn btn-light">
                     View Senses First
                 </button>
             </li>
-      </ul>
+        </ul>
+
+        {# ------------ Sidebar part to be looped depending on TOGGLE ------------ #}
+        {# Two views, two versions, one displayed as a block and the other not displayed #}
+        {% for data in datalist %}
+            <div class="toggleThisPart {{ data.top }}-first" id="sidebar-{{ data.top }}-first" style="display:none" ntopitems="{{ data.json | length }}">
+                
+                <h6 class="sidebar-heading">Meta</h6>
+                <ul class="list-unstyled">
+                    {# ------------ Sidebar buttons listed - to be looped depending on TOGGLE ------------ #}
+                    {% for topitem in data.json %}
+
+                        {% if data.top === "sense" %}
+                            {% set idpart = topitem.sense | lower %}
+                            {% set sidearray = topitem.metacategories %}
+                            {% set senseindex = loop.index%}
+                        {% else %}
+                            {% set idpart = "metacategory" + loop.index %}
+                            {% set sidearray = topitem.categories %}
+                            {% set senseindex = -1 %} {# holding value #}
+                        {% endif %}
+
+                        <li class="fs-4">
+                            <a type="button" 
+                                        class="btn btn-light" 
+                                        data-bs-toggle="collapse" 
+                                        data-bs-target=".multi-collapse-{{idpart}}"
+                                        role="button" 
+                                        aria-expanded="{% if loop.index == 1 %}true{%else%}false{% endif %}" 
+                                        aria-controls="{{idpart}} body-{{idpart}}">
+                                {{ get_text(topitem, data.top) }}
+                            </a>
+
+                            {# TODO: FUNCTIONALITY remove submenu items and add pagination inside Card instead #}
+                            <ul class="collapse multi-collapse-{{idpart}}{% if loop.index == 1 %} show{% endif %}" id="{{idpart}}">
+                                {# ------------ Category buttons listed - to be looped depending on TOGGLE ------------ #}
+                                {% set mainLoopIndex = loop.index %}
+                                {% for item in sidearray %}
+                                    {% if data.side === "category" %}
+                                        {% set sideindex = item.index %}
+                                    {% else %}
+                                        {% set sideindex = loop.index %}
+                                    {% endif %}
+
+                                    {% set base_id = idpart + '-' + sideindex %}
+
+                                    {# List of category buttons #}
+                                    <li>
+                                        {# TODO: coresponding icon, class="bi bi-{icon-slug}" #}
+                                        {# COLLAPSE CATEGORY #}
+                                        {# <i class="bi bi-toggles"></i> #}
+                                        <button type="button"  
+                                                    id="button-{{base_id}}" 
+                                                    class="btn btn-light" 
+                                                    data-bs-toggle="collapse" 
+                                                    data-bs-target="#collapse-{{base_id}}" 
+                                                    aria-expanded="{% if mainLoopIndex == 1 and loop.index == 1 %}true{%else%}false{% endif %}" 
+                                                    aria-controls="collapse-{{base_id}}">
+                                            {{ get_text(item,data.side) }}
+                                        </button>
+                                    <li>
+                                    {# End List of category buttons #}
+                                {% endfor %}
+                                {# ------------ Category buttons listed - to be looped depending on TOGGLE ------------ #}
+                            </ul>
+                        </li>
+                    {% endfor %}
+                    {# ------------ End Sidebar buttons listed - to be looped depending on TOGGLE ------------ #}
+                </ul>
+            </div>
+        {% endfor %}
+        {# ------------ End Sidebar part ------------ #}
 
     </div>
 {#  END SIDEBAR #}
@@ -29,12 +161,12 @@ eleventyNavigation:
         <div class="container-fluid px-lg-2 px-xl-3">
             
             {# page breadcrumb #}
-            <div class="page-breadcrumb">
+            {# <div class="page-breadcrumb">
                 <ul class="breadcrumb">
                     <li class="breadcrumb-item"><a href="/">Home</a></li>
                     <li class="breadcrumb-item active">Page 1</li>
                 </ul>
-            </div>
+            </div> #}
             
             {# create progress bar #}
             <div class="container-xl progress-bar bg-white mb-3">
@@ -57,343 +189,164 @@ eleventyNavigation:
                     {% endfor %}
                 </div>
             </div>
-
-            {# page header #}
-            <div class="page-header">
-                <h1 class="page-heading">Page 1</h1>
-            </div>
             
-            {# page content #}
-            <section>
-                <div class="row">
-                    <div class="col-lg-12 mb-5">
-                        <div class="card">
-                          <div class="card-header d-flex justify-content-between">
-                            <h4 class="card-heading">1. Vision</h4>
-                            <nav aria-label="Page navigation example">
-                                <ul class="pagination justify-content-end">
-                                  <li class="page-item disabled">
-                                    <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
-                                  </li>
-                                  <li class="page-item"><a class="page-link" href="#">1</a></li>
-                                  <li class="page-item"><a class="page-link" href="#">...</a></li>
-                                  <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                  <li class="page-item">
-                                    <a class="page-link" href="#">Next</a>
-                                  </li>
-                                </ul>
-                            </nav>
-                          </div>
-                          <div class="card-body">
-                            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Esse, possimus. 
-                                Impedit voluptatum ex voluptate sed dolor fugiat, molestias doloribus facere?
-                            </p>
-                            <hr class="bg-gray-400 my-4">
-                            <form class="form-horizontal">
-                                <div class="row">
-                                    <fieldset class="pb-3" id="Vision-1-1" value="0">
-                                        <legend class="fs-6">Notices every tiny change in the environment</legend>
-                                        
-                                        <div class="row row-cols-auto justify-content-center">
-                                            
-                                                <div class="form-check form-check-inline col border border-1 rounded">
-                                                    <input class="form-check-input ps-2" type="checkbox" name="Vision-1-1-was-true" question_id="Vision-1-1" id="Vision-1-1-was-true" value="2">
-                                                    <label class="form-check-label fs-6" for="Vision-1-1-was-true">
-                                                        Was True
-                                                    </label>
-                                                </div>
-                                            
-                                                <div class="form-check form-check-inline col border border-1 rounded">
-                                                    <input class="form-check-input ps-2" type="checkbox" name="Vision-1-1-true-now" question_id="Vision-1-1" id="Vision-1-1-true-now" value="3">
-                                                    <label class="form-check-label fs-6" for="Vision-1-1-true-now">
-                                                        True Now
-                                                    </label>
-                                                </div>
-                                            
-                                                <div class="form-check form-check-inline col border border-1 rounded">
-                                                    <input class="form-check-input ps-2" type="checkbox" name="Vision-1-1-not-sure" question_id="Vision-1-1" id="Vision-1-1-not-sure" value="1">
-                                                    <label class="form-check-label fs-6" for="Vision-1-1-not-sure">
-                                                        Not Sure
-                                                    </label>
-                                                </div>
-                                            
-                                                <div class="form-check form-check-inline col border border-1 rounded">
-                                                    <input class="form-check-input ps-2" type="checkbox" name="Vision-1-1-false" question_id="Vision-1-1" id="Vision-1-1-false" value="0" checked="checked">
-                                                    <label class="form-check-label fs-6" for="Vision-1-1-false">
-                                                        False
-                                                    </label>
-                                                </div>
-                                            
-                                        </div> <!-- end row of checkboxes-->
-                                    </fieldset>
-                                </div>
-                                <hr class="bg-gray-400 my-4">
-                                <div class="row">
-                                    <fieldset class="pb-3" id="Vision-1-2" value="0">
-                                        <legend class="fs-6">Resists any change (all senses)</legend>
-                                        
-                                        <div class="row row-cols-auto justify-content-center">
-                                            
-                                                <div class="form-check form-check-inline col border border-1 rounded">
-                                                    <input class="form-check-input ps-2" type="checkbox" name="Vision-1-2-was-true" question_id="Vision-1-2" id="Vision-1-2-was-true" value="2">
-                                                    <label class="form-check-label fs-6" for="Vision-1-2-was-true">
-                                                        Was True
-                                                    </label>
-                                                </div>
-                                            
-                                                <div class="form-check form-check-inline col border border-1 rounded">
-                                                    <input class="form-check-input ps-2" type="checkbox" name="Vision-1-2-true-now" question_id="Vision-1-2" id="Vision-1-2-true-now" value="3">
-                                                    <label class="form-check-label fs-6" for="Vision-1-2-true-now">
-                                                        True Now
-                                                    </label>
-                                                </div>
-                                            
-                                                <div class="form-check form-check-inline col border border-1 rounded">
-                                                    <input class="form-check-input ps-2" type="checkbox" name="Vision-1-2-not-sure" question_id="Vision-1-2" id="Vision-1-2-not-sure" value="1">
-                                                    <label class="form-check-label fs-6" for="Vision-1-2-not-sure">
-                                                        Not Sure
-                                                    </label>
-                                                </div>
-                                            
-                                                <div class="form-check form-check-inline col border border-1 rounded">
-                                                    <input class="form-check-input ps-2" type="checkbox" name="Vision-1-2-false" question_id="Vision-1-2" id="Vision-1-2-false" value="0" checked="checked">
-                                                    <label class="form-check-label fs-6" for="Vision-1-2-false">
-                                                        False
-                                                    </label>
-                                                </div>
-                                            
-                                        </div> <!-- end row of checkboxes-->
-                                    </fieldset>
-                                </div>
-                                <hr class="bg-gray-400 my-4">
-                                <div class="row">
-                                  <div class="col-md-9 ms-auto">
-                                    <button class="btn btn-secondary" type="submit">Cancel</button>
-                                    {# button to save question answers #}
-                                    <button class="btn btn-primary" id="savebutton" type="button">Save changes</button>
-                                    {# button to show results #}
-                                    <button class="btn btn-success" id="resultsbutton" type="button">Show Results</button>
-                                  </div>
-                                </div>
-                              </form>
-                          </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
+            {# ------------ CONTENT Body part to be looped - depends on TOGGLE ------------ #}
+            {% for data in datalist %}
+            <div class="container-xl toggleThisPart {{ data.top }}-first" id="{{ data.top }}-first" style="display:none" ntopitems="{{ data.json | length }}">
 
-        
-        </div>
-    </div>
-{# END BODY #}
-</div>
+                {% for topitem in data.json %}
 
-
-
-
-
-
-
-
-
-
-
-
-{# First create context menu buttons #}
-<div class="container mb-5">
-    <div class="row">
-
-    </div>
-</div>
-
-
-{# create the interface #}
-
-{# create and index from sense name to index #}
-{% set senselookup = [] %}
-{% for sense in questions %}
-    {% set senselookup = (senselookup.push( {"{{sense.sense}}": loop.index} ), senselookup) %}
-{% endfor %}
-
-{% set datalist = [{"json": questions, "top": "sense", "side": "metacategory", "body": "category"},
-                   {"json": meta, "top": "metacategory", "side": "category", "body": "sense"}] %}
-
-{# set macro to return the text #}
-{% macro get_text(item, locat) %}
-  {% if locat === "sense" %}
-    {% set text = item.sense %}
-  {% elseif locat === "metacategory" %}
-    {% set text = item.name %}
-  {% else%}
-    {% set text = item.category %}
-  {% endif %}
-
-  {{ text }}
-{% endmacro%}
-
-{% macro print_categories(data, topidpart, bodyarray, senseindex, sideindex) %}
-    {% for bodyitem in bodyarray %}
-        {% if data.body === "category" %}
-            {% set bodyindex = bodyitem.index %}
-        {% else %}
-            {% set bodyindex = loop.index %}
-        {% endif %}
-        {% if data.top === "sense"%}
-          {% set catindex = bodyindex %}
-        {% else %} {# struct.top === metacategory #}
-          {% set senseindex = bodyindex %}
-          {% set catindex = sideindex %}
-        {% endif %}
-
-        <div class="accordion-item">
-            <h2 class="accordion-header" id="heading-{{ topidpart }}-{{ sideindex }}-{{ bodyindex }}">
-                <button class="accordion-button collapsed" 
-                            type="button" 
-                            data-bs-toggle="collapse" 
-                            data-bs-target="#collapse-{{ topidpart }}-{{ sideindex }}-{{ bodyindex }}" 
-                            aria-expanded="false" 
-                            aria-controls="collapse-{{ topidpart }}-{{ sideindex }}-{{ bodyindex }}">
-                    {{ get_text(bodyitem, data.body) }}
-                </button>
-            </h2>
-
-            <div id="collapse-{{ topidpart }}-{{ sideindex }}-{{ bodyindex }}" 
-                        senseindex="{{ senseindex - 1 }}" catindex="{{ catindex - 1 }}"
-                        class="accordion-collapse collapse QuestionCollapse-{{data.top}}" 
-                        aria-labelledby="bodyaccordion"
-                        data-bs-parent="#{{ topidpart }}-{{ sideindex }}">
-                {#<div class="accordion-body">
-                    <p>some body text</p>
-                </div>#}
-            </div>
-        </div>
-
-    {% endfor %}
-{% endmacro %}
-
-{% macro print_tab_content(data) %}
-    {% for topitem in data.json %}
-
-        {% if data.top === "sense" %}
-            {% set idpart = topitem.sense | lower %}
-            {% set sidearray = topitem.metacategories %}
-            {% set senseindex = loop.index%}
-        {% else %}
-            {% set idpart = "metacategory" + loop.index %}
-            {% set sidearray = topitem.categories %}
-            {% set senseindex = -1 %} {# holding value #}
-        {% endif %}
-
-    
-        {# START the tab's contents #}
-        <div class="tab-pane fade{% if loop.first %} show active{% endif %}" 
-                    id="nav-{{ idpart }}" 
-                    role="tabpanel" 
-                    aria-labelledby="nav-{{ idpart }}-tab">
-
-            {# very important - it is the unique id of the parent #}
-            {# START main accordion for sidebar, as a row #}
-            {# create sidebare items #}
-            <div class="accordion row" id="side-accordion-{{ idpart }}">
-                <div class="col-md-3">  
-                    {# START items in the sidebar, left column, responsive #}
-                    {% for item in sidearray %}
-                        {% if data.side === "category" %}
-                            {% set sideindex = item.index %}
-                        {% else %}
-                            {% set sideindex = loop.index %}
-                        {% endif %}
-
-                        {% set base_id = idpart + '-' + sideindex %}
+                    {% if data.top === "sense" %}
+                        {% set idpart = topitem.sense | lower %}
+                        {% set sidearray = topitem.metacategories %}
+                        {% set senseindex = loop.index%}
+                    {% else %}
+                        {% set idpart = "metacategory" + loop.index %}
+                        {% set sidearray = topitem.categories %}
+                        {% set senseindex = -1 %} {# holding value #}
+                    {% endif %}
                     
-                        <div class="accordion-item ">
-                            <h2 class="accordion-header" id="heading-{{base_id}}">
-                                <button class="accordion-button collapsed" type="button" 
-                                            data-bs-toggle="collapse" 
-                                            data-bs-target="#collapse-{{ base_id }}" 
-                                            aria-expanded="false" 
-                                            aria-controls="collapse-{{ base_id }}">
-                                    {{ get_text(item,data.side) }}
-                                </button>
-                            </h2>
+                    {# TODO: FUNCTIONALITY add pagination to page-header, always show one category at any given time #}
+                    {# ------------ CONTENT DISPLAY multi-collapse inside Body - part to be looped - depends on TOGGLE ------------ #}
+                    <section class="collapse multi-collapse-{{idpart}}{% if loop.index == 1 %} show{%else%}{% endif %}" id="body-{{idpart}}">
+                        {# Page header #}
+                        <div class="page-header">
+                            {# Page 1 or Category Name - depends on TOGGLE #}
+                            <h1 class="page-heading">{{ get_text(topitem, data.top) }}</h1>
                         </div>
-                    {% endfor %}
-                </div> {# end col-md-3 #}
-
-                {# Now create accordion collapse in the RHS #}
-                {# This is means looping through sidearray again #}
-                <div class="col-md-9">
-                    {% for item in sidearray %}
-                        {% if data.side === "category" %}
-                            {% set sideindex = item.index %}
-                            {% set bodyarray = item.senses %}
-                        {% else %}
-                            {% set sideindex = loop.index %}
-                            {% set bodyarray = item.categories %}
-                        {% endif %}
-
-                        {% set base_id = idpart + '-' + sideindex %}
-
-                        <div id="collapse-{{ base_id }}" class="accordion-collapse collapse" 
-                                    aria-labelledby="heading-{{ base_id }}"
-                                    data-bs-parent="#side-accordion-{{ idpart }}">
-                                
-                            {# this is the body inside accordion, the right colun, responsive #}
-                            <div class="accordion-body">
-                                <div class="accordion" id="{{ idpart }}-{{ sideindex }}">
-                                    {% call print_categories(data, idpart, bodyarray, senseindex, sideindex) %}
-                                    {% endcall %}
-                                </div> 
-                            </div>  {# END this is the body inside accordion #}
-                        </div> {# end collapse#}
-                    {% endfor %}
-                </div> {# end col #}
-
-            </div> {# END main accordion #}
-        </div> {# END the tab's contents #}
-    {% endfor %}  {# this view #}
-{% endmacro %}
-
-
-{# now create the top tabs - senses #}
-{% for data in datalist %}
-    <div class="container-xl" id="{{ data.top }}-first" style="display:none" ntopitems="{{ data.json | length }}">
-        <div class="row">
-            <nav>
-                <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                    {% for topitem in data.json %}
-                        {% if data.top === "sense" %}
-                            {% set idpart = topitem.sense | lower %}
-                        {% else %}
-                            {% set idpart = "metacategory" + loop.index %}
-                        {% endif %}
-
-                        <button class="nav-link col-xxl-{{ 12 / data.json | length }}{% if loop.first %} active{% endif %}" 
-                                id="nav-{{ idpart }}-tab" 
-                                data-bs-toggle="tab" 
-                                data-bs-target="#nav-{{ idpart }}" 
-                                type="button" 
-                                role="tab" 
-                                aria-controls="nav-{{ idpart }}" 
-                                aria-selected="{% if loop.first %}true{% else %}false{% endif %}">
-                            {{ get_text(topitem, data.top) }}
-                        </button>
                         
-                    {% endfor %}
-                </div>
-            </nav>
-        </div> {# end row #}
+                        {# Page content #}
+                        <section>
+                            <div class="row">
+                                <div class="col-lg-12 mb-5">
 
-            <div class="row">
-                {# START of the tab, main container #}
-                {# this part should occure only once, so it is outside of the loop #}
-                <div class="tab-content {{data.top}}-sidebar" id="{{idpart}}-nav-tabContent">
-                        {% call print_tab_content(data) %}
-                        {% endcall %}
-                </div>
-        </div> {# end row #}
-    </div> <!-- end of container for view -->
-{% endfor %}
+                                    {# Card #}
+                                    <div class="card">
+
+                                        {% set mainLoopIndex = loop.index %}
+                                        {% for item in sidearray %}
+                                            {% if data.side === "category" %}
+                                                {% set sideindex = item.index %}
+                                                {% set bodyarray = item.senses %}
+                                            {% else %}
+                                                {% set sideindex = loop.index %}
+                                                {% set bodyarray = item.categories %}
+                                            {% endif %}
+
+                                            {% set base_id = idpart + '-' + sideindex %}
+
+                                            {# COLLAPSE CATEGORY #}
+                                            <div class="card-contents collapse{% if mainLoopIndex == 1 and loop.index == 1 %} show{%else%}{% endif %}" id="collapse-{{base_id}}">
+                                                {# Card - header #}
+                                                <div class="card-header d-flex justify-content-between">
+                                                    {# 1. Category or Sense Name - depends on TOGGLE #}
+                                                    <h4 class="card-heading">{{ get_text(item,data.side) }}</h4>
+                                                    {# Pagination #}
+                                                    {# <nav aria-label="Page navigation example">
+                                                        <ul class="pagination justify-content-end">
+                                                        <li class="page-item disabled">
+                                                            <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+                                                        </li>
+                                                        <li class="page-item"><a class="page-link" href="#">1</a></li>
+                                                        <li class="page-item"><a class="page-link" href="#">...</a></li>
+                                                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                                        <li class="page-item">
+                                                            <a class="page-link" href="#">Next</a>
+                                                        </li>
+                                                        </ul>
+                                                    </nav> #}
+                                                </div>
+
+                                                {# Card - body #}
+                                                <div class="card-body">
+                                                    {# Card - description #}
+                                                    <p class="card-description" id="description-{{ idpart }}-{{ sideindex }}">
+                                                        Lorem ipsum dolor sit amet consectetur adipisicing elit. 
+                                                        Repudiandae minima cumque ab at quia numquam, 
+                                                        similique soluta dolores ut sequi maiores non optio pariatur provident.
+                                                    </p>
+                                                    <hr class="bg-gray-400 my-4">
+
+                                                    {# Card - form #}
+                                                    <form>
+                                                        {# Card - accordion #}
+                                                        {# ------------ Card - accordion - part to be looped - depends on TOGGLE ------------ #}
+                                                        <div class="accordion accordion-flush" id="{{ idpart }}-{{ sideindex }}">
+                                                            {% for bodyitem in bodyarray %}
+                                                                {% if data.body === "category" %}
+                                                                    {% set bodyindex = bodyitem.index %}
+                                                                {% else %}
+                                                                    {% set bodyindex = loop.index %}
+                                                                {% endif %}
+                                                                {% if data.top === "sense"%}
+                                                                    {% set catindex = bodyindex %}
+                                                                {% else %} {# struct.top === metacategory #}
+                                                                    {% set senseindex = bodyindex %}
+                                                                    {% set catindex = sideindex %}
+                                                                {% endif %}
+
+                                                                <div class="accordion-item">
+                                                                    <h2 class="accordion-header" id="flush-heading-{{ base_id }}">
+                                                                        <button class="accordion-button collapsed" type="button" 
+                                                                                    data-bs-toggle="collapse" 
+                                                                                    data-bs-target="#collapse-{{ idpart }}-{{ sideindex }}-{{ bodyindex }}" 
+                                                                                    aria-expanded="false" 
+                                                                                    aria-controls="collapse-{{ idpart }}-{{ sideindex }}-{{ bodyindex }}">
+                                                                            {# ------------ QUESTION - Accordion-button - part to be looped - depends on TOGGLE ------------ #}
+                                                                            {{ get_text(bodyitem, data.body) }}
+                                                                            {# ------------ End QUESTION - Accordion-button ------------ #}
+                                                                        </button>
+                                                                    </h2>
+                                                                    <div id="collapse-{{ idpart }}-{{ sideindex }}-{{ bodyindex }}" 
+                                                                            senseindex="{{ senseindex - 1 }}" catindex="{{ catindex - 1 }}"
+                                                                            class="accordion-collapse collapse QuestionCollapse-{{data.top}}" 
+                                                                            aria-labelledby="bodyaccordion"
+                                                                            data-bs-parent="#{{ idpart }}-{{ sideindex }}">
+                                                                        {# ------------ CHECKBOXES - Accordion-body - part to be looped - depends on TOGGLE ------------ #}
+
+                                                                        {# ------------ END CHECKBOXES - Accordion-body ------------ #}
+                                                                    </div>
+                                                                </div>
+                                                            {% endfor %}
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                            
+                                        {% endfor %}
+                                        {# ------------ End Card - accordion - part to be looped - depends on TOGGLE ------------ #}
+
+                                        {# Card - footer - form's functionality #}
+                                        <div class="card-body">
+                                            <hr class="bg-gray-400 my-4">
+                                            <div class="row">
+                                                <div class="col-md-9 ms-auto">
+                                                    <button class="btn btn-secondary" type="button">Cancel</button>
+                                                    {# button to save question answers #}
+                                                    <button class="btn btn-primary" id="savebutton" type="button">Save changes</button>
+                                                    {# button to show results #}
+                                                    <button class="btn btn-success" id="resultsbutton" type="button">Show Results</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {# End Card - footer #}
+                                    </div>
+                                    {# End Card #}
+                                </div>
+                            </div>
+                        </section>
+                        {# End Page content #}
+                    </section>
+                    {# ------------ END CONTENT DISPLAY multi-collapse inside Body ------------ #}
+                {% endfor %}
+            </div>
+            {% endfor %}   
+            {# ------------ End CONTENT Body part ------------ #}
+
+        </div>
+    </div>
+    {# END BODY #}
+</div>
 
 
 {# Create a list of groups of questions 
@@ -408,18 +361,17 @@ eleventyNavigation:
     {% for sense in questions %}
         {% set senseindex = loop.index %}
         {% for metacat in sense.metacategories %}
-            {% for cat in metacat.categories %}   
+            {% for cat in metacat.categories -%}   
                 {% set base_id = sense.sense + '-' + cat.index %}
-
                 <div class="accordion-body QuestionAccordionBody" id={{base_id}}
                                 senseindex="{{senseindex - 1 }}" catindex="{{cat.index - 1 }}">
-                    {% for question in cat.questions %}
+                    {%- for question in cat.questions -%}
                         {% set questionName = base_id + '-' + loop.index %}
                         <fieldset class="pb-3" id="{{ questionName }}" value=0>
                             <legend class="fs-6">{{ question }}</legend>
                             {# use class=row to spread radio inputs #}
                             <div class="row row-cols-auto justify-content-center">
-                                {% for opt in  questionOptions %}
+                                {%- for opt in  questionOptions -%}
                                     <div class="form-check form-check-inline col border border-1 rounded">
                                         <input class="form-check-input ps-2" type="checkbox" 
                                                     name="{{ questionName }}-{{ opt.id }}" 
@@ -431,15 +383,15 @@ eleventyNavigation:
                                             {{ opt.label }}
                                         </label>
                                     </div>
-                                {% endfor %}
+                                {%- endfor -%}
                             </div> <!-- end row of checkboxes-->
                         </fieldset>
-                    {% endfor %} {# end question loop #}
+                    {%- endfor -%} {# end question loop #}
                 </div>
-            {% endfor %} {# end category loop #}
+            {%- endfor %} {# end category loop #}
         {% endfor %} {# end metacategory loop #}
     {% endfor %} {# end sense loop #}
-</div> {# end container #}
+</div>
 
 
 <script>
@@ -462,7 +414,9 @@ eleventyNavigation:
         return arr;
     }
 
-
+//
+// javascript CONSTANTS
+//
     // set up default view: sensesfirst
     var togglestatus = "categoryfirst";
     const sensesTopTabs = document.getElementById("sense-first");
@@ -471,11 +425,11 @@ eleventyNavigation:
 
     // create 2D array of questions and 2D array of progress-item
     const numberOfCategories = 21;
-    const numberOfSenses = sensesTopTabs.getAttribute("ntopitems")
+    const numberOfSenses = sensesTopTabs.getAttribute("ntopitems");
 
     // 2D array of questions 
     const questionAccordionList = document.querySelectorAll(".QuestionAccordionBody");
-    console.log('number of senses: ' + numberOfSenses)
+    //console.log(questionAccordionList);
     const questionArray = createArray(+numberOfSenses, +numberOfCategories);
 
     // 2D array of progress-item
@@ -483,7 +437,7 @@ eleventyNavigation:
     const progressArray = createArray(+numberOfSenses, +numberOfCategories);
 
     if (questionAccordionList.length != +sensesTopTabs.getAttribute("ntopitems") * +numberOfCategories)
-        console.log("ERROR number of questions sets does not equal number of senses * number of categories")
+        console.log("ERROR number of questions sets does not equal number of senses * number of categories");
 
     //fill progressArray
     for (i=0 ; i<questionAccordionList.length; i++){
@@ -499,23 +453,26 @@ eleventyNavigation:
         question = questionAccordionList[i];
         senseindex = question.getAttribute("senseindex");
         catindex = question.getAttribute("catindex");
-        console.log('coords for question set ' + i + ' are [' + senseindex + ',' + catindex + ']');
+        //console.log('coords for question set ' + i + ' are [' + senseindex + ',' + catindex + ']');
         questionArray[senseindex][catindex] = question;
     }
-
     
 
     // attach questions
+    // more CONSTANTS
     const sensesQuestionCollapseList = document.querySelectorAll(".QuestionCollapse-sense");
     const metacategoryQuestionCollapseList = document.querySelectorAll(".QuestionCollapse-metacategory");
+    const toggleThisPartList = document.querySelectorAll(".toggleThisPart");
+    const metacategoriesFirstList = document.querySelectorAll(".metacategory-first");
     
     function attachQuestions(questionCollapseList){
         for (i=0 ; i<questionCollapseList.length ; i++){
             accordionCollapse = questionCollapseList[i];
             senseindex = accordionCollapse.getAttribute("senseindex");
             catindex = accordionCollapse.getAttribute("catindex");
-
+            
             accordionCollapse.appendChild(questionArray[senseindex][catindex]);
+            console.log(accordionCollapse);
 
             // attach event listener to question the $ notation is jQuery
             str = '#' + accordionCollapse.id;
@@ -558,7 +515,14 @@ eleventyNavigation:
             });
         }
     }
-    attachQuestions(metacategoryQuestionCollapseList);
+
+    // This only runs once when the page loads
+    if (togglestatus === "categoryfirst") {
+        for(let i = 0; i < metacategoriesFirstList.length; i++){
+            metacategoriesFirstList[i].style.display = "block";
+        }
+        attachQuestions(metacategoryQuestionCollapseList);
+    }
 
     // Get toggle button and assign a function
     const togglebutton = document.getElementById("togglebutton");
@@ -566,16 +530,31 @@ eleventyNavigation:
         if (togglestatus === "categoryfirst") {
             togglestatus = "sensesfirst";
             togglebutton.innerHTML = "View Category First";
-            metacategoryTopTabs.style.display = "none";
-            sensesTopTabs.style.display = "block";
+            //metacategoryTopTabs.style.display = "none";
+            for (i=0 ; i<toggleThisPartList.length ; i++) {
+                if (toggleThisPartList[i].style.display == "block") {
+                    toggleThisPartList[i].style.display = "none";
+                }
+                else {
+                    toggleThisPartList[i].style.display = "block";
+                }
+            };
             console.log('attaching questions: senses')
             attachQuestions(sensesQuestionCollapseList);
         }
         else {
             togglestatus = "categoryfirst";
             togglebutton.innerHTML = "View Senses First";
-            sensesTopTabs.style.display = "none";
-            metacategoryTopTabs.style.display = "block";
+            //sensesTopTabs.style.display = "none";
+            //metacategoryTopTabs.style.display = "block";
+            for (i=0 ; i<toggleThisPartList.length ; i++) {
+                if (toggleThisPartList[i].style.display == "block") {
+                    toggleThisPartList[i].style.display = "none";
+                }
+                else {
+                    toggleThisPartList[i].style.display = "block";
+                }
+            };
             console.log('attaching questions: metacategory')
             attachQuestions(metacategoryQuestionCollapseList);
         }
@@ -594,6 +573,7 @@ eleventyNavigation:
     questionButtons[i].addEventListener('change', function() {
       //console.log(this.id + ' ' + this.getAttribute("question_id"));
       
+      // local CONSTANTS
       const formwrapper = document.getElementById(this.getAttribute("question_id"));
       var currentvalue = formwrapper.getAttribute("value");
       const thisvalue = this.getAttribute("value");
