@@ -169,16 +169,16 @@ eleventyNavigation:
             </div> #}
             
             {# create progress bar #}
-            <div class="container-xl progress-bar bg-white mb-3">
+            <div class="container-xl progress-bar bg-white">
                 <div class="row">
                     {% for metacat in meta %}
                         {% for category in metacat.categories %}
                         {% set catindex = category.index %}
                     
-                        <div class="col p-0">
+                        <div class="col p-0" style="border: 2px solid LightGray">
                             {% for sense in category.senses %}
-                            <div class="progress-item border border-1" 
-                                style="width: auto; height:20px;"
+                            <div class="progress-item" 
+                                style="width: auto; height:20px; border: 1px solid; border-color: LightGray;"
                                 senseindex="{{ loop.index - 1 }}"
                                 catindex="{{ catindex - 1 }}">
                             </div>
@@ -236,7 +236,9 @@ eleventyNavigation:
                                             {% set base_id = idpart + '-' + sideindex %}
 
                                             {# COLLAPSE CATEGORY #}
-                                            <div class="card-contents collapse{% if mainLoopIndex == 1 and loop.index == 1 %} show{%else%}{% endif %}" id="collapse-{{base_id}}">
+                                            <div class="card-contents SideCollapse collapse{% if mainLoopIndex == 1 and loop.index == 1 %} show{%else%}{% endif %}" id="collapse-{{base_id}}"
+                                                        sideindex={{sideindex}}
+                                                        sidetype="{{ data.top }}">
                                                 {# Card - header #}
                                                 <div class="card-header d-flex justify-content-between">
                                                     {# 1. Category or Sense Name - depends on TOGGLE #}
@@ -421,6 +423,8 @@ eleventyNavigation:
     var togglestatus = "categoryfirst";
     const sensesTopTabs = document.getElementById("sense-first");
     const metacategoryTopTabs = document.getElementById("metacategory-first");
+    const sidebuttons = document.querySelectorAll(".SideCollapse");
+    console.log('length of sidebuttons: ' + sidebuttons.length);
     metacategoryTopTabs.style.display = "block";
 
     // create 2D array of questions and 2D array of progress-item
@@ -448,6 +452,27 @@ eleventyNavigation:
         progressArray[senseindex][catindex] = progressItem;
     }
 
+    // function to highlight one column of the progressArray
+     function setColumnBorderColour(colindex,colour,width) {
+        //console.log(progressArray[0][0].parentNode);
+        progressArray[0][colindex].parentNode.style.border = width + "px solid " + colour;
+    }
+    setColumnBorderColour(0,"black",2);
+
+    // add event listener to sidebuttons
+    for (i=0 ; i<sidebuttons.length ; i++){
+        sidebuttons[i].addEventListener('show.bs.collapse',function() {
+            console.log("in event listener for side collapse show ");
+            if (this.getAttribute("sidetype") === 'metacategory')
+                setColumnBorderColour(+this.getAttribute("sideindex") - 1, "black",2);
+        });
+        sidebuttons[i].addEventListener('hide.bs.collapse',function() {
+            console.log("in event listener for side collapse hide ");
+            if (this.getAttribute("sidetype") === 'metacategory')
+                setColumnBorderColour(+this.getAttribute("sideindex") - 1, "LightGray",2);
+        })
+    }
+
     // fill questionArray
     for (i=0 ; i<questionAccordionList.length; i++){
         question = questionAccordionList[i];
@@ -472,7 +497,7 @@ eleventyNavigation:
             catindex = accordionCollapse.getAttribute("catindex");
             
             accordionCollapse.appendChild(questionArray[senseindex][catindex]);
-            console.log(accordionCollapse);
+            //console.log(accordionCollapse);
 
             // attach event listener to question the $ notation is jQuery
             str = '#' + accordionCollapse.id;
