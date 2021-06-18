@@ -1,0 +1,93 @@
+[
+{
+    "name": "Gestalt Peception",
+    "index": 1,
+    "senses": {
+        "vision": "Inability to filter visual stimuli",
+        "hearing": "Inability to screen out background noise",
+        "touch": "Inability to distinguish between tactile stimuli of differnt intensity",
+        "smell": "Inability to distinguish between strong and weak smells",
+        "taste": "Inability to distinguish between strong and weak tastes",
+        "proprioception": "Inability to coordinate body position and movements of body parts",
+        "balance": "Inability to distinguish between 'inner' and 'outer' movements"
+    }
+},
+{
+    "name": "Inability to stop feeling a change",
+    "index": 2,
+    "senses":{
+        "vision": "Prolonged perception of visual information",
+        "hearing": "Prolonged perception of auditory stimuli",
+        "touch": "Prolonged perception of tactile sensation",
+        "smell": "Prolonged perception of olfactory sensation",
+        "taste": "Prolonged perception of gustatory stimuli",
+        "proprioception": "Prolonged perception of proprioception sensations",
+        "balance": "Prolonged perception of vestibular stimulation"
+    }
+},
+{
+    "name": "Fragmented",
+    "index": 3,
+    "senses": {
+        "vision": "Seeing 'in bits', prosopagnosia (face blindness)",
+        "hearing": "Hearing 'in bits'",
+        "touch": "Feeling touch, cold/hot 'in bits'",
+        "smell": "Smelling 'in bits'",
+        "taste": "Tasting 'in bits'",
+        "proprioception": "Feeling only some parts of the body",
+        "balance": "'Uneven' movements"
+    }
+},
+{
+    "name": "Distorted",
+    "index": 4,
+    "senses":{
+        "vision": "Poor/distorted depth and space perception; seeing 2D world; distortions of shape, size",
+        "hearing": "Hearing distorted sounds etc",
+        "touch": "Distorted tactile perception",
+        "smell": "Distorted olfactory perception",
+        "taste": "Distorted gustatory perception",
+        "proprioception": "Distorted perception of body",
+        "balance": "Distorted perception of body movements"
+    }
+},
+{
+    "name": "Delayed",
+    "index": 5,
+    "senses":{
+        "vision": "Delayed processing of visual stimuli",
+        "hearing": "Delayed processing of auditory stimuli",
+        "touch": "Delayed processing of tactile stimuli",
+        "smell": "Delayed processing of smells",
+        "taste": "Delayed processing of tastes",
+        "proprioception": "Delayed processing of body postures, body sensations",
+        "balance": "Delayed processing of movement of head/body"
+    }
+},
+{
+    "name": "Intensity: hyper",
+    "index": 6,
+    "senses":{
+        "vision": "Vision is too acute, sees things others do not see",
+        "hearing": "Hearing is too acute, hears things others do not hear",
+        "touch": "Oversensitive to touch; difficulty with clothes",
+        "smell": "Cannot tolerate how people or objects smell",
+        "taste": "Cannot tolerate certain foods; gag/vomit easily",
+        "proprioception": "Odd body posturing, difficuty manipulating small objects",
+        "balance": "Low tolerance for any activity that involves movement or quick changes in the position of the body"
+    }
+},
+{
+    "name": "Intensity: hypo",
+    "index": 7,
+    "senses":{
+        "vision": "Difficulty working out where objects are, touching everything in an unfamiliar room, attracted to bright lights",
+        "hearing": "Sound seeker; enjoy noisy places, create lound noises",
+        "touch": "Appear not to feel pain or hot or cold temperatures",
+        "smell": "Smell everything they can get",
+        "taste": "Mouth and lick objects, regurgitate",
+        "proprioception": "Floppy, unaware of body sensations (eg do not feel hunger), bump into objects, tendancy to fall",
+        "balance": "enjoy and seek all kinds of movement, can spin for a long time without feeling dizzy"
+    }
+}
+]

@@ -1,0 +1,45 @@
+[
+{
+    "name": "Gestalt Percepion",
+    "index": 1,
+    "subtitle": "Inability to distinguish between foreground and background stimuli",
+    "description": "Autistic people are often unable to discriminate between relevant and irrelevant stimuli. What is background to others may equally forground to them: they perceive everything without filtration or selection. It is often hard for autistic people to integrate what they are experiencing into separate and unique entities, to 'break' the whole picture into meaningful parts, to 'group together' and to 'draw the boundaries' around plenty of tiny sensory pieces to make them into meaningful units."
+},
+{
+    "name": "Inability to stop feeling a change",
+    "index": 2,
+    "subtitle": "Inability/difficulty to stop feeling the change",
+    "description": "While non autistic people 'forget' a sensation after a short period of time, some autistic people feel this sensation for much longer. For exaple, when you get dressed in the morning, you can feel your clothes on you skin for a few seconds and then the feeling fades. This is hte same with smell, taste, or any other sense. If the senses are exposed to a continuing stimulus, habituation soon occurs. This is why you do not feel the clothes you are wearing until you change or adjust them. For many autistic individuals, however, the habituation process doesn't work properly and the sensation may last for hours or even days."
+},
+{
+    "name": "Fragmented",
+    "index": 3,
+    "subtitle": "Perception 'in bits'",
+    "description": "Because of gestalt perception, when too much information needs to be processed sumultaneously, autistic people are often not able to 'break' the whole picture into meaningful units and to interpret objects, people and surroundings as constituents of a whole situation. Instead they process 'bits' that happen to get their attention. For example, where a non autistic person may see a room, an autistic person sees a door handle, the leg of the table, a coin on the floor, etc."
+
+},
+{
+    "name": "Distorted",
+    "index": 4,
+    "subtitle" :"Change in the perception of form, space, sound etc",
+    "description": "Although fragmented perception can also be termed 'distorted', in this schema distorted perception doesn't mean fragmentation but rather change (distortion) in the perception of the form, space, sound, etc. Distortions are reported to become worse in the sate of nervous overarousal and information overload. In the field of vision the most common distortions reported by individuals with autism are poor/distorted depth and space perception, seeing a 2D world, 'double vision', distortions of shape, size and movement."
+},
+{
+    "name": "Delayed",
+    "index": 5,
+    "subtitle": "Delayed responses to stimuli",
+    "description": "As a consequence of fragmented perception, autisitc individuals may experience delayed processing, and hence delayed responses to stimuli: 'As a child...it appeared as though I didn't feel pain or discomfort, didn't want help, didn't know what I was saying, didn't listen or didn't watch. By the time some of these sensations, responses or comprehensions were decoded and processed for meaning and personal significance, and I'd accessed the means of responding, I was fifteen minutes, one day, a week, a month, even a year away from the context in which the experiences happened.'"
+},
+{
+    "name": "Intensity: hyper",
+    "index": 6,
+    "subtitle": "Senses seem too acute",
+    "description": "In this schema, 'hypersensitivity' means acute or heightened, or excessive sensitivity to one or more senses. The channel is too open, and as a result, too much stimulation gets in for the brain to handle."
+},
+{
+    "name": "Intensity: hypo",
+    "index": 7,
+    "subtitle": "Below normal sensitivity",
+    "description": "There might be times when autistic people are not getting enough information, when their brain can feel empty and stop processing, and they don't really see anything or hear anything - they are just there. To stimulate their senses they might wave their hands around or rock back and forth, or make strange noises, or hit their head wiht their hands. The channel is not open enough, and as a result, too little of the stimulation gets through and the brain is deprived."
+}
+]
