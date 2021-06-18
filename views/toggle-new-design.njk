@@ -416,6 +416,29 @@ eleventyNavigation:
         return arr;
     }
 
+    // close all open accordion in collapselist
+    // actually closes all open collapse elements in the list
+    // all elements should be bootstrap collapse elements
+    function closeCollapse(collapselist){
+        console.log("hiding collapselist");
+        for (i=0 ; i<collapselist.length ; i++){
+            collapseitem = collapselist[i];
+            console.log("collapse item: " + collapseitem.getAttribute("id") + ' ' + 
+                            collapseitem.classList.contains('show'));
+            if (collapseitem.classList.contains('show')) {
+                console.log("hiding item: " + collapseitem.getAttribute("id"));
+                // convert DOM object to a bootstrap collapse object
+                // default is that the collapse object will toggle show/hide
+                // on initialisation. {'toggle': false } prevents this.
+                // yes this is the behaviour we want, but best to be explicit.
+                // if bootstrap changes this our code will break.
+                collapseobj = new bootstrap.Collapse(collapseitem,{ 'toggle': false });
+                // call hide to close collapse object and cause events to be released
+                collapseobj.hide();
+            }
+        }
+    }
+
 //
 // javascript CONSTANTS
 //
@@ -500,8 +523,7 @@ eleventyNavigation:
             //console.log(accordionCollapse);
 
             // attach event listener to question the $ notation is jQuery
-            str = '#' + accordionCollapse.id;
-            $(str).on('hidden.bs.collapse',function(){
+            accordionCollapse.addEventListener('hide.bs.collapse',function(){
                 console.log("collapse hidden function " + this.id);
                 senseindex = this.getAttribute("senseindex");
                 catindex = this.getAttribute("catindex");
@@ -552,8 +574,10 @@ eleventyNavigation:
     // Get toggle button and assign a function
     const togglebutton = document.getElementById("togglebutton");
     togglebutton.addEventListener('click', function() {
+        closeCollapse(sidebuttons);
         if (togglestatus === "categoryfirst") {
             togglestatus = "sensesfirst";
+            closeCollapse(metacategoryQuestionCollapseList);
             togglebutton.innerHTML = "View Category First";
             //metacategoryTopTabs.style.display = "none";
             for (i=0 ; i<toggleThisPartList.length ; i++) {
@@ -569,6 +593,7 @@ eleventyNavigation:
         }
         else {
             togglestatus = "categoryfirst";
+            closeCollapse(sensesQuestionCollapseList);
             togglebutton.innerHTML = "View Senses First";
             //sensesTopTabs.style.display = "none";
             //metacategoryTopTabs.style.display = "block";
