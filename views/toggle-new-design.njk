@@ -88,7 +88,7 @@ eleventyNavigation:
             <div class="toggleThisPart {{ data.top }}-first" id="sidebar-{{ data.top }}-first" style="display:none" ntopitems="{{ data.json | length }}">
                 
                 <h6 class="sidebar-heading">Meta</h6>
-                <ul class="list-unstyled">
+                <ul class="list-unstyled" id="list-{{data.top}}">
                     {# ------------ Sidebar buttons listed - to be looped depending on TOGGLE ------------ #}
                     {% for topitem in data.json %}
 
@@ -103,18 +103,18 @@ eleventyNavigation:
                         {% endif %}
 
                         <li class="fs-4">
-                            <a type="button" 
-                                        class="btn btn-light" 
+                            <button type="button" 
+                                        class="accordion-button btn-light" 
                                         data-bs-toggle="collapse" 
                                         data-bs-target=".multi-collapse-{{idpart}}"
                                         role="button" 
                                         aria-expanded="{% if loop.index == 1 %}true{%else%}false{% endif %}" 
                                         aria-controls="{{idpart}} body-{{idpart}}">
                                 {{ get_text(topitem, data.top) }}
-                            </a>
+                            </button>
 
                             {# TODO: FUNCTIONALITY remove submenu items and add pagination inside Card instead #}
-                            <ul class="collapse multi-collapse-{{idpart}}{% if loop.index == 1 %} show{% endif %}" id="{{idpart}}">
+                            <ul class="collapse SidebarCollapse multi-collapse-{{idpart}}{% if loop.index == 1 %} show{% endif %}" id="{{idpart}}" data-bs-parent="#list-{{data.top}}">
                                 {# ------------ Category buttons listed - to be looped depending on TOGGLE ------------ #}
                                 {% set mainLoopIndex = loop.index %}
                                 {% for item in sidearray %}
@@ -208,7 +208,7 @@ eleventyNavigation:
                     
                     {# TODO: FUNCTIONALITY add pagination to page-header, always show one category at any given time #}
                     {# ------------ CONTENT DISPLAY multi-collapse inside Body - part to be looped - depends on TOGGLE ------------ #}
-                    <section class="collapse multi-collapse-{{idpart}}{% if loop.index == 1 %} show{%else%}{% endif %}" id="body-{{idpart}}">
+                    <section class="collapse BodyCollapse multi-collapse-{{idpart}}{% if loop.index == 1 %} show{%else%}{% endif %}" id="body-{{idpart}}">
                         {# Page header #}
                         <div class="page-header">
                             {# Page 1 or Category Name - depends on TOGGLE #}
@@ -463,10 +463,17 @@ eleventyNavigation:
     const progressItemList = document.querySelectorAll(".progress-item");
     const progressArray = createArray(+numberOfSenses, +numberOfCategories);
 
+    // create array of cardsContentsList
+    const cardsContentsList = document.querySelectorAll(".card-contents");
+    // create array of cardsContentsList
+    const bodyContentsList = document.querySelectorAll(".BodyCollapse");
+    // create array of sidebarCollapseList
+    const sidebarCollapseList = document.querySelectorAll(".SidebarCollapse");
+
     if (questionAccordionList.length != +sensesTopTabs.getAttribute("ntopitems") * +numberOfCategories)
         console.log("ERROR number of questions sets does not equal number of senses * number of categories");
 
-    //fill progressArray
+//fill progressArray
     for (i=0 ; i<questionAccordionList.length; i++){
         progressItem = progressItemList[i];
         senseindex = progressItem.getAttribute("senseindex");
@@ -571,7 +578,7 @@ eleventyNavigation:
         attachQuestions(metacategoryQuestionCollapseList);
     }
 
-    // Get toggle button and assign a function
+// Get toggle button and assign a function
     const togglebutton = document.getElementById("togglebutton");
     togglebutton.addEventListener('click', function() {
         closeCollapse(sidebuttons);
@@ -750,6 +757,25 @@ eleventyNavigation:
         a.click();
         
     });
+
+// COLLAPSE CATEGORY JAVASCRIPT
+// add eventListener to card, so when it shows, other hides
+    console.log(cardsContentsList.length);
+    function toggleObjects(objectList){
+        for(let i=0; i < objectList.length; i++){
+            card = objectList[i];
+            card.addEventListener('show.bs.collapse', function () {
+                for(let j=0; j < objectList.length; j++){
+                    if(i != j && objectList[j].classList.contains('show')){
+                        objectList[j].classList.toggle('show');
+                    }
+                }
+            });
+        }
+    }
+    //toggleObjects(sidebarCollapseList);
+    //toggleObjects(bodyContentsList);
+    //toggleObjects(cardsContentsList);
 
   console.log('added event listeners')
 </script>
