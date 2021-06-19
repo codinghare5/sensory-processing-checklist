@@ -103,8 +103,9 @@ eleventyNavigation:
                         {% endif %}
 
                         <li class="fs-4">
+                            {# class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne" #}
                             <button type="button" 
-                                        class="accordion-button btn-light" 
+                                        class="accordion-button btn-light{% if loop.index == 1 %}{%else%} collapsed{% endif %}" 
                                         data-bs-toggle="collapse" 
                                         data-bs-target=".multi-collapse-{{idpart}}"
                                         role="button" 
@@ -114,7 +115,7 @@ eleventyNavigation:
                             </button>
 
                             {# TODO: FUNCTIONALITY remove submenu items and add pagination inside Card instead #}
-                            <ul class="collapse SidebarCollapse multi-collapse-{{idpart}}{% if loop.index == 1 %} show{% endif %}" id="{{idpart}}" data-bs-parent="#list-{{data.top}}">
+                            <ul class="SidebarCollapse multi-collapse-{{idpart}} collapse{% if loop.index == 1 %} show{% endif %}" id="{{idpart}}" data-bs-parent="#list-{{data.top}}">
                                 {# ------------ Category buttons listed - to be looped depending on TOGGLE ------------ #}
                                 {% set mainLoopIndex = loop.index %}
                                 {% for item in sidearray %}
@@ -131,9 +132,10 @@ eleventyNavigation:
                                         {# TODO: coresponding icon, class="bi bi-{icon-slug}" #}
                                         {# COLLAPSE CATEGORY #}
                                         {# <i class="bi bi-toggles"></i> #}
+                                        {# class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne" #}
                                         <button type="button"  
                                                     id="button-{{base_id}}" 
-                                                    class="btn btn-light" 
+                                                    class="accordion-button btn-light{% if mainLoopIndex == 1 and loop.index == 1 %}{%else%} collapsed{% endif %}" 
                                                     data-bs-toggle="collapse" 
                                                     data-bs-target="#collapse-{{base_id}}" 
                                                     aria-expanded="{% if mainLoopIndex == 1 and loop.index == 1 %}true{%else%}false{% endif %}" 
@@ -208,7 +210,7 @@ eleventyNavigation:
                     
                     {# TODO: FUNCTIONALITY add pagination to page-header, always show one category at any given time #}
                     {# ------------ CONTENT DISPLAY multi-collapse inside Body - part to be looped - depends on TOGGLE ------------ #}
-                    <section class="collapse BodyCollapse multi-collapse-{{idpart}}{% if loop.index == 1 %} show{%else%}{% endif %}" id="body-{{idpart}}">
+                    <section class="BodyCollapse multi-collapse-{{idpart}} collapse{% if loop.index == 1 %} show{%else%}{% endif %}" id="body-{{idpart}}">
                         {# Page header #}
                         <div class="page-header">
                             {# Page 1 or Category Name - depends on TOGGLE #}
@@ -221,7 +223,7 @@ eleventyNavigation:
                                 <div class="col-lg-12 mb-5">
 
                                     {# Card #}
-                                    <div class="card">
+                                    <div class="card" id="accordion-parent-{{idpart}}">
 
                                         {% set mainLoopIndex = loop.index %}
                                         {% for item in sidearray %}
@@ -238,7 +240,8 @@ eleventyNavigation:
                                             {# COLLAPSE CATEGORY #}
                                             <div class="card-contents SideCollapse collapse{% if mainLoopIndex == 1 and loop.index == 1 %} show{%else%}{% endif %}" id="collapse-{{base_id}}"
                                                         sideindex={{sideindex}}
-                                                        sidetype="{{ data.top }}">
+                                                        sidetype="{{ data.top }}"
+                                                        data-bs-parent="#accordion-parent-{{idpart}}">
                                                 {# Card - header #}
                                                 <div class="card-header d-flex justify-content-between">
                                                     {# 1. Category or Sense Name - depends on TOGGLE #}
