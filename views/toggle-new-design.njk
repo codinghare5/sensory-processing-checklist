@@ -10,7 +10,9 @@ eleventyNavigation:
 {# Legend:
     BODY, Body - main part, page's content, the Body of the whole element
 
-    COLLAPSE CATEGORY - corresponding sidebar button and its collapsible element further down
+    BUTTON - toggling, collapsing
+
+    COLLAPSE CATEGORY, collapse - corresponding sidebar button and its collapsible element further down
 
     CONSTANTS - nunjucks constants on top, javascript constants on the bottom
 
@@ -27,6 +29,8 @@ eleventyNavigation:
     QUESTION - question's contents go here
 
     SIDEBAR, Sidebar - main part, page's sidebar, the Sidebar of the whole element
+
+    SHOW - places where class 'show' happends to be
 
     TODO - easly find something to do next, tag some feature
 
@@ -103,18 +107,29 @@ eleventyNavigation:
                         {% endif %}
 
                         <li class="fs-4">
+<<<<<<< Updated upstream
                             <a type="button" 
                                         class="btn btn-light" 
+=======
+                            {# BUTTON collapsed #}
+                            <button type="button" 
+                                        class="accordion-button btn-light collapsed" 
+>>>>>>> Stashed changes
                                         data-bs-toggle="collapse" 
                                         data-bs-target=".multi-collapse-{{idpart}}"
                                         role="button" 
-                                        aria-expanded="{% if loop.index == 1 %}true{%else%}false{% endif %}" 
-                                        aria-controls="{{idpart}} body-{{idpart}}">
+                                        aria-expanded="false" 
+                                        aria-controls="body-{{idpart}} {{idpart}}">
                                 {{ get_text(topitem, data.top) }}
                             </a>
 
                             {# TODO: FUNCTIONALITY remove submenu items and add pagination inside Card instead #}
+<<<<<<< Updated upstream
                             <ul class="collapse multi-collapse-{{idpart}}{% if loop.index == 1 %} show{% endif %}" id="{{idpart}}">
+=======
+                            {# SHOW element#}
+                            <ul class="SidebarCollapse multi-collapse-{{idpart}} collapse" id="{{idpart}}" data-bs-parent="#list-{{data.top}}">
+>>>>>>> Stashed changes
                                 {# ------------ Category buttons listed - to be looped depending on TOGGLE ------------ #}
                                 {% set mainLoopIndex = loop.index %}
                                 {% for item in sidearray %}
@@ -131,12 +146,20 @@ eleventyNavigation:
                                         {# TODO: coresponding icon, class="bi bi-{icon-slug}" #}
                                         {# COLLAPSE CATEGORY #}
                                         {# <i class="bi bi-toggles"></i> #}
+<<<<<<< Updated upstream
                                         <button type="button"  
                                                     id="button-{{base_id}}" 
                                                     class="btn btn-light" 
+=======
+                                        {# class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne" #}
+                                        {# BUTTON collapsed #}
+                                        <button type="button"  
+                                                    id="button-{{base_id}}" 
+                                                    class="accordion-button btn-light collapsed" 
+>>>>>>> Stashed changes
                                                     data-bs-toggle="collapse" 
                                                     data-bs-target="#collapse-{{base_id}}" 
-                                                    aria-expanded="{% if mainLoopIndex == 1 and loop.index == 1 %}true{%else%}false{% endif %}" 
+                                                    aria-expanded="false" 
                                                     aria-controls="collapse-{{base_id}}">
                                             {{ get_text(item,data.side) }}
                                         </button>
@@ -192,6 +215,7 @@ eleventyNavigation:
             
             {# ------------ CONTENT Body part to be looped - depends on TOGGLE ------------ #}
             {% for data in datalist %}
+            {# metacategory-first / sense-first - main body container #}
             <div class="container-xl toggleThisPart {{ data.top }}-first" id="{{ data.top }}-first" style="display:none" ntopitems="{{ data.json | length }}">
 
                 {% for topitem in data.json %}
@@ -208,7 +232,14 @@ eleventyNavigation:
                     
                     {# TODO: FUNCTIONALITY add pagination to page-header, always show one category at any given time #}
                     {# ------------ CONTENT DISPLAY multi-collapse inside Body - part to be looped - depends on TOGGLE ------------ #}
+<<<<<<< Updated upstream
                     <section class="collapse multi-collapse-{{idpart}}{% if loop.index == 1 %} show{%else%}{% endif %}" id="body-{{idpart}}">
+=======
+                    {# SHOW element #}
+                    <section class="BodyCollapse multi-collapse-{{idpart}} collapse" 
+                                    id="body-{{idpart}}"
+                                    data-bs-parent="#list-{{data.top}}">
+>>>>>>> Stashed changes
                         {# Page header #}
                         <div class="page-header">
                             {# Page 1 or Category Name - depends on TOGGLE #}
@@ -236,7 +267,15 @@ eleventyNavigation:
                                             {% set base_id = idpart + '-' + sideindex %}
 
                                             {# COLLAPSE CATEGORY #}
+<<<<<<< Updated upstream
                                             <div class="card-contents collapse{% if mainLoopIndex == 1 and loop.index == 1 %} show{%else%}{% endif %}" id="collapse-{{base_id}}">
+=======
+                                            {# SHOW element #}
+                                            <div class="card-contents SideCollapse collapse" id="collapse-{{base_id}}"
+                                                        sideindex={{sideindex}}
+                                                        sidetype="{{ data.top }}"
+                                                        data-bs-parent="#accordion-parent-{{idpart}}">
+>>>>>>> Stashed changes
                                                 {# Card - header #}
                                                 <div class="card-header d-flex justify-content-between">
                                                     {# 1. Category or Sense Name - depends on TOGGLE #}
@@ -287,6 +326,7 @@ eleventyNavigation:
 
                                                                 <div class="accordion-item">
                                                                     <h2 class="accordion-header" id="flush-heading-{{ base_id }}">
+                                                                        {# BUTTON collapsed #}
                                                                         <button class="accordion-button collapsed" type="button" 
                                                                                     data-bs-toggle="collapse" 
                                                                                     data-bs-target="#collapse-{{ idpart }}-{{ sideindex }}-{{ bodyindex }}" 
@@ -448,6 +488,30 @@ eleventyNavigation:
         progressArray[senseindex][catindex] = progressItem;
     }
 
+<<<<<<< Updated upstream
+=======
+    // function to highlight one column of the progressArray
+     function setColumnBorderColour(colindex,colour,width) {
+        //console.log(progressArray[0][0].parentNode);
+        progressArray[0][colindex].parentNode.style.border = width + "px solid " + colour;
+    }
+    setColumnBorderColour(0,"black",2);
+
+    // add event listener to sidebuttons
+    // for (i=0 ; i<sidebuttons.length ; i++){
+    //     sidebuttons[i].addEventListener('shown.bs.collapse',function() {
+    //         console.log("in event listener for side collapse show ");
+    //         if (this.getAttribute("sidetype") === 'metacategory')
+    //             setColumnBorderColour(+this.getAttribute("sideindex") - 1, "black",2);
+    //     });
+    //     sidebuttons[i].addEventListener('hide.bs.collapse',function() {
+    //         console.log("in event listener for side collapse hide ");
+    //         if (this.getAttribute("sidetype") === 'metacategory')
+    //             setColumnBorderColour(+this.getAttribute("sideindex") - 1, "LightGray",2);
+    //     })
+    // }
+
+>>>>>>> Stashed changes
     // fill questionArray
     for (i=0 ; i<questionAccordionList.length; i++){
         question = questionAccordionList[i];
@@ -464,6 +528,7 @@ eleventyNavigation:
     const metacategoryQuestionCollapseList = document.querySelectorAll(".QuestionCollapse-metacategory");
     const toggleThisPartList = document.querySelectorAll(".toggleThisPart");
     const metacategoriesFirstList = document.querySelectorAll(".metacategory-first");
+    const sensesFirstList = document.querySelectorAll(".sense-first");
     
     function attachQuestions(questionCollapseList){
         for (i=0 ; i<questionCollapseList.length ; i++){
@@ -527,8 +592,15 @@ eleventyNavigation:
     // Get toggle button and assign a function
     const togglebutton = document.getElementById("togglebutton");
     togglebutton.addEventListener('click', function() {
+<<<<<<< Updated upstream
         if (togglestatus === "categoryfirst") {
             togglestatus = "sensesfirst";
+=======
+        //closeCollapse(sidebuttons);
+        if (togglestatus === "categoryfirst") {
+            togglestatus = "sensesfirst";
+            //closeCollapse(metacategoryQuestionCollapseList);
+>>>>>>> Stashed changes
             togglebutton.innerHTML = "View Category First";
             //metacategoryTopTabs.style.display = "none";
             for (i=0 ; i<toggleThisPartList.length ; i++) {
@@ -544,6 +616,10 @@ eleventyNavigation:
         }
         else {
             togglestatus = "categoryfirst";
+<<<<<<< Updated upstream
+=======
+            //closeCollapse(sensesQuestionCollapseList);
+>>>>>>> Stashed changes
             togglebutton.innerHTML = "View Senses First";
             //sensesTopTabs.style.display = "none";
             //metacategoryTopTabs.style.display = "block";
@@ -701,6 +777,278 @@ eleventyNavigation:
         
     });
 
+<<<<<<< Updated upstream
+=======
+// COLLAPSE CATEGORY JAVASCRIPT
+// add eventListener to card, so when it shows, other hides
+    console.log(cardsContentsList.length);
+    function toggleObjects(objectList){
+        for(let i=0; i < objectList.length; i++){
+            card = objectList[i];
+            card.addEventListener('show.bs.collapse', function () {
+                for(let j=0; j < objectList.length; j++){
+                    if(i != j && objectList[j].classList.contains('show')){
+                        objectList[j].classList.toggle('show');
+                        if(objectList[j].querySelectorAll('.card-contents').length){
+                            console.log(objectList[j].querySelectorAll('.card-contents')[0].classList);
+                        }
+                    }
+                }
+            });
+            /*card.addEventListener('hide.bs.collapse', function () {
+                for(let j=0; j < objectList.length; j++){
+                    if(i != j && objectList[j].classList.contains('show')){
+                        objectList[j].classList.toggle('show');
+                    }
+                }
+            });*/
+        }
+    }
+    //toggleObjects(sidebarCollapseList);
+    //toggleObjects(bodyContentsList);
+    //toggleObjects(cardsContentsList);
+
+
+    function prepare2dArrayById(id){
+        // ------ metacategory-first / sense-first ------ main body container
+        // all collapsible elements have got a parent
+        // grab it first then
+        metabuttons = document.getElementById(id);
+        // make a list of them
+        list = metabuttons.children;
+        var result = {};
+
+        // this is just some fancy way to loop over it
+        // it just creates an array from iterable object
+        // and holds the current oneinside 'item' variable
+        Array.prototype.map.call(list, item => {
+            // this part selects all rendered card contents
+            // we need them in one place to loop over and see if are showing
+            cardContents = item.querySelectorAll('.card-contents');
+            id = item.getAttribute('id');
+            // take main body container's id
+            // and use it to create an object
+            // where
+            // 'containers id' : [ container, it's cards ]
+            result[id] = [item, cardContents];
+        });
+
+        //console.log(result);
+        return result;
+    }
+
+    metaTree = prepare2dArrayById('metacategory-first');
+
+    function addEvents(){
+        metaButtons = document.getElementById('metacategory-first').children;
+        senseButtons = document.getElementById('sense-first').children;
+        allCollapsibles = sidebarCollapseList;
+        //console.log(metaButtons);
+        cardContentList = [];
+        
+
+        Array.prototype.map.call(metaButtons, collapse => {
+            cardContents = collapse.querySelectorAll('.card-contents');
+            id = collapse.getAttribute('id');
+            //console.log(cardContents);
+            if(collapse.classList.contains('show')){
+                collapse.classList.toggle('show');
+            };
+            Array.prototype.map.call(cardContents, card => {
+                if(card.classList.contains('show')){
+                    card.classList.toggle('show');
+                }
+            });
+
+            collapse.addEventListener('hide.bs.collapse', function () {
+                thisId = this.getAttribute('id');
+                console.log(metaButtons);
+                const {buttons} = metaButtons;
+                for(button in buttons){
+                    console.log(button)
+                    buttonId = button.getAttribute('id');
+                    cardContentList = button.querySelectorAll('.card-contents');
+                    const {cards} = cardContentList;
+                    if(buttonId == thisId){
+                        for(card in cards){
+                           cardCl = card.classList;
+                           if(cardCl.contains('show')){
+                                collapseObj = new bootstrap.Collapse(card,{ 'toggle': false });
+                                // call hide to close collapse object and cause events to be released
+                                collapseObj.hide();
+                                collapseObj = new bootstrap.Collapse(card,{ 'toggle': true });
+                           }
+                        }
+                    } else {
+                        for(card in cards){
+                           cardCl = card.classList;
+                           if(cardCl.contains('show')){
+                                collapseObj = new bootstrap.Collapse(card,{ 'toggle': false });
+                                // call hide to close collapse object and cause events to be released
+                                collapseObj.hide();
+                                collapseObj = new bootstrap.Collapse(card,{ 'toggle': true });
+                           }
+                        }
+                    }
+                }
+            });
+            collapse.addEventListener('show.bs.collapse', function () {
+                thisId = this.getAttribute('id');
+                const {buttons} = metaButtons;
+                for(button in buttons){
+                    console.log(button)
+                    buttonId = button.getAttribute('id');
+                    cardContentList = button.querySelectorAll('.card-contents');
+                    const {cards} = cardContentList;
+                    if(!(buttonId == thisId)){
+                        for(card in cards){
+                           cardCl = card.classList;
+                           if(cardCl.contains('show')){
+                                collapseObj = new bootstrap.Collapse(card,{ 'toggle': false });
+                                // call hide to close collapse object and cause events to be released
+                                collapseObj.hide();
+                                collapseObj = new bootstrap.Collapse(card,{ 'toggle': true });
+                           }
+                        }
+                    } else {
+                        cardCl = cards[0].classList;
+                        if(cardCl.contains('show')){
+                            collapseObj = new bootstrap.Collapse(card,{ 'toggle': false });
+                            // call hide to close collapse object and cause events to be released
+                            collapseObj.show();
+                            collapseObj = new bootstrap.Collapse(card,{ 'toggle': true });
+                        }
+                        else {
+                            collapseObj = new bootstrap.Collapse(card,{ 'toggle': false });
+                            // call hide to close collapse object and cause events to be released
+                            collapseObj.show();
+                            collapseObj = new bootstrap.Collapse(card,{ 'toggle': true });
+                        }
+                    }
+                }
+            });
+        });
+    }
+
+    //addEvents();
+
+    var theState = {"changeState": true}
+
+    function addEventsToAllSidebarButtons(tree){
+        for(var node in tree){
+            collapsible = tree[node][0];
+            //console.log('-----------------');
+            // Array.prototype.map.call(tree[node][1], card => {
+            //     //console.log(card);
+            //     card.addEventListener('show.bs.collapse',function() {
+            //         console.log("in event listener for side collapse show ");
+            //         console.log(this);
+            //         if (this.getAttribute("sidetype") === 'metacategory')
+            //             setColumnBorderColour(+this.getAttribute("sideindex") - 1, "black",2);
+                    
+            //     });
+            //     card.addEventListener('hide.bs.collapse',function() {
+            //         console.log("in event listener for side collapse hide ");
+            //         console.log(this);
+            //         if (this.getAttribute("sidetype") === 'metacategory')
+            //             setColumnBorderColour(+this.getAttribute("sideindex") - 1, "LightGray",2);
+            //     });
+            // });
+            collapsible.addEventListener('show.bs.collapse', function () {
+                show = false;
+                //console.log(this);
+                thisId = this.getAttribute('id');
+                for(branch in metaTree){
+                    metaBranchClassList = metaTree[branch][0].classList;
+                    isShowing = metaBranchClassList.contains('show');
+                    if(!(thisId == branch) && isShowing){
+                        metaBranchClassList.toggle('show');
+                        theState['changeState'] = true;
+                        Array.prototype.map.call(metaTree[branch][1], card => {
+                            //console.log(card);
+                            cardClassList = card.classList;
+                            isShowing = cardClassList.contains('show');
+                            if(isShowing){
+                                //console.log(card);
+                                //cardClassList.toggle('show');
+                                collapseobj = new bootstrap.Collapse(card, { 'toggle': false });
+                                var obj = bootstrap.Collapse.getInstance(card);
+                                console.log('---getInstance---');
+                                console.log(obj);
+                                console.log('---getInstance---');
+                                // call hide to close collapse object and cause events to be released
+                                collapseobj.hide();
+                                //collapseobj = new bootstrap.Collapse(card,{ 'toggle': true });
+                            }
+                        });
+                    }
+                }
+            });
+            collapsible.addEventListener('shown.bs.collapse', function () {
+                thisId = this.getAttribute('id');
+                console.log(metaTree[thisId][1]);
+                show = false;
+                show = Array.prototype.some.call(metaTree[thisId][1], card => {
+                    cardClassList = card.classList;
+                    isShowing = cardClassList.contains('show');
+                    return isShowing;
+                });
+                console.log('---show---');
+                console.log(show);
+                console.log(theState['changeState']);
+                console.log('---show---');
+                if(show === false && theState['changeState']){
+                    theState['changeState'] = false;
+                    console.log('---state---');
+                    console.log(theState['changeState']);
+                    console.log('---state---');
+                    card = metaTree[thisId][1][0];
+                    //metaTree[branch][1][0].classList.toggle('show');
+                    collapseobj = new bootstrap.Collapse(card,{ 'toggle': false });
+                    // call hide to close collapse object and cause events to be released
+                    collapseobj.show();
+                }
+
+                // for(branch in metaTree){
+                //     metaBranchClassList = metaTree[branch][0].classList;
+                //     isShowing = metaBranchClassList.contains('show');
+                //     console.log('------shown------');
+                //     console.log(branch);
+                //     console.log(isShowing);
+                //     if((thisId == branch) && isShowing){
+                //         console.log('If body has showed...');
+                //         show = false;
+                //         show = Array.prototype.some.call(metaTree[branch][1], card => {
+                //             cardClassList = card.classList;
+                //             isShowing = cardClassList.contains('show');
+                //             return isShowing;
+                //         });
+                //         // const fruits = ['apple', 'banana', 'mango', 'guava'];
+
+                //         // function checkAvailability(arr, val) {
+                //         //     return arr.some(function(arrVal) {
+                //         //         return val === arrVal;
+                //         //     });
+                //         // }
+                //         console.log('---show---');
+                //         console.log(show);
+                //         console.log('---show---');
+                //         if(show == false){
+                //             card = metaTree[branch][1][0];
+                //             //metaTree[branch][1][0].classList.toggle('show');
+                //             collapseobj = new bootstrap.Collapse(card,{ 'toggle': false });
+                //             // call hide to close collapse object and cause events to be released
+                //             collapseobj.hide();
+                //         }
+                //     }
+                // }
+            });
+        }
+    }
+
+    addEventsToAllSidebarButtons(metaTree);
+
+>>>>>>> Stashed changes
   console.log('added event listeners')
 </script>
 
