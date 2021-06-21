@@ -22,6 +22,8 @@ eleventyNavigation:
 
     END - there is very high probability, that an element ends here :)
 
+    INITIAL STATE - state object; keeps things together when events fire
+
     page-body - class for the Body
 
     part to be looped - for loop is being used for this part - DRY convention
@@ -92,7 +94,7 @@ eleventyNavigation:
             <div class="toggleThisPart {{ data.top }}-first" id="sidebar-{{ data.top }}-first" style="display:none" ntopitems="{{ data.json | length }}">
                 
                 <h6 class="sidebar-heading">Meta</h6>
-                <ul class="list-unstyled">
+                <ul class="list-unstyled" id="list-{{data.top}}">
                     {# ------------ Sidebar buttons listed - to be looped depending on TOGGLE ------------ #}
                     {% for topitem in data.json %}
 
@@ -107,29 +109,20 @@ eleventyNavigation:
                         {% endif %}
 
                         <li class="fs-4">
-<<<<<<< Updated upstream
-                            <a type="button" 
-                                        class="btn btn-light" 
-=======
                             {# BUTTON collapsed #}
                             <button type="button" 
                                         class="accordion-button btn-light collapsed" 
->>>>>>> Stashed changes
                                         data-bs-toggle="collapse" 
                                         data-bs-target=".multi-collapse-{{idpart}}"
                                         role="button" 
                                         aria-expanded="false" 
                                         aria-controls="body-{{idpart}} {{idpart}}">
                                 {{ get_text(topitem, data.top) }}
-                            </a>
+                            </button>
 
                             {# TODO: FUNCTIONALITY remove submenu items and add pagination inside Card instead #}
-<<<<<<< Updated upstream
-                            <ul class="collapse multi-collapse-{{idpart}}{% if loop.index == 1 %} show{% endif %}" id="{{idpart}}">
-=======
                             {# SHOW element#}
                             <ul class="SidebarCollapse multi-collapse-{{idpart}} collapse" id="{{idpart}}" data-bs-parent="#list-{{data.top}}">
->>>>>>> Stashed changes
                                 {# ------------ Category buttons listed - to be looped depending on TOGGLE ------------ #}
                                 {% set mainLoopIndex = loop.index %}
                                 {% for item in sidearray %}
@@ -146,17 +139,11 @@ eleventyNavigation:
                                         {# TODO: coresponding icon, class="bi bi-{icon-slug}" #}
                                         {# COLLAPSE CATEGORY #}
                                         {# <i class="bi bi-toggles"></i> #}
-<<<<<<< Updated upstream
-                                        <button type="button"  
-                                                    id="button-{{base_id}}" 
-                                                    class="btn btn-light" 
-=======
                                         {# class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne" #}
                                         {# BUTTON collapsed #}
                                         <button type="button"  
                                                     id="button-{{base_id}}" 
                                                     class="accordion-button btn-light collapsed" 
->>>>>>> Stashed changes
                                                     data-bs-toggle="collapse" 
                                                     data-bs-target="#collapse-{{base_id}}" 
                                                     aria-expanded="false" 
@@ -192,16 +179,16 @@ eleventyNavigation:
             </div> #}
             
             {# create progress bar #}
-            <div class="container-xl progress-bar bg-white mb-3">
+            <div class="container-xl progress-bar bg-white">
                 <div class="row">
                     {% for metacat in meta %}
                         {% for category in metacat.categories %}
                         {% set catindex = category.index %}
                     
-                        <div class="col p-0">
+                        <div class="col p-0" style="border: 2px solid LightGray">
                             {% for sense in category.senses %}
-                            <div class="progress-item border border-1" 
-                                style="width: auto; height:20px;"
+                            <div class="progress-item" 
+                                style="width: auto; height:20px; border: 1px solid; border-color: LightGray;"
                                 senseindex="{{ loop.index - 1 }}"
                                 catindex="{{ catindex - 1 }}">
                             </div>
@@ -215,7 +202,7 @@ eleventyNavigation:
             
             {# ------------ CONTENT Body part to be looped - depends on TOGGLE ------------ #}
             {% for data in datalist %}
-            {# metacategory-first / sense-first - main body container #}
+            {# THIS1 - metacategory-first / sense-first - main body container #}
             <div class="container-xl toggleThisPart {{ data.top }}-first" id="{{ data.top }}-first" style="display:none" ntopitems="{{ data.json | length }}">
 
                 {% for topitem in data.json %}
@@ -232,14 +219,10 @@ eleventyNavigation:
                     
                     {# TODO: FUNCTIONALITY add pagination to page-header, always show one category at any given time #}
                     {# ------------ CONTENT DISPLAY multi-collapse inside Body - part to be looped - depends on TOGGLE ------------ #}
-<<<<<<< Updated upstream
-                    <section class="collapse multi-collapse-{{idpart}}{% if loop.index == 1 %} show{%else%}{% endif %}" id="body-{{idpart}}">
-=======
                     {# SHOW element #}
                     <section class="BodyCollapse multi-collapse-{{idpart}} collapse" 
                                     id="body-{{idpart}}"
                                     data-bs-parent="#list-{{data.top}}">
->>>>>>> Stashed changes
                         {# Page header #}
                         <div class="page-header">
                             {# Page 1 or Category Name - depends on TOGGLE #}
@@ -252,7 +235,7 @@ eleventyNavigation:
                                 <div class="col-lg-12 mb-5">
 
                                     {# Card #}
-                                    <div class="card">
+                                    <div class="card" id="accordion-parent-{{idpart}}">
 
                                         {% set mainLoopIndex = loop.index %}
                                         {% for item in sidearray %}
@@ -267,15 +250,11 @@ eleventyNavigation:
                                             {% set base_id = idpart + '-' + sideindex %}
 
                                             {# COLLAPSE CATEGORY #}
-<<<<<<< Updated upstream
-                                            <div class="card-contents collapse{% if mainLoopIndex == 1 and loop.index == 1 %} show{%else%}{% endif %}" id="collapse-{{base_id}}">
-=======
                                             {# SHOW element #}
                                             <div class="card-contents SideCollapse collapse" id="collapse-{{base_id}}"
                                                         sideindex={{sideindex}}
                                                         sidetype="{{ data.top }}"
                                                         data-bs-parent="#accordion-parent-{{idpart}}">
->>>>>>> Stashed changes
                                                 {# Card - header #}
                                                 <div class="card-header d-flex justify-content-between">
                                                     {# 1. Category or Sense Name - depends on TOGGLE #}
@@ -454,6 +433,29 @@ eleventyNavigation:
         return arr;
     }
 
+    // close all open accordion in collapselist
+    // actually closes all open collapse elements in the list
+    // all elements should be bootstrap collapse elements
+    function closeCollapse(collapselist){
+        console.log("hiding collapselist");
+        for (i=0 ; i<collapselist.length ; i++){
+            collapseitem = collapselist[i];
+            console.log("collapse item: " + collapseitem.getAttribute("id") + ' ' + 
+                            collapseitem.classList.contains('show'));
+            if (collapseitem.classList.contains('show')) {
+                console.log("hiding item: " + collapseitem.getAttribute("id"));
+                // convert DOM object to a bootstrap collapse object
+                // default is that the collapse object will toggle show/hide
+                // on initialisation. {'toggle': false } prevents this.
+                // yes this is the behaviour we want, but best to be explicit.
+                // if bootstrap changes this our code will break.
+                collapseobj = new bootstrap.Collapse(collapseitem,{ 'toggle': false });
+                // call hide to close collapse object and cause events to be released
+                collapseobj.hide();
+            }
+        }
+    }
+
 //
 // javascript CONSTANTS
 //
@@ -461,6 +463,8 @@ eleventyNavigation:
     var togglestatus = "categoryfirst";
     const sensesTopTabs = document.getElementById("sense-first");
     const metacategoryTopTabs = document.getElementById("metacategory-first");
+    const sidebuttons = document.querySelectorAll(".SideCollapse");
+    console.log('length of sidebuttons: ' + sidebuttons.length);
     metacategoryTopTabs.style.display = "block";
 
     // create 2D array of questions and 2D array of progress-item
@@ -476,10 +480,17 @@ eleventyNavigation:
     const progressItemList = document.querySelectorAll(".progress-item");
     const progressArray = createArray(+numberOfSenses, +numberOfCategories);
 
+    // create array of cardsContentsList
+    const cardsContentsList = document.querySelectorAll(".card-contents");
+    // create array of cardsContentsList
+    const bodyContentsList = document.querySelectorAll(".BodyCollapse");
+    // create array of sidebarCollapseList
+    const sidebarCollapseList = document.querySelectorAll(".SidebarCollapse");
+
     if (questionAccordionList.length != +sensesTopTabs.getAttribute("ntopitems") * +numberOfCategories)
         console.log("ERROR number of questions sets does not equal number of senses * number of categories");
 
-    //fill progressArray
+//fill progressArray
     for (i=0 ; i<questionAccordionList.length; i++){
         progressItem = progressItemList[i];
         senseindex = progressItem.getAttribute("senseindex");
@@ -488,8 +499,6 @@ eleventyNavigation:
         progressArray[senseindex][catindex] = progressItem;
     }
 
-<<<<<<< Updated upstream
-=======
     // function to highlight one column of the progressArray
      function setColumnBorderColour(colindex,colour,width) {
         //console.log(progressArray[0][0].parentNode);
@@ -511,7 +520,6 @@ eleventyNavigation:
     //     })
     // }
 
->>>>>>> Stashed changes
     // fill questionArray
     for (i=0 ; i<questionAccordionList.length; i++){
         question = questionAccordionList[i];
@@ -537,11 +545,10 @@ eleventyNavigation:
             catindex = accordionCollapse.getAttribute("catindex");
             
             accordionCollapse.appendChild(questionArray[senseindex][catindex]);
-            console.log(accordionCollapse);
+            //console.log(accordionCollapse);
 
             // attach event listener to question the $ notation is jQuery
-            str = '#' + accordionCollapse.id;
-            $(str).on('hidden.bs.collapse',function(){
+            accordionCollapse.addEventListener('hide.bs.collapse',function(){
                 console.log("collapse hidden function " + this.id);
                 senseindex = this.getAttribute("senseindex");
                 catindex = this.getAttribute("catindex");
@@ -589,18 +596,13 @@ eleventyNavigation:
         attachQuestions(metacategoryQuestionCollapseList);
     }
 
-    // Get toggle button and assign a function
+// Get toggle button and assign a function
     const togglebutton = document.getElementById("togglebutton");
     togglebutton.addEventListener('click', function() {
-<<<<<<< Updated upstream
-        if (togglestatus === "categoryfirst") {
-            togglestatus = "sensesfirst";
-=======
         //closeCollapse(sidebuttons);
         if (togglestatus === "categoryfirst") {
             togglestatus = "sensesfirst";
             //closeCollapse(metacategoryQuestionCollapseList);
->>>>>>> Stashed changes
             togglebutton.innerHTML = "View Category First";
             //metacategoryTopTabs.style.display = "none";
             for (i=0 ; i<toggleThisPartList.length ; i++) {
@@ -616,10 +618,7 @@ eleventyNavigation:
         }
         else {
             togglestatus = "categoryfirst";
-<<<<<<< Updated upstream
-=======
             //closeCollapse(sensesQuestionCollapseList);
->>>>>>> Stashed changes
             togglebutton.innerHTML = "View Senses First";
             //sensesTopTabs.style.display = "none";
             //metacategoryTopTabs.style.display = "block";
@@ -777,8 +776,6 @@ eleventyNavigation:
         
     });
 
-<<<<<<< Updated upstream
-=======
 // COLLAPSE CATEGORY JAVASCRIPT
 // add eventListener to card, so when it shows, other hides
     console.log(cardsContentsList.length);
@@ -837,6 +834,9 @@ eleventyNavigation:
         return result;
     }
 
+    // SIDEBAR NODES, main structure of metacategory-first as an object
+    // simplifies the work with buttons, events and cards
+    // structure: {'containers id' : [ container, it's cards ]}
     metaTree = prepare2dArrayById('metacategory-first');
 
     function addEvents(){
@@ -932,30 +932,16 @@ eleventyNavigation:
 
     //addEvents();
 
+    // INITIAL STATE
+    // it helps keep things together when events trigger
     var theState = {"changeState": true}
 
     function addEventsToAllSidebarButtons(tree){
         for(var node in tree){
             collapsible = tree[node][0];
-            //console.log('-----------------');
-            // Array.prototype.map.call(tree[node][1], card => {
-            //     //console.log(card);
-            //     card.addEventListener('show.bs.collapse',function() {
-            //         console.log("in event listener for side collapse show ");
-            //         console.log(this);
-            //         if (this.getAttribute("sidetype") === 'metacategory')
-            //             setColumnBorderColour(+this.getAttribute("sideindex") - 1, "black",2);
-                    
-            //     });
-            //     card.addEventListener('hide.bs.collapse',function() {
-            //         console.log("in event listener for side collapse hide ");
-            //         console.log(this);
-            //         if (this.getAttribute("sidetype") === 'metacategory')
-            //             setColumnBorderColour(+this.getAttribute("sideindex") - 1, "LightGray",2);
-            //     });
-            // });
+            // SHOW - add event listener to THIS1
+            // this one listens if we change between meta
             collapsible.addEventListener('show.bs.collapse', function () {
-                show = false;
                 //console.log(this);
                 thisId = this.getAttribute('id');
                 for(branch in metaTree){
@@ -971,84 +957,46 @@ eleventyNavigation:
                             if(isShowing){
                                 //console.log(card);
                                 //cardClassList.toggle('show');
-                                collapseobj = new bootstrap.Collapse(card, { 'toggle': false });
+                                collapseobj = new bootstrap.Collapse(card, { 'toggle': true });
                                 var obj = bootstrap.Collapse.getInstance(card);
-                                console.log('---getInstance---');
-                                console.log(obj);
-                                console.log('---getInstance---');
+                                //console.log('---getInstance---');
+                                //console.log(obj);
+                                //console.log('---getInstance---');
                                 // call hide to close collapse object and cause events to be released
                                 collapseobj.hide();
-                                //collapseobj = new bootstrap.Collapse(card,{ 'toggle': true });
                             }
                         });
                     }
                 }
             });
+            // SHOWN event listener
             collapsible.addEventListener('shown.bs.collapse', function () {
                 thisId = this.getAttribute('id');
-                console.log(metaTree[thisId][1]);
+                //console.log(metaTree[thisId][1]);
                 show = false;
                 show = Array.prototype.some.call(metaTree[thisId][1], card => {
                     cardClassList = card.classList;
                     isShowing = cardClassList.contains('show');
                     return isShowing;
                 });
-                console.log('---show---');
-                console.log(show);
-                console.log(theState['changeState']);
-                console.log('---show---');
+                //console.log('---show---');
+                //console.log(show);
+                //console.log(theState['changeState']);
+                //console.log('---show---');
                 if(show === false && theState['changeState']){
                     theState['changeState'] = false;
-                    console.log('---state---');
-                    console.log(theState['changeState']);
-                    console.log('---state---');
+                    //console.log('---state---');
+                    //console.log(theState['changeState']);
+                    //console.log('---state---');
                     card = metaTree[thisId][1][0];
-                    //metaTree[branch][1][0].classList.toggle('show');
-                    collapseobj = new bootstrap.Collapse(card,{ 'toggle': false });
-                    // call hide to close collapse object and cause events to be released
-                    collapseobj.show();
+                    card.classList.toggle('show');
                 }
-
-                // for(branch in metaTree){
-                //     metaBranchClassList = metaTree[branch][0].classList;
-                //     isShowing = metaBranchClassList.contains('show');
-                //     console.log('------shown------');
-                //     console.log(branch);
-                //     console.log(isShowing);
-                //     if((thisId == branch) && isShowing){
-                //         console.log('If body has showed...');
-                //         show = false;
-                //         show = Array.prototype.some.call(metaTree[branch][1], card => {
-                //             cardClassList = card.classList;
-                //             isShowing = cardClassList.contains('show');
-                //             return isShowing;
-                //         });
-                //         // const fruits = ['apple', 'banana', 'mango', 'guava'];
-
-                //         // function checkAvailability(arr, val) {
-                //         //     return arr.some(function(arrVal) {
-                //         //         return val === arrVal;
-                //         //     });
-                //         // }
-                //         console.log('---show---');
-                //         console.log(show);
-                //         console.log('---show---');
-                //         if(show == false){
-                //             card = metaTree[branch][1][0];
-                //             //metaTree[branch][1][0].classList.toggle('show');
-                //             collapseobj = new bootstrap.Collapse(card,{ 'toggle': false });
-                //             // call hide to close collapse object and cause events to be released
-                //             collapseobj.hide();
-                //         }
-                //     }
-                // }
             });
         }
     }
 
     addEventsToAllSidebarButtons(metaTree);
 
->>>>>>> Stashed changes
   console.log('added event listeners')
 </script>
 
