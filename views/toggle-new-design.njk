@@ -254,6 +254,7 @@ eleventyNavigation:
                                             <div class="card-contents SideCollapse collapse" id="collapse-{{base_id}}"
                                                         sideindex={{sideindex}}
                                                         sidetype="{{ data.top }}"
+                                                        baseid="{{base_id}}"
                                                         data-bs-parent="#accordion-parent-{{idpart}}">
                                                 {# Card - header #}
                                                 <div class="card-header d-flex justify-content-between">
@@ -459,6 +460,10 @@ eleventyNavigation:
 //
 // javascript CONSTANTS
 //
+    // INITIAL STATE
+    // it helps keep things together when events trigger
+    var theState = {"changeState": true}
+
     // set up default view: sensesfirst
     var togglestatus = "categoryfirst";
     const sensesTopTabs = document.getElementById("sense-first");
@@ -504,21 +509,22 @@ eleventyNavigation:
         //console.log(progressArray[0][0].parentNode);
         progressArray[0][colindex].parentNode.style.border = width + "px solid " + colour;
     }
-    setColumnBorderColour(0,"black",2);
+    //setColumnBorderColour(0,"black",2);
 
     // add event listener to sidebuttons
-    // for (i=0 ; i<sidebuttons.length ; i++){
-    //     sidebuttons[i].addEventListener('shown.bs.collapse',function() {
-    //         console.log("in event listener for side collapse show ");
-    //         if (this.getAttribute("sidetype") === 'metacategory')
-    //             setColumnBorderColour(+this.getAttribute("sideindex") - 1, "black",2);
-    //     });
-    //     sidebuttons[i].addEventListener('hide.bs.collapse',function() {
-    //         console.log("in event listener for side collapse hide ");
-    //         if (this.getAttribute("sidetype") === 'metacategory')
-    //             setColumnBorderColour(+this.getAttribute("sideindex") - 1, "LightGray",2);
-    //     })
-    // }
+    var theCategory = {}
+    for (i=0 ; i<sidebuttons.length ; i++){
+        sidebuttons[i].addEventListener('show.bs.collapse',function() {
+            console.log("in event listener for side collapse show ");
+            if (this.getAttribute("sidetype") === 'metacategory')
+                setColumnBorderColour(+this.getAttribute("sideindex") - 1, "black",2);
+        });
+        sidebuttons[i].addEventListener('hide.bs.collapse',function() {
+            console.log("in event listener for side collapse hide ");
+            if (this.getAttribute("sidetype") === 'metacategory')
+                setColumnBorderColour(+this.getAttribute("sideindex") - 1, "LightGray",2);
+        });
+    }
 
     // fill questionArray
     for (i=0 ; i<questionAccordionList.length; i++){
@@ -776,36 +782,6 @@ eleventyNavigation:
         
     });
 
-// COLLAPSE CATEGORY JAVASCRIPT
-// add eventListener to card, so when it shows, other hides
-    console.log(cardsContentsList.length);
-    function toggleObjects(objectList){
-        for(let i=0; i < objectList.length; i++){
-            card = objectList[i];
-            card.addEventListener('show.bs.collapse', function () {
-                for(let j=0; j < objectList.length; j++){
-                    if(i != j && objectList[j].classList.contains('show')){
-                        objectList[j].classList.toggle('show');
-                        if(objectList[j].querySelectorAll('.card-contents').length){
-                            console.log(objectList[j].querySelectorAll('.card-contents')[0].classList);
-                        }
-                    }
-                }
-            });
-            /*card.addEventListener('hide.bs.collapse', function () {
-                for(let j=0; j < objectList.length; j++){
-                    if(i != j && objectList[j].classList.contains('show')){
-                        objectList[j].classList.toggle('show');
-                    }
-                }
-            });*/
-        }
-    }
-    //toggleObjects(sidebarCollapseList);
-    //toggleObjects(bodyContentsList);
-    //toggleObjects(cardsContentsList);
-
-
     function prepare2dArrayById(id){
         // ------ metacategory-first / sense-first ------ main body container
         // all collapsible elements have got a parent
@@ -839,163 +815,84 @@ eleventyNavigation:
     // structure: {'containers id' : [ container, it's cards ]}
     metaTree = prepare2dArrayById('metacategory-first');
 
-    function addEvents(){
-        metaButtons = document.getElementById('metacategory-first').children;
-        senseButtons = document.getElementById('sense-first').children;
-        allCollapsibles = sidebarCollapseList;
-        //console.log(metaButtons);
-        cardContentList = [];
-        
-
-        Array.prototype.map.call(metaButtons, collapse => {
-            cardContents = collapse.querySelectorAll('.card-contents');
-            id = collapse.getAttribute('id');
-            //console.log(cardContents);
-            if(collapse.classList.contains('show')){
-                collapse.classList.toggle('show');
-            };
-            Array.prototype.map.call(cardContents, card => {
-                if(card.classList.contains('show')){
-                    card.classList.toggle('show');
-                }
-            });
-
-            collapse.addEventListener('hide.bs.collapse', function () {
-                thisId = this.getAttribute('id');
-                console.log(metaButtons);
-                const {buttons} = metaButtons;
-                for(button in buttons){
-                    console.log(button)
-                    buttonId = button.getAttribute('id');
-                    cardContentList = button.querySelectorAll('.card-contents');
-                    const {cards} = cardContentList;
-                    if(buttonId == thisId){
-                        for(card in cards){
-                           cardCl = card.classList;
-                           if(cardCl.contains('show')){
-                                collapseObj = new bootstrap.Collapse(card,{ 'toggle': false });
-                                // call hide to close collapse object and cause events to be released
-                                collapseObj.hide();
-                                collapseObj = new bootstrap.Collapse(card,{ 'toggle': true });
-                           }
-                        }
-                    } else {
-                        for(card in cards){
-                           cardCl = card.classList;
-                           if(cardCl.contains('show')){
-                                collapseObj = new bootstrap.Collapse(card,{ 'toggle': false });
-                                // call hide to close collapse object and cause events to be released
-                                collapseObj.hide();
-                                collapseObj = new bootstrap.Collapse(card,{ 'toggle': true });
-                           }
-                        }
-                    }
-                }
-            });
-            collapse.addEventListener('show.bs.collapse', function () {
-                thisId = this.getAttribute('id');
-                const {buttons} = metaButtons;
-                for(button in buttons){
-                    console.log(button)
-                    buttonId = button.getAttribute('id');
-                    cardContentList = button.querySelectorAll('.card-contents');
-                    const {cards} = cardContentList;
-                    if(!(buttonId == thisId)){
-                        for(card in cards){
-                           cardCl = card.classList;
-                           if(cardCl.contains('show')){
-                                collapseObj = new bootstrap.Collapse(card,{ 'toggle': false });
-                                // call hide to close collapse object and cause events to be released
-                                collapseObj.hide();
-                                collapseObj = new bootstrap.Collapse(card,{ 'toggle': true });
-                           }
-                        }
-                    } else {
-                        cardCl = cards[0].classList;
-                        if(cardCl.contains('show')){
-                            collapseObj = new bootstrap.Collapse(card,{ 'toggle': false });
-                            // call hide to close collapse object and cause events to be released
-                            collapseObj.show();
-                            collapseObj = new bootstrap.Collapse(card,{ 'toggle': true });
-                        }
-                        else {
-                            collapseObj = new bootstrap.Collapse(card,{ 'toggle': false });
-                            // call hide to close collapse object and cause events to be released
-                            collapseObj.show();
-                            collapseObj = new bootstrap.Collapse(card,{ 'toggle': true });
-                        }
-                    }
-                }
-            });
-        });
-    }
-
-    //addEvents();
-
-    // INITIAL STATE
-    // it helps keep things together when events trigger
-    var theState = {"changeState": true}
-
-    function addEventsToAllSidebarButtons(tree){
+// COLLAPSE CATEGORY JAVASCRIPT
+    function addEventsToAllCards(tree){
         for(var node in tree){
             collapsible = tree[node][0];
             // SHOW - add event listener to THIS1
             // this one listens if we change between meta
             collapsible.addEventListener('show.bs.collapse', function () {
-                //console.log(this);
                 thisId = this.getAttribute('id');
+                metaBranchClassList = metaTree[thisId][0].classList;
+                // console.log('show ' +JSON.stringify(thisId));
+
+                // loop through sidebar nodes (the metaTree object)
+                // branch variable is just an index (of metacategory)
+                // and metaTree[branch][0] is a node/pointer 
+                // to n-th container (only one per metacategory)
                 for(branch in metaTree){
                     metaBranchClassList = metaTree[branch][0].classList;
                     isShowing = metaBranchClassList.contains('show');
+
+                    // check if not this, so we can hide other metacategories. 
+                    // if any is still showing = isShowing (if not we don't have to hide it). 
                     if(!(thisId == branch) && isShowing){
-                        metaBranchClassList.toggle('show');
+                        // true, we are changing metacategory
+                        // and another one is showing.
                         theState['changeState'] = true;
+                        collapseObj = new bootstrap.Collapse(metaTree[branch][0],{ 'toggle': true });
+                        
+                        // Some fancy way to loop through an object if it is not an array/list but it is an iterable.
+                        // metaTree[branch][1] is the node list of cards in curent loop index metacategory
                         Array.prototype.map.call(metaTree[branch][1], card => {
-                            //console.log(card);
                             cardClassList = card.classList;
-                            isShowing = cardClassList.contains('show');
-                            if(isShowing){
-                                //console.log(card);
+                            isCardShowing = cardClassList.contains('show');
+                            if(isCardShowing){
                                 //cardClassList.toggle('show');
-                                collapseobj = new bootstrap.Collapse(card, { 'toggle': true });
-                                var obj = bootstrap.Collapse.getInstance(card);
-                                //console.log('---getInstance---');
-                                //console.log(obj);
-                                //console.log('---getInstance---');
-                                // call hide to close collapse object and cause events to be released
-                                collapseobj.hide();
+                                collapseobj = new bootstrap.Collapse(card,{ 'toggle': true });
                             }
                         });
                     }
                 }
-            });
-            // SHOWN event listener
-            collapsible.addEventListener('shown.bs.collapse', function () {
-                thisId = this.getAttribute('id');
-                //console.log(metaTree[thisId][1]);
-                show = false;
-                show = Array.prototype.some.call(metaTree[thisId][1], card => {
-                    cardClassList = card.classList;
-                    isShowing = cardClassList.contains('show');
-                    return isShowing;
-                });
-                //console.log('---show---');
-                //console.log(show);
-                //console.log(theState['changeState']);
-                //console.log('---show---');
-                if(show === false && theState['changeState']){
+                // if another metacategory has just collapesd we have got a state change.
+                // We better 'click' on that category button, we have left behind, so
+                // our Progress Grid doesn't focus on it anymore.
+                if(theState['changeState'])
+                {
+                    // we are handling the state change. THX, good boy.
                     theState['changeState'] = false;
-                    //console.log('---state---');
-                    //console.log(theState['changeState']);
-                    //console.log('---state---');
+
+                    // WHY this part works properly?
+                    // -- comment out this part if checking the other why --
                     card = metaTree[thisId][1][0];
-                    card.classList.toggle('show');
+                    sideType = card.getAttribute("sidetype");
+                    base = card.getAttribute('baseid');
+                    buttonId = 'button-'+base;
+                    button = document.getElementById(buttonId);
+                    button.click();
+                    // -- end comment out this part --
+
+                    // WHY this part doesn't work properly?
+                    // -- comment out this part if checking the working why --
+                    // card = metaTree[thisId][1][0];
+                    // collapseobj = new bootstrap.Collapse(card,{ 'toggle': true });
+                    // -- end comment out this part --
                 }
+            });
+            // We do not really need this part at all :)
+            collapsible.addEventListener('hide.bs.collapse', function () {
+                // theState['changeState'] = true;
+                // thisId = this.getAttribute('id');
+                // metaBranchClassList = metaTree[thisId][0].classList;
+                // console.log('hide ' +JSON.stringify(thisId));
+                // lastCatClassList = theCategory['last'].classList;
+                // lastIsShowing = lastCatClassList.contains('show');
+                // if(lastIsShowing) var collapseObj = new bootstrap.Collapse(theCategory['last'],{ 'toggle': true });
             });
         }
     }
 
-    addEventsToAllSidebarButtons(metaTree);
+    addEventsToAllCards(metaTree);
 
   console.log('added event listeners')
 </script>
