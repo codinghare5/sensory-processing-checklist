@@ -81,7 +81,7 @@
             "name": "Sensory Experience 2",
             "categories": [
             {
-                "category": "Sensitivity to Disturbance",
+                "category": "Sensory Intolerance",
                 "index": 8,
                 "questions":[
                     "Squints or closes eyes in bright lights",
@@ -268,7 +268,7 @@
             "name": "Sensory Experience 2",
             "categories": [ 
             {
-                "category": "Sensitivity to Disturbance",
+                "category": "Sensory Intolerance",
                 "index": 8,
                 "questions":[
                     "Gets frustrated with certain sounds",
@@ -460,7 +460,7 @@
             "name": "Sensory Experience 2",
             "categories": [
             {
-                "category": "Sensitivity to Disturbance",
+                "category": "Sensory Intolerance",
                 "index": 8,
                 "questions":[
                     "Cannot tolerate certain fabrics (clothes, bedding) and textures, including food",
