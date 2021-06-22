@@ -45,6 +45,43 @@
 {
     "name": "Sensory Intolerance",
     "index": 8,
-    "subtitle": ""
+    "subtitle": "Finding some sensory stimuli intolerable/painful",
+    "description": "All senses can be affected. Some may find many noises and bright lights nearly impossible to bear; for others, certain noises (children's voices, car horns, a kettle whistling) and the pitch of some sounds might cause a lot of discomfort."
+},
+{
+    "name": "Fascination",
+    "index": 9,
+    "subtitle": "Finding certain stimuli calming, peaceful and hypnotic",
+    "description": "Fascination with certain stimuli is the opposite of disturbance by certain stimuli, also caused by hypersensitivity. These two features are like two sides of one and the same coin. The only difference is, while disturbance causes pain, fascination gives pleasant experiences and brings calm and peace to autistic people (although at the cost of their withdrawal. Sometimes autistic people, when they have given up fighting an incomprehensible world, rescue themselves from overload to an entertaining, secure and hypnotic level of hyper. Eg watching the reflection of every element of light and colour; tracing every patterned shape and vibration of noise as it bounces off the walls."
+},
+{
+    "name": "Fluctuation",
+    "index": 10,
+    "subtitle": "Inconsistent perception of sensory stimuli",
+    "description": "One of the baffling features of autisitc individuals is their inconsistent perception of sensory stimuli. Two types of this inconsistency can be distinguished: fluctuation between hyper- and hypo-, and fluctuation between hyper-/hypo- and normal ('in' and 'out')."
+},
+{
+    "name": "Vulnerability to Overload",
+    "index": 11,
+    "subtitle": "Trying to deal with too much sensory information at once creates overload",
+    "description": "Many autistic individuals are very vulnerable to sensory overload, becoming overloaded in situations that would not bother other people. The causes of such overload can be: inability to filter out irrelevant or excessive information; delayed processing, if the person works in mono but is forced to attend to the information from several channels; distorted to fragmented perception, resulting in anxiety, confusion, frustration and stress that, in turn, may lead to hypersensitivity. Hypersensitivity can happen both independently of information overload and as a direct result of it."
+},
+{
+    "name": "Systems Shutdown",
+    "index": 12,
+    "subtitle": "Losing some or all of normal functioning",
+    "description": "Too much sensory overload may result in systems shutdowns, in which the person loses some or all of his or her normal functioning. Shutdown may fee different to different people, but is extremely unpleasant. When someone cannot cope with sensory information, they may shut down some or all sensory channels. Many autistic children are suspect to be deaf, as they sometimes do not react to sounds. Their hearing, however, is often even more acute than average, but they learn to 'switch it off' when they experience information overload. Children with sensory overload learn to shut off their sensory channels when sensory input becomes too intense and withdarw into their own world." 
+},
+{
+    "name": "Sensory Agnosia",
+    "index": 13,
+    "subtitle": "Difficulty or inability to interpret information from a sense",
+    "description": "The consequence of being unable to filter sensory information and being flooded with sensory stimuli at the rate the person cannot cope with is being able to sense (see, hear, etc.) but unable to attach the meaning to (i.e. to interpret) the sensations. The person is 'blind while seeing', 'deaf while hearing', etc. The term 'sensory agnosia' refers to a temporary state of literal perception casued by sensory agnosia. In the state of sensory agnosia, interpretations of any sense can be lost; autistic individuals often act as if they were really blind, deaf, numb, and sometimes 'dead'. It is a very frightening experience."
+},
+{
+    "name": "Mono-processing",
+    "index": 14,
+    "subtitle": "Processing one sense at a time",
+    "description": "To avoid overload of sensory information, the brain consciously processes only one modality (although subconsiously a great amount of information may get it (accumulation of unknown knowing). The person might focus on one sense, for example, sight, and might see every minute detail of hte object. However, while his/her vision is on, the person might lose awareness of any information coming through the other senses. Thus while the person sees something he/she does not hear anything and does not feel touch, etc. When the visual stimulus fades out, the sound could be processed, but then the sound is the only information the person is dealing with. As the person focuses on only one modality at a time, the sound may be experienced louder because it is all the person focusses on (hypersensitivity)."
 }
 ]
