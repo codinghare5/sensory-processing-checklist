@@ -182,6 +182,94 @@
     }
 },
 {
-    
+    "name": "Peripheral Perception",
+    "index": 15,
+    "senses":{
+        "vision": "Peropheral vision, avoidance of eye contact",
+        "hearing": "Hearing if listening to someone indirectly",
+        "touch": "Peripheral tactile perception",
+        "smell": "Peripheral olfactory perception",
+        "taste": "Peripheral gustatory perception",
+        "proprioception": "Peripipheral proprioceptive perception",
+        "balance": "Peripheral vestibular perception"
+    } 
+},
+{
+    "name": "Compensating",
+    "index": 16,
+    "senses":{
+        "vision": "Checking visual perception by other senses",
+        "hearing": "Checking auditory perception by other senses",
+        "touch": "Checking tactile perception by other senses",
+        "smell": "Checking olfactory perception by other senses",
+        "taste": "Checking gustatory perception by other senses",
+        "proprioception": "Checking proprioceptive perception by other senses",
+        "balance": "Checking vestibular perception by other senses"
+    }
+},
+{
+    "name": "Merging with Stimuli",
+    "index": 17,
+    "senses":{
+        "vision": "Merging, getting in resonance with lights, colours, patterns",
+        "hearing": "Merging, getting in resonance with sounds",
+        "touch": "Merging, getting in resonance with tactile stimuli; feeling pain of other people",
+        "smell": "Merging, getting in resonance with smells",
+        "taste": "Merging, getting in resonance with tastes",
+        "proprioception": "Merging, getting in resonance with movements",
+        "balance": "In constant motion"
+    }
+},
+{
+    "name": "Daydreaming",
+    "index": 18,
+    "senses":{
+        "vision": "'Seeing' thoughts, emotions of other people; events that do not relate to oneself",
+        "hearing": "'Hearing' thoughts of other people, events",
+        "touch": "'Feeling' events",
+        "smell": "'Olfactory hallucinations'",
+        "taste": "'Gustatory hallucinations'",
+        "proprioception": "Experiencing physical movements while being still",
+        "balance": "Experiencing movements of head/body while being still"
+    }
+},
+{
+    "name": "Synaethesia",
+    "index": 19,
+    "senses":{
+        "vision": "'Seeing' sounds, smells, temperature, etc",
+        "hearing": "'Hearing' colours, flavours, touch, etc",
+        "touch": "Seeing colours, hearing sounds while being touched",
+        "smell": "Smelling sounds colours, etc.",
+        "taste": "Tasting shapes, colours, sounds, etc.",
+        "proprioception": "Involuntary body postures in response to visual, auditory, tactile, etc. stimuli",
+        "balance": "Involuntary body movements in response to visual, auditory, tactile, etc. stimuli"
+    }
+},
+{
+    "name": "Perceptual Memory",
+    "index": 20,
+    "senses":{
+        "vision": "Visual ('photographic') memory / triggered by visual stimuli",
+        "hearing": "'Audiographic / sound' memory / triggered by auditory stimuli",
+        "touch": "Tactile memory / triggered by tactile stimuli",
+        "smell": "Olfactory memory / triggered by smells",
+        "taste": "Gustatory memory / triggered by tastes",
+        "proprioception": "Proprioceptive memory / triggered by 'body positions', movements",
+        "balance": "Vestibular memory / triggered by motor activities"
+    }
+},
+{
+    "name": "Perceptual Thinking",
+    "index": 21,
+    "senses":{
+        "vision": "Visual thinking ('thinking in pictures')",
+        "hearing": "Thinking in 'auditory pictures'",
+        "touch": "Thinking in 'tactile images'",
+        "smell": "Thinking in 'olfactory images'",
+        "taste": "Thinking in 'gustatory images'",
+        "proprioception": "'Body positions', 'movement images'",
+        "balance": "Relating to head / body movements"
+    }
 }
 ]
