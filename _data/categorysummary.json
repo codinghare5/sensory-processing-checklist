@@ -89,5 +89,99 @@
         "proprioception": "Floppy, unaware of body sensations (eg do not feel hunger), bump into objects, tendancy to fall",
         "balance": "enjoy and seek all kinds of movement, can spin for a long time without feeling dizzy"
     }
+},
+{
+    "name": "Sensitivity to Disturbance",
+    "index": 8,
+    "senses":{
+        "vision": "Light/colour sensitivity, disturbance by some patterns",
+        "hearing": "Disturbance by some sounds",
+        "touch": "Sensitivity to certain textures",
+        "smell": "Disturbance by some olfactory stimuli",
+        "taste": "Disturbance by some gustatory stimuli",
+        "proprioception": "Disturbance by some body positions",
+        "balance": "Intolerance of certain movements"
+    }
+},
+{
+    "name": "Fascination",
+    "index": 9,
+    "senses":{
+        "vision": "Fascination with patterns, lights, colours",
+        "hearing": "Fascination with sounds",
+        "touch": "Fascination with tactile stimuli",
+        "smell": "Fascination with smells",
+        "taste": "Fascination with flavours",
+        "proprioception": "Fascination with certain body movements",
+        "balance": "Excessive physical movements"
+    }
+},
+{
+    "name": "Fluctuation",
+    "index": 10,
+    "senses": {
+        "vision": "Fluctuation between hyper- and hypo-; 'in' and 'out'",
+        "hearing": "Fluctuation between hyper- and hypo-; 'in' and 'out'",
+        "touch": "Fluctuation between hyper- and hypo-; 'in' and 'out'",
+        "smell": "Fluctuation between hyper- and hypo-; 'in' and 'out'",
+        "taste": "Fluctuation between hyper- and hypo-; 'in' and 'out'",
+        "proprioception": "Fluctuation between hyper- and hypo-; 'in' and 'out'",
+        "balance": "Fluctuation between hyper- and hypo-; 'in' and 'out'"
+    }
+},
+{
+    "name": "Vulnerability to Overload",
+    "index": 11,
+    "senses":{
+        "vision": "visual overload",
+        "hearing": "Sound overload",
+        "touch": "Tactile overload",
+        "smell": "Olfactory overload",
+        "taste": "Gustatory overload",
+        "proprioception": "Proprioceptive overload",
+        "balance": "Vestibular overload"
+    }
+},
+{
+    "name": "Systems Shutdown",
+    "index": 12,
+    "senses":{
+        "vision": "Visual 'tuneouts'",
+        "hearing": "Auditory 'tuneouts'",
+        "touch": "Tactile 'tuneouts'",
+        "smell": "Olfactory 'tuneouts'",
+        "taste": "Gustatory 'tuneouts'",
+        "proprioception": "Proprioceptive 'tuneouts'",
+        "balance": "Vestibular 'tuneouts'"
+    }
+},
+{
+    "name": "Sensory Agnosia",
+    "index": 13,
+    "senses": {
+        "vision": "'Meaning-blindness'; feeling/acting 'blind'",
+        "hearing": "'Meaning-deafness; feeling/acting 'deaf'",
+        "touch": "'Touch deadness'",
+        "smell": "Diffiulty interpreting smells",
+        "taste": "Difficulty interpreting tastes",
+        "proprioception": "Difficulty interpreting body position, body sensations, etc.",
+        "balance": "Difficulty interpreting body/head movements"
+    }
+},
+{
+    "name": "Mono-processing",
+    "index": 14,
+    "senses":{
+        "vision": "Shutting down other senses while seeing",
+        "hearing": "Shutting down other channels while hearing",
+        "touch": "Shutting down other channels while touching or being touched",
+        "smell": "Shutting down other senses while smelling",
+        "taste": "Shutting down other senses while tasting",
+        "proprioception": "Shutting down other senses while being aware of body position",
+        "balance": "Shutting down other channels while aware of body movements"
+    }
+},
+{
+    
 }
 ]
