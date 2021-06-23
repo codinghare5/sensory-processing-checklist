@@ -111,7 +111,19 @@
 {
     "name": "Synaethesia",
     "index": 19,
-    "subtitle": "",
-    "description": ""
+    "subtitle": "Sensing other senses given one stimulus in a particular sense",
+    "description": "Synaesthesia or 'cross-sensory perception' is an involuntary physical experience of cross-modal association, that is, the stimulation of one sensory modality triggers a perception in one or more different senses. For example, hearing certain sounds brings the perception of colours. Many synaesthetes hae more than one form of synaethesia."
+},
+{
+    "name": "Perceptual Memory",
+    "index": 20,
+    "subtitle": "Storing real sensory experiences in memory",
+    "description": "Many people with autism don't remember verbally but while remembering they actually see, hear, feel, smell or taste the items (in their mind). The thought about something produces real experiences they had when encountering this thing or event for the first time. They store their visual, auditory, olfactory, gustatory and tactile memories, which are very real. For instance, the thought of textures they hate might cause goose bumps and chills, and a general sense of unease would follow."
+},
+{
+    "name": "Perceptual Thinking",
+    "index": 21,
+    "subtitle": "Using sensory perceptions to think and reason (eg in pictures or sound)",
+    "description": "One of the characteristics of autism is the remarkable ability of most autistic individuals to excel at visual-spatial skills while performing very poorly at verbal skills. For those who have visual thinking ('thinking in pictures'), words are like a second language; their thought processes are different from language-based thinkers. 'Perceptual thinkers' can experience thought as reality. This means that when we think about something, they relive it visually, auditorily and emotionally."
 }
 ]
