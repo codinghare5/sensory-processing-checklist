@@ -1,0 +1,275 @@
+[
+{
+    "name": "Gestalt Peception",
+    "index": 1,
+    "senses": {
+        "vision": "Inability to filter visual stimuli",
+        "hearing": "Inability to screen out background noise",
+        "touch": "Inability to distinguish between tactile stimuli of differnt intensity",
+        "smell": "Inability to distinguish between strong and weak smells",
+        "taste": "Inability to distinguish between strong and weak tastes",
+        "proprioception": "Inability to coordinate body position and movements of body parts",
+        "balance": "Inability to distinguish between 'inner' and 'outer' movements"
+    }
+},
+{
+    "name": "Inability to stop feeling a change",
+    "index": 2,
+    "senses":{
+        "vision": "Prolonged perception of visual information",
+        "hearing": "Prolonged perception of auditory stimuli",
+        "touch": "Prolonged perception of tactile sensation",
+        "smell": "Prolonged perception of olfactory sensation",
+        "taste": "Prolonged perception of gustatory stimuli",
+        "proprioception": "Prolonged perception of proprioception sensations",
+        "balance": "Prolonged perception of vestibular stimulation"
+    }
+},
+{
+    "name": "Fragmented",
+    "index": 3,
+    "senses": {
+        "vision": "Seeing 'in bits', prosopagnosia (face blindness)",
+        "hearing": "Hearing 'in bits'",
+        "touch": "Feeling touch, cold/hot 'in bits'",
+        "smell": "Smelling 'in bits'",
+        "taste": "Tasting 'in bits'",
+        "proprioception": "Feeling only some parts of the body",
+        "balance": "'Uneven' movements"
+    }
+},
+{
+    "name": "Distorted",
+    "index": 4,
+    "senses":{
+        "vision": "Poor/distorted depth and space perception; seeing 2D world; distortions of shape, size",
+        "hearing": "Hearing distorted sounds etc",
+        "touch": "Distorted tactile perception",
+        "smell": "Distorted olfactory perception",
+        "taste": "Distorted gustatory perception",
+        "proprioception": "Distorted perception of body",
+        "balance": "Distorted perception of body movements"
+    }
+},
+{
+    "name": "Delayed",
+    "index": 5,
+    "senses":{
+        "vision": "Delayed processing of visual stimuli",
+        "hearing": "Delayed processing of auditory stimuli",
+        "touch": "Delayed processing of tactile stimuli",
+        "smell": "Delayed processing of smells",
+        "taste": "Delayed processing of tastes",
+        "proprioception": "Delayed processing of body postures, body sensations",
+        "balance": "Delayed processing of movement of head/body"
+    }
+},
+{
+    "name": "Intensity: hyper",
+    "index": 6,
+    "senses":{
+        "vision": "Vision is too acute, sees things others do not see",
+        "hearing": "Hearing is too acute, hears things others do not hear",
+        "touch": "Oversensitive to touch; difficulty with clothes",
+        "smell": "Cannot tolerate how people or objects smell",
+        "taste": "Cannot tolerate certain foods; gag/vomit easily",
+        "proprioception": "Odd body posturing, difficuty manipulating small objects",
+        "balance": "Low tolerance for any activity that involves movement or quick changes in the position of the body"
+    }
+},
+{
+    "name": "Intensity: hypo",
+    "index": 7,
+    "senses":{
+        "vision": "Difficulty working out where objects are, touching everything in an unfamiliar room, attracted to bright lights",
+        "hearing": "Sound seeker; enjoy noisy places, create lound noises",
+        "touch": "Appear not to feel pain or hot or cold temperatures",
+        "smell": "Smell everything they can get",
+        "taste": "Mouth and lick objects, regurgitate",
+        "proprioception": "Floppy, unaware of body sensations (eg do not feel hunger), bump into objects, tendancy to fall",
+        "balance": "enjoy and seek all kinds of movement, can spin for a long time without feeling dizzy"
+    }
+},
+{
+    "name": "Sensory Intolerance",
+    "index": 8,
+    "senses":{
+        "vision": "Light/colour sensitivity, disturbance by some patterns",
+        "hearing": "Disturbance by some sounds",
+        "touch": "Sensitivity to certain textures",
+        "smell": "Disturbance by some olfactory stimuli",
+        "taste": "Disturbance by some gustatory stimuli",
+        "proprioception": "Disturbance by some body positions",
+        "balance": "Intolerance of certain movements"
+    }
+},
+{
+    "name": "Fascination",
+    "index": 9,
+    "senses":{
+        "vision": "Fascination with patterns, lights, colours",
+        "hearing": "Fascination with sounds",
+        "touch": "Fascination with tactile stimuli",
+        "smell": "Fascination with smells",
+        "taste": "Fascination with flavours",
+        "proprioception": "Fascination with certain body movements",
+        "balance": "Excessive physical movements"
+    }
+},
+{
+    "name": "Fluctuation",
+    "index": 10,
+    "senses": {
+        "vision": "Fluctuation between hyper- and hypo-; 'in' and 'out'",
+        "hearing": "Fluctuation between hyper- and hypo-; 'in' and 'out'",
+        "touch": "Fluctuation between hyper- and hypo-; 'in' and 'out'",
+        "smell": "Fluctuation between hyper- and hypo-; 'in' and 'out'",
+        "taste": "Fluctuation between hyper- and hypo-; 'in' and 'out'",
+        "proprioception": "Fluctuation between hyper- and hypo-; 'in' and 'out'",
+        "balance": "Fluctuation between hyper- and hypo-; 'in' and 'out'"
+    }
+},
+{
+    "name": "Vulnerability to Overload",
+    "index": 11,
+    "senses":{
+        "vision": "visual overload",
+        "hearing": "Sound overload",
+        "touch": "Tactile overload",
+        "smell": "Olfactory overload",
+        "taste": "Gustatory overload",
+        "proprioception": "Proprioceptive overload",
+        "balance": "Vestibular overload"
+    }
+},
+{
+    "name": "Systems Shutdown",
+    "index": 12,
+    "senses":{
+        "vision": "Visual 'tuneouts'",
+        "hearing": "Auditory 'tuneouts'",
+        "touch": "Tactile 'tuneouts'",
+        "smell": "Olfactory 'tuneouts'",
+        "taste": "Gustatory 'tuneouts'",
+        "proprioception": "Proprioceptive 'tuneouts'",
+        "balance": "Vestibular 'tuneouts'"
+    }
+},
+{
+    "name": "Sensory Agnosia",
+    "index": 13,
+    "senses": {
+        "vision": "'Meaning-blindness'; feeling/acting 'blind'",
+        "hearing": "'Meaning-deafness; feeling/acting 'deaf'",
+        "touch": "'Touch deadness'",
+        "smell": "Diffiulty interpreting smells",
+        "taste": "Difficulty interpreting tastes",
+        "proprioception": "Difficulty interpreting body position, body sensations, etc.",
+        "balance": "Difficulty interpreting body/head movements"
+    }
+},
+{
+    "name": "Mono-processing",
+    "index": 14,
+    "senses":{
+        "vision": "Shutting down other senses while seeing",
+        "hearing": "Shutting down other channels while hearing",
+        "touch": "Shutting down other channels while touching or being touched",
+        "smell": "Shutting down other senses while smelling",
+        "taste": "Shutting down other senses while tasting",
+        "proprioception": "Shutting down other senses while being aware of body position",
+        "balance": "Shutting down other channels while aware of body movements"
+    }
+},
+{
+    "name": "Peripheral Perception",
+    "index": 15,
+    "senses":{
+        "vision": "Peropheral vision, avoidance of eye contact",
+        "hearing": "Hearing if listening to someone indirectly",
+        "touch": "Peripheral tactile perception",
+        "smell": "Peripheral olfactory perception",
+        "taste": "Peripheral gustatory perception",
+        "proprioception": "Peripipheral proprioceptive perception",
+        "balance": "Peripheral vestibular perception"
+    } 
+},
+{
+    "name": "Compensating",
+    "index": 16,
+    "senses":{
+        "vision": "Checking visual perception by other senses",
+        "hearing": "Checking auditory perception by other senses",
+        "touch": "Checking tactile perception by other senses",
+        "smell": "Checking olfactory perception by other senses",
+        "taste": "Checking gustatory perception by other senses",
+        "proprioception": "Checking proprioceptive perception by other senses",
+        "balance": "Checking vestibular perception by other senses"
+    }
+},
+{
+    "name": "Merging with Stimuli",
+    "index": 17,
+    "senses":{
+        "vision": "Merging, getting in resonance with lights, colours, patterns",
+        "hearing": "Merging, getting in resonance with sounds",
+        "touch": "Merging, getting in resonance with tactile stimuli; feeling pain of other people",
+        "smell": "Merging, getting in resonance with smells",
+        "taste": "Merging, getting in resonance with tastes",
+        "proprioception": "Merging, getting in resonance with movements",
+        "balance": "In constant motion"
+    }
+},
+{
+    "name": "Daydreaming",
+    "index": 18,
+    "senses":{
+        "vision": "'Seeing' thoughts, emotions of other people; events that do not relate to oneself",
+        "hearing": "'Hearing' thoughts of other people, events",
+        "touch": "'Feeling' events",
+        "smell": "'Olfactory hallucinations'",
+        "taste": "'Gustatory hallucinations'",
+        "proprioception": "Experiencing physical movements while being still",
+        "balance": "Experiencing movements of head/body while being still"
+    }
+},
+{
+    "name": "Synaethesia",
+    "index": 19,
+    "senses":{
+        "vision": "'Seeing' sounds, smells, temperature, etc",
+        "hearing": "'Hearing' colours, flavours, touch, etc",
+        "touch": "Seeing colours, hearing sounds while being touched",
+        "smell": "Smelling sounds colours, etc.",
+        "taste": "Tasting shapes, colours, sounds, etc.",
+        "proprioception": "Involuntary body postures in response to visual, auditory, tactile, etc. stimuli",
+        "balance": "Involuntary body movements in response to visual, auditory, tactile, etc. stimuli"
+    }
+},
+{
+    "name": "Perceptual Memory",
+    "index": 20,
+    "senses":{
+        "vision": "Visual ('photographic') memory / triggered by visual stimuli",
+        "hearing": "'Audiographic / sound' memory / triggered by auditory stimuli",
+        "touch": "Tactile memory / triggered by tactile stimuli",
+        "smell": "Olfactory memory / triggered by smells",
+        "taste": "Gustatory memory / triggered by tastes",
+        "proprioception": "Proprioceptive memory / triggered by 'body positions', movements",
+        "balance": "Vestibular memory / triggered by motor activities"
+    }
+},
+{
+    "name": "Perceptual Thinking",
+    "index": 21,
+    "senses":{
+        "vision": "Visual thinking ('thinking in pictures')",
+        "hearing": "Thinking in 'auditory pictures'",
+        "touch": "Thinking in 'tactile images'",
+        "smell": "Thinking in 'olfactory images'",
+        "taste": "Thinking in 'gustatory images'",
+        "proprioception": "'Body positions', 'movement images'",
+        "balance": "Relating to head / body movements"
+    }
+}
+]
