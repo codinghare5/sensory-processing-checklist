@@ -514,13 +514,17 @@ eleventyNavigation:
     // add event listener to sidebuttons
     var theCategory = {}
     for (i=0 ; i<sidebuttons.length ; i++){
-        sidebuttons[i].addEventListener('show.bs.collapse',function() {
+        sidebuttons[i].addEventListener('show.bs.collapse',function(event) {
             console.log("in event listener for side collapse show ");
+            thisId = this.getAttribute('id');
+            if(!(event.target.id === thisId)) return;
             if (this.getAttribute("sidetype") === 'metacategory')
                 setColumnBorderColour(+this.getAttribute("sideindex") - 1, "black",2);
         });
-        sidebuttons[i].addEventListener('hide.bs.collapse',function() {
+        sidebuttons[i].addEventListener('hide.bs.collapse',function(event) {
             console.log("in event listener for side collapse hide ");
+            thisId = this.getAttribute('id');
+            if(!(event.target.id === thisId)) return;
             if (this.getAttribute("sidetype") === 'metacategory')
                 setColumnBorderColour(+this.getAttribute("sideindex") - 1, "LightGray",2);
         });
@@ -814,6 +818,8 @@ eleventyNavigation:
     // simplifies the work with buttons, events and cards
     // structure: {'containers id' : [ container, it's cards ]}
     metaTree = prepare2dArrayById('metacategory-first');
+    //metaTreeSenses = prepare2dArrayById('senses-first');
+    //console.log(metaTreeSenses);
 
 // COLLAPSE CATEGORY JAVASCRIPT
     function addEventsToAllCards(tree){
@@ -821,10 +827,11 @@ eleventyNavigation:
             collapsible = tree[node][0];
             // SHOW - add event listener to THIS1
             // this one listens if we change between meta
-            collapsible.addEventListener('show.bs.collapse', function () {
+            collapsible.addEventListener('show.bs.collapse', function (event) {
                 thisId = this.getAttribute('id');
+                if(!(event.target.id === thisId)) return;
                 metaBranchClassList = metaTree[thisId][0].classList;
-                // console.log('show ' +JSON.stringify(thisId));
+                console.log(event);
 
                 // loop through sidebar nodes (the metaTree object)
                 // branch variable is just an index (of metacategory)
@@ -836,11 +843,12 @@ eleventyNavigation:
 
                     // check if not this, so we can hide other metacategories. 
                     // if any is still showing = isShowing (if not we don't have to hide it). 
-                    if(!(thisId == branch) && isShowing){
+                    if(!(thisId === branch) && isShowing){
                         // true, we are changing metacategory
                         // and another one is showing.
                         theState['changeState'] = true;
-                        collapseObj = new bootstrap.Collapse(metaTree[branch][0],{ 'toggle': true });
+                        collapseObj = new bootstrap.Collapse(metaTree[branch][0],{ 'toggle': false });
+                        collapseObj.hide();
                         
                         // Some fancy way to loop through an object if it is not an array/list but it is an iterable.
                         // metaTree[branch][1] is the node list of cards in curent loop index metacategory
@@ -849,7 +857,13 @@ eleventyNavigation:
                             isCardShowing = cardClassList.contains('show');
                             if(isCardShowing){
                                 //cardClassList.toggle('show');
-                                collapseobj = new bootstrap.Collapse(card,{ 'toggle': true });
+                                //collapseobj = new bootstrap.Collapse(card,{ 'toggle': true });
+                                sideType = card.getAttribute("sidetype");
+                                base = card.getAttribute('baseid');
+                                console.log(sideType);
+                                buttonId = 'button-'+base;
+                                button = document.getElementById(buttonId);
+                                button.click();
                             }
                         });
                     }
@@ -880,11 +894,31 @@ eleventyNavigation:
                 }
             });
             // We do not really need this part at all :)
-            collapsible.addEventListener('hide.bs.collapse', function () {
-                // theState['changeState'] = true;
+            collapsible.addEventListener('hidden.bs.collapse', function () {
+                //theState['changeState'] = true;
                 // thisId = this.getAttribute('id');
                 // metaBranchClassList = metaTree[thisId][0].classList;
-                // console.log('hide ' +JSON.stringify(thisId));
+                console.log('hidden ' +JSON.stringify(thisId));
+                // lastCatClassList = theCategory['last'].classList;
+                // lastIsShowing = lastCatClassList.contains('show');
+                // if(lastIsShowing) var collapseObj = new bootstrap.Collapse(theCategory['last'],{ 'toggle': true });
+            });
+            collapsible.addEventListener('hide.bs.collapse', function () {
+                thisId = this.getAttribute('id');
+                if(!(event.target.id === thisId)) return;
+                //theState['changeState'] = true;
+                // thisId = this.getAttribute('id');
+                // metaBranchClassList = metaTree[thisId][0].classList;
+                console.log('hide ' +JSON.stringify(thisId));
+                // lastCatClassList = theCategory['last'].classList;
+                // lastIsShowing = lastCatClassList.contains('show');
+                // if(lastIsShowing) var collapseObj = new bootstrap.Collapse(theCategory['last'],{ 'toggle': true });
+            });
+            collapsible.addEventListener('shown.bs.collapse', function () {
+                //theState['changeState'] = true;
+                // thisId = this.getAttribute('id');
+                // metaBranchClassList = metaTree[thisId][0].classList;
+                console.log('shown ' +JSON.stringify(thisId));
                 // lastCatClassList = theCategory['last'].classList;
                 // lastIsShowing = lastCatClassList.contains('show');
                 // if(lastIsShowing) var collapseObj = new bootstrap.Collapse(theCategory['last'],{ 'toggle': true });
@@ -894,7 +928,7 @@ eleventyNavigation:
 
     addEventsToAllCards(metaTree);
 
-  console.log('added event listeners')
+  console.log('added event listeners');
 </script>
 
 
