@@ -33,6 +33,6 @@
     "markdown-it-anchor": "^7.1.0"
   },
   "dependencies": {
-    "bootstrap": "^5.0.1"
+    "bootstrap": "^5.0.2"
   }
 }
