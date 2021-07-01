@@ -1,0 +1,130 @@
+---
+layout: layouts/base.njk
+title: Toggle Views
+eleventyNavigation:
+  key: New Toggle
+  parent: Views
+  order: 4
+---
+<div class="container-xl p-4">
+    <h1 class="text-center"> Sensory Processing Checklist Questions</h1>
+
+    {# Instructions #}
+    <h2>Instructions</h2>
+    <p>Please answer the question according to the following options:</p>
+    <ul>
+        <li><strong>Was True</strong>: was true at any time in the past.</li>
+        <li><strong>True</strong>: True now (if it was true and is true now tick both answers)</li>
+        <li><strong>Not Sure</strong>: Not sure or don't know</li>
+         <li><strong>False</strong>: False (if the statement is not true)</li>
+    </ul>
+    <p>Please try to answer all the questions.</p>
+
+    <h3>Navigation</h3>
+    <p>The simplest way to work your way through the questions is simply to answer them in order presented, 
+    clicking the next button when you are ready to move forward. The progress grid highlights the column for
+    the questions that are currently being answered.</p>
+
+    <p>The progress grid will be coloured in as you answer the questions. This will provide you with an interim 
+    indication of the results.</p>
+
+    <p>If you want to move to a different set of answers, simply click on the appropriate column of the progress grid.</p>
+
+    <h3>Saving results</h3>
+    <p>It is possible to save answers and read them in again. To do so, click the save and read buttons below.<br>
+    Files will be downloaded to your download folder.</p>
+</div>
+
+{# context menu #}
+<nav class="d-flex justify-content-center pb-4">
+    {# button to save question answers #}
+    <button class="col-3 bg-info fs-5 rounded" id="savebutton" type="button">Save Answer File</button>
+    {# button to save question answers #}
+    <button class="col-3 bg-info fs-5 rounded" id="readbutton" type="button">Read Answer File</button>
+    {# button to show results #}
+    <button class="col-4 bg-info fs-5 rounded" id="resultsbutton" type="button">Show Results</button>
+</nav>
+
+{# Create Category name placeholder #}
+<h2 class="text-center pb-2"> Category Name Placeholder </h2>
+
+{# create progress bar #}
+<div class="container-xl progress-bar bg-white pb-3 px-5">
+    <div class="row">
+        {% for metacat in meta %}
+            {% for category in metacat.categories %}
+            {% set catindex = category.index %}
+        
+            <div class="col p-0" style="border: 2px solid LightGray">
+                {% for sense in category.senses %}
+                <div class="progress-item" 
+                    style="width: auto; height:20px; border: 1px solid; border-color: LightGray;"
+                    senseindex="{{ loop.index - 1 }}"
+                    catindex="{{ catindex - 1 }}">
+                </div>
+                {% endfor %}
+            </div>
+
+            {% endfor %}
+        {% endfor %}
+    </div>
+</div>
+
+{# Create Area to hold information about the category - put the text for the first category in it 
+    This should be an accordion #}
+<div class="accordion py-3" id="category-description">
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="category-description-header">
+      <button class="accordion-button" type="button" data-bs-toggle="collapse" 
+                data-bs-target="#category-collapse" aria-expanded="true" 
+                aria-controls="categorycollapse">
+        <div class="text-center fs-3">About {{ categoryinfo[0].name }}</div>
+      </button>
+    </h2>
+    <div id="category-collapse" class="accordion-collapse collapse show" 
+            aria-labelledby="category-description-header" 
+            data-bs-parent="#category-description">
+      <div class="accordion-body">
+        {{ categoryinfo[0].description}}
+      </div>
+    </div>
+  </div>
+</div>
+
+{# body #}
+<div class="container-xl m-3">
+    {# button to open all accordions #}
+    <div class="pt-3">
+     <button class="col-3 bg-info fs-5 rounded float-end mt-1 mb-2" id="openallbutton" type="button">Open All</button>
+    </div>
+    {# body accordion of sets of questions labelled by sense #}
+    <div class="accordion" id="bodyaccordion">
+        {# create a set of sense accordions #}
+        {% for sense in questions %}
+            <div class="accordion-item">
+                {% set sensestr = sense.sense | lower %}
+                <h2 class="accordion-header" id="{{ sensestr }}-accordion-header">
+                    <button class="accordion-button" type="button" 
+                            data-bs-toggle="collapse" 
+                            data-bs-target="#{{ sensestr }}body" 
+                            aria-expanded="true" 
+                            aria-controls="{{ sensestr }}body">
+                        {{ sense.sense }} Questions
+                    </button>
+                </h2>
+                <div id="{{ sensestr }}body" class="accordion-collapse collapse show" 
+                        aria-labelledby="{{ sensestr }}-accordion-header" data-bs-parent="#bodyaccordion">
+                    <div class="accordion-body">
+                        <p>{{ sense.sense }} questions for this category will go here.</p>
+                    </div>
+                </div>
+            </div> {# end accordion item #}
+        {% endfor %}
+    </div> {# end accordion #}
+
+    {# next and previous buttons #}
+    <nav class="pt-3">
+        <button class="col-3 bg-info fs-5 rounded float-start" id="previousbutton" type="button">Previous</button>
+        <button class="col-3 bg-info fs-5 rounded float-end" id="nextbutton" type="button">Next</button>
+    </nav>
+</div> {# end container#}
