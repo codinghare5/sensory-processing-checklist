@@ -113,7 +113,7 @@ eleventyNavigation:
                 <div id="{{ sensestr }}-collapse" class="accordion-collapse collapse" 
                         aria-labelledby="{{ sensestr }}-accordion-header" data-bs-parent="#bodyaccordion">
                     <div class="accordion-body">
-                        <p>{{ sense.sense }} questions for this category will go here.</p>
+                        {{ sense.sense }} questions for this category will go here.
                     </div>
                 </div>
             </div> {# end accordion item #}
@@ -177,7 +177,7 @@ eleventyNavigation:
                           {"label": "Not Sure", "id": "not-sure", "value": 1},
                           {"label": "False", "id": "false", "value": 0}] %}
 {# create question sets  #}
-<div class="container-xl pt-5" id="questionset-container" style="display:block">
+<div class="container-xl pt-5" id="questionset-container" style="display:none">
     {% for category in categoryquestions %}
         {% set catindex = category.index %}
 
@@ -276,7 +276,7 @@ eleventyNavigation:
     //      - Black for highlight
     // or change colours to suit
     function setProgressGridHighlight(catindex, colour){
-        item = progressGrid[+catindex].column;
+        var item = progressGrid[+catindex].column;
         item.style.borderColor = colour;
     }
 
@@ -295,14 +295,22 @@ eleventyNavigation:
 
         // set category header and description
         console.log("setting category info for category " + catindex);
-        item = categoryArray[+catindex];
+        var item = categoryArray[+catindex];
         categoryTitle.innerHTML = item.name;
         categoryButton.innerHTML =  'About ' + item.name;
         categoryBody.innerHTML = item.description;
 
+        // sort out the highlighting of the progress grid columns
         setProgressGridHighlight(currentIndex,"LightGrey");
         setProgressGridHighlight(catindex, "Black")
         currentIndex = catindex;
+
+        // set body accordion bodyies
+        console.log("setting accordion bodies");
+        console.log(item);
+        for (var i=0; i<accordionBodies.length; i++)
+            accordionBodies[i].innerHTML = item.questions[i];
+
     }
 
 
@@ -322,7 +330,7 @@ eleventyNavigation:
 
             // create an array of questions grouped by sense
             questionsArray = createArray(questionSets.length);
-            for (j=0; j<questionSets.length; j++){
+            for (var j=0; j<questionSets.length; j++){
                 qset = questionSets[j];
                 senseindex = qset.getAttribute('senseindex');
                 questionsArray[+senseindex] = qset.innerHTML;
@@ -390,9 +398,18 @@ eleventyNavigation:
     ////////////////////////////////////////////////
 
     // constants for particular html elements
+
+    // Category information elements
     const categoryTitle = document.getElementById('category-name');
     const categoryButton = document.getElementById('category-description-button');
     const categoryBody = document.getElementById('category-description-body');
+
+    // Body
+    openAllButton = document.getElementById('openallbutton');
+    accordionBodies = document.querySelectorAll('#bodyaccordion .accordion-body');
+    console.log(accordionBodies);
+    
+
 
     // constants for structures of html elements
     const categoryArray = createCategoryArray();
@@ -401,8 +418,8 @@ eleventyNavigation:
     //progressGrid.consolelog();
 
     // other constants
-    var currentIndex = 0;
-    setProgressGridHighlight(0,"Black")
+    var currentIndex = 10; // doesn't matter what the value is as long as it isn't 0
+    displayCategory(0);
 
     // add event listeners
 
