@@ -161,6 +161,10 @@ eleventyNavigation:
 
 <script>
     // Functions 
+    ///////////////////////////////////////////////////////////////////////////////////////
+
+    // Generic Functions
+    ////////////////////////////////////////////////////////////////////////////////////////
 
     // create array script copied from internet
     // usage:
@@ -179,6 +183,23 @@ eleventyNavigation:
 
         return arr;
     }
+
+    // function to add the same event listener to every element in an array. 
+    Array.prototype.addEventListener = function(eventname, eventfunction) {
+        for (i=0 ; i<this.length ; i++)
+            this[i].addEventListener(eventname, eventfunction);
+    };
+
+    // create a function to console log every element in an array
+    Array.prototype.consolelog = function() {
+        for (i=0 ; i<this.length ; i++)
+            console.log(this[i]);
+    };
+
+   
+  
+    // Functions that manipulate html elements in some way
+    /////////////////////////////////////////////////////////////////////
 
     // create an array of information to do with each category:
     //      - name (for the header)
@@ -244,6 +265,6 @@ eleventyNavigation:
     // Global Variables
     const categoryArray = createCategoryArray();
     const progressGrid = createProgressGrid();
-    console.log(progressGrid);
+    categoryArray.consolelog();
 
 </script>
