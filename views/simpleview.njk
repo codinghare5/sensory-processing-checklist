@@ -46,7 +46,7 @@ eleventyNavigation:
 </nav>
 
 {# Create Category name placeholder #}
-<h2 class="text-center pb-2" id="category-name"> Category Name Placeholder </h2>
+<h2 class="text-center pb-2" id="category-name"> {{ categorysummary[0].name }} </h2>
 
 {# create progress bar #}
 <div class="container-xl bg-white pb-3 px-5" id="progress-grid">
@@ -56,7 +56,7 @@ eleventyNavigation:
                 {% set catindex = category.index %}
         
                 <div class="col p-0 progress-column" style="border: 2px solid LightGray" 
-                            index="{{catindex - 1 }}">
+                            catindex="{{ catindex - 1 }}">
                     {% for sense in category.senses %}
                     <div class="progress-item" 
                         style="width: auto; height:20px; border: 1px solid; border-color: LightGray;"
@@ -74,11 +74,12 @@ eleventyNavigation:
     This should be an accordion #}
 <div class="accordion py-3" id="category-description">
   <div class="accordion-item">
-    <h2 class="accordion-header" id="category-description-header">
+    <h2 class="accordion-header">
       <button class="accordion-button" type="button" data-bs-toggle="collapse" 
                 data-bs-target="#category-collapse" aria-expanded="true" 
-                aria-controls="categorycollapse">
-        <div class="text-center fs-3">About {{ categoryinfo[0].name }}</div>
+                aria-controls="categorycollapse"
+                id="category-description-button">
+            About {{ categoryinfo[0].name }}
       </button>
     </h2>
     <div id="category-collapse" class="accordion-collapse collapse show" 
@@ -201,6 +202,32 @@ eleventyNavigation:
     // Functions that manipulate html elements in some way
     /////////////////////////////////////////////////////////////////////
 
+
+    // displayCategory
+    // changes html inner of
+    //      category-name
+    //      category-description-header
+    //      category-description-body
+    // also highlights the correct column in the progress grid
+    //
+    // Assumes currentindex is declared somewhere and has an appropriate value
+    function displayCategory(catindex) {
+        console.log("in displayCategory: " + catindex + ' ' + currentIndex);
+        if (+catindex == +currentIndex)
+            return; // nothing to do
+
+        // set category header and description
+        console.log("setting category info for category " + catindex);
+        item = categoryArray[+catindex];
+        categoryTitle.innerHTML = item.name;
+        categoryButton.innerHTML =  'About ' + item.name;
+        categoryBody.innerHTML = item.description;
+
+        currentIndex = catindex;
+    }
+
+
+
     // create an array of information to do with each category:
     //      - name (for the header)
     //      - description (for the category description)
@@ -237,35 +264,50 @@ eleventyNavigation:
 
         // (local) constructor for ProgressGrid
         // column is a DOM object with class progress-column
-        function ProgressGrid(column){
+        function ProgressGrid(column, catindex){
             this.column = column;
 
-            items = column.getElementsByClassName("progress-item");
+            items = column.querySelectorAll(".progress-item");
             itemsArray = createArray(items, length);
             for (i=0 ; i<items.length ; i++) {
                 item = items[i];
                 itemsArray[+item.getAttribute("senseindex")] = item;
+                item.addEventListener("click", function(){ displayCategory(catindex); });
             }
 
             this.senseboxes = itemsArray
         }
 
         const pGrid = document.getElementById("progress-grid");
-        const progressColumnList = pGrid.getElementsByClassName("progress-column");
+        const progressColumnList = pGrid.querySelectorAll(".progress-column");
         const progressArray = createArray(progressColumnList.length);
         for (j=0 ; j<progressArray.length ; j++){
             item = progressColumnList[j];
-            progressArray[+item.getAttribute("catindex")] = new ProgressGrid(item);
+            catindex = item.getAttribute("catindex");
+            progressArray[+catindex] = new ProgressGrid(item, catindex);
         }
 
         return progressArray;
     }
 
 
-    // Global Variables
+    // constants for particular html elements
+    const categoryTitle = document.getElementById('category-name');
+    const categoryButton = document.getElementById('category-description-button');
+    const categoryBody = document.getElementById('category-description-body');
+
+    // constants for structures of html elements
     const categoryArray = createCategoryArray();
     const progressGrid = createProgressGrid();
     categoryArray.consolelog();
+    //progressGrid.consolelog();
+
+    // other constants
+    var currentIndex = 0;
+
+    // add event listeners
+
+
 
 
 
