@@ -191,6 +191,52 @@
     ]
   },
   {
+    "category": "Intensity: hypo",
+    "index": 7,
+    "senses": [
+      {
+        "sense": "Vision",
+        "questions": [
+          "Is attracted to lights",
+          "Looks intensely at objects and people",
+          "Moves/flicks/waves fingers or objects in front of eyes",
+          "Is fascinated with reflections, bright coloured objects",
+          "Runs a hand around the edge of an object",
+          "Perimeter hugging"
+        ]
+      },
+      {
+        "sense": "Hearing",
+        "questions": [
+          "Bangs objects, doors",
+          "Likes vibration",
+          "Likes excessively loud music, TV, etc.",
+          "Likes kitchen and bathroom",
+          "Likes traffic, crowds",
+          "Is attracted by sounds, noises",
+          "Tears paper, crumples paper in the hand",
+          "Makes loud rhythmic noises"
+        ]
+      },
+      {
+        "sense": "Touch",
+        "questions": [
+          "Likes pressure, tight clothes",
+          "Seeks pressure by crawling under heavy objects",
+          "Hugs tightly",
+          "Enjoys rough and tumble play",
+          "Is not bothered by cuts or bruises",
+          "Low reaction to pain and temperature",
+          "Prone to self-injury: pinching, biting, banging head against the wall, etc.",
+          "Enjoys messy play",
+          "Unable to identify which part of body was touched if not looking",
+          "(In extreme cases) doesn’t feel the body",
+          "A messy dresser"
+        ]
+      }
+    ]
+  },
+  {
     "category": "Sensory Intolerance",
     "index": 8,
     "senses": [
