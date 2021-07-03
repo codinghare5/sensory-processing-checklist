@@ -147,6 +147,76 @@ eleventyNavigation:
     {% endfor %}
 </div>
 
+{# Create a container to hold groups of questions along with the short description #}
+
+{# macro work out and return the summary text for a category and sense #}
+{% macro get_category_summary(catindex, senseindex) %}
+    {% set catsenses = categorysummary[catindex].senses %}
+    {% if senseindex == 1 %}
+        {% set text = catsenses.vision %}
+    {% elseif senseindex == 2 %}
+        {% set text = catsenses.hearing %}
+    {% elseif senseindex == 3 %}
+        {% set text = catsenses.touch %}
+    {% elseif senseindex == 4 %}
+        {% set text = catsenses.smell %}
+    {% elseif senseindex == 5 %}
+        {% set text = catsenses.taste %}
+    {% elseif senseindex == 6 %}
+        {% set text = catsenses.proprioception %}
+    {% elseif senseindex == 7 %}
+        {% set text = catsenses.balance %}
+  {% endif %}
+
+  {{ text }}
+{% endmacro%}
+
+{% set questionOptions = [ {"label": "Was True", "id": "was-true", "value": 2},
+                          {"label": "True Now", "id": "true-now", "value": 3},
+                          {"label": "Not Sure", "id": "not-sure", "value": 1},
+                          {"label": "False", "id": "false", "value": 0}] %}
+{# create question sets  #}
+<div class="container" id="questionset-container" style="display:block">
+    {% for category in categoryquestions %}
+        {% set catindex = category.index %}
+
+        <div class="category-questionset" catindex="{{catindex - 1 }}">
+            {% for sense in category.senses %} 
+                {% set senseindex = loop.index %} 
+                {% set base_id = sense.sense + '_' + catindex %}
+
+                <div class="category-sense-questions" senseindex="{{ senseindex - 1}} ">
+                    <p><strong>{{ get_category_summary(catindex,senseindex) }}</strong></p>
+                    
+                    {% for question in sense.questions %}
+                        {% set questionName = base_id + '-' + senseindex %}
+                        <fieldset class="pb-3" id="{{ questionName }}" value=0>
+                            <legend class="fs-6">{{ question }}</legend>
+                            {# use class=row to spread radio inputs #}
+                            <div class="row row-cols-auto justify-content-center">
+                                {% for opt in  questionOptions %}
+                                    <div class="form-check form-check-inline col border border-1 rounded">
+                                        <input class="form-check-input ps-2" type="checkbox" 
+                                                    name="{{ questionName }}-{{ opt.id }}" 
+                                                    question_id="{{ questionName }}"
+                                                    id="{{ questionName }}-{{opt.id}}" 
+                                                    value="{{ opt.value }}"
+                                                    {% if opt.id == "false" %} checked="checked"{% endif %}>
+                                        <label class="form-check-label fs-6" for="{{ questionName }}-{{ opt.id }}">
+                                            {{ opt.label }}
+                                        </label>
+                                    </div>
+                                {% endfor %}
+                            </div> <!-- end row of checkboxes-->
+                        </fieldset>
+                    {% endfor %} {# end question loop #}
+                </div>
+            {% endfor %} {# end category loop #}
+        </div>
+    {% endfor %} {# end sense loop #}
+</div> {# end container #}
+
+
 {#===================== END COMPONENTS TO BE USED WITH JAVASCRIPT =====================================#}
 
 
@@ -298,6 +368,11 @@ eleventyNavigation:
         return progressArray;
     }
 
+
+    /////////////////////////////////   End Functions  /////////////////////////////////////////////
+
+    // Variables
+    ////////////////////////////////////////////////
 
     // constants for particular html elements
     const categoryTitle = document.getElementById('category-name');
