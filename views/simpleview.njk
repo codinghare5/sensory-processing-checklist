@@ -202,6 +202,15 @@ eleventyNavigation:
     // Functions that manipulate html elements in some way
     /////////////////////////////////////////////////////////////////////
 
+    //function to set or remove the progress grid highlight:
+    //  just set the color
+    //      - LightGray for no highlight
+    //      - Black for highlight
+    // or change colours to suit
+    function setProgressGridHighlight(catindex, colour){
+        item = progressGrid[+catindex].column;
+        item.style.borderColor = colour;
+    }
 
     // displayCategory
     // changes html inner of
@@ -223,6 +232,8 @@ eleventyNavigation:
         categoryButton.innerHTML =  'About ' + item.name;
         categoryBody.innerHTML = item.description;
 
+        setProgressGridHighlight(currentIndex,"LightGrey");
+        setProgressGridHighlight(catindex, "Black")
         currentIndex = catindex;
     }
 
@@ -299,11 +310,12 @@ eleventyNavigation:
     // constants for structures of html elements
     const categoryArray = createCategoryArray();
     const progressGrid = createProgressGrid();
-    categoryArray.consolelog();
+    //categoryArray.consolelog();
     //progressGrid.consolelog();
 
     // other constants
     var currentIndex = 0;
+    setProgressGridHighlight(0,"Black")
 
     // add event listeners
 
