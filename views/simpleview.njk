@@ -1,10 +1,10 @@
 ---
 layout: layouts/base.njk
-title: Toggle Views
+title: Simple View
 eleventyNavigation:
-  key: New Toggle
+  key: Simple View
   parent: Views
-  order: 4
+  order: 5
 ---
 <div class="container-xl p-4">
     <h1 class="text-center"> Sensory Processing Checklist Questions</h1>
@@ -53,17 +53,17 @@ eleventyNavigation:
     <div class="row">
         {% for metacat in meta %}
             {% for category in metacat.categories %}
-            {% set catindex = category.index %}
+                {% set catindex = category.index %}
         
-            <div class="col p-0" style="border: 2px solid LightGray">
-                {% for sense in category.senses %}
-                <div class="progress-item" 
-                    style="width: auto; height:20px; border: 1px solid; border-color: LightGray;"
-                    senseindex="{{ loop.index - 1 }}"
-                    catindex="{{ catindex - 1 }}">
+                <div class="col p-0 progress-column" style="border: 2px solid LightGray" 
+                            index="{{catindex - 1 }}">
+                    {% for sense in category.senses %}
+                    <div class="progress-item" 
+                        style="width: auto; height:20px; border: 1px solid; border-color: LightGray;"
+                        senseindex="{{ loop.index - 1 }}">
+                    </div>
+                    {% endfor %}
                 </div>
-                {% endfor %}
-            </div>
 
             {% endfor %}
         {% endfor %}
@@ -207,10 +207,43 @@ eleventyNavigation:
         return catArray;
     }
 
+    // Create progress grid column array
+    //  This is a list of the columns of the grid where each item contains
+    //      a progress-column
+    //      an array of progress-item
+    // An array of ProgressGrid is returned
+    function createProgressGrid() {
+
+        // (local) constructor for ProgressGrid
+        // column is a DOM object with class progress-column
+        function ProgressGrid(column){
+            this.column = column;
+
+            items = column.querySelectorAll(".progress-item");
+            itemsArray = createArray(items, length);
+            for (i=0 ; i<items.length ; i++) {
+                item = items[i];
+                itemsArray[+item.getAttribute("senseindex")] = item;
+            }
+
+            this.senseboxes = itemsArray
+        }
+
+        const pGrid = document.getElementById("progress-grid");
+        const progressColumnList = pGrid.querySelectorAll(".progress-column");
+        const progressArray = createArray(progressColumnList.length);
+        for (j=0 ; j<progressArray.length ; j++){
+            item = progressColumnList[j];
+            progressArray[+item.getAttribute("catindex")] = new ProgressGrid(item);
+        }
+
+        return progressArray;
+    }
+
 
     // Global Variables
     const categoryArray = createCategoryArray();
-   
-
+    const progressGrid = createProgressGrid();
+    console.log(progressGrid);
 
 </script>
