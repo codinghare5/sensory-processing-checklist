@@ -240,7 +240,7 @@ eleventyNavigation:
         function ProgressGrid(column){
             this.column = column;
 
-            items = column.querySelectorAll(".progress-item");
+            items = column.getElementsByClassName("progress-item");
             itemsArray = createArray(items, length);
             for (i=0 ; i<items.length ; i++) {
                 item = items[i];
@@ -251,7 +251,7 @@ eleventyNavigation:
         }
 
         const pGrid = document.getElementById("progress-grid");
-        const progressColumnList = pGrid.querySelectorAll(".progress-column");
+        const progressColumnList = pGrid.getElementsByClassName("progress-column");
         const progressArray = createArray(progressColumnList.length);
         for (j=0 ; j<progressArray.length ; j++){
             item = progressColumnList[j];
@@ -266,5 +266,7 @@ eleventyNavigation:
     const categoryArray = createCategoryArray();
     const progressGrid = createProgressGrid();
     categoryArray.consolelog();
+
+
 
 </script>
