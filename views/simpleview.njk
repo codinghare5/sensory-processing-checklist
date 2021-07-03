@@ -140,10 +140,11 @@ eleventyNavigation:
 
 {# Create header for category names and paragraphs for category descriptions #}
 {# Creating them together inside a <div> with and id makes them easy to extract in javascript #}
-<div id="category-container"> {# simply holds <p> elements of category descriptions for easy retrieval #}
+<div id="category-container" style="display:none"> 
+{# simply holds <p> elements of category descriptions for easy retrieval #}
     {% for cat in categoryinfo %}
-        <h2 style="display:none" catindex="{{ cat.index }}"> {{ cat.name }}</h2>
-        <p style="display:none" catindex="{{ cat.index }}"> {{ cat.description }}</p>
+        <h2 catindex="{{ cat.index }}"> {{ cat.name }}</h2>
+        <p catindex="{{ cat.index }}"> {{ cat.description }}</p>
     {% endfor %}
 </div>
 
@@ -176,7 +177,7 @@ eleventyNavigation:
                           {"label": "Not Sure", "id": "not-sure", "value": 1},
                           {"label": "False", "id": "false", "value": 0}] %}
 {# create question sets  #}
-<div class="container" id="questionset-container" style="display:block">
+<div class="container-xl pt-5" id="questionset-container" style="display:block">
     {% for category in categoryquestions %}
         {% set catindex = category.index %}
 
@@ -189,7 +190,7 @@ eleventyNavigation:
                     <p><strong>{{ get_category_summary(catindex,senseindex) }}</strong></p>
                     
                     {% for question in sense.questions %}
-                        {% set questionName = base_id + '-' + senseindex %}
+                        {% set questionName = base_id + '-' + senseindex + '-' + loop.index %}
                         <fieldset class="pb-3" id="{{ questionName }}" value=0>
                             <legend class="fs-6">{{ question }}</legend>
                             {# use class=row to spread radio inputs #}
@@ -315,9 +316,18 @@ eleventyNavigation:
     function createCategoryArray() {
 
         // (local) constructor for Category
-        function Category(name,description){
-            this.name = name;
-            this.description = description;
+        function Category(name,description,questionSets){
+            this.name = name.innerHTML;
+            this.description = description.innerHTML;
+
+            // create an array of questions grouped by sense
+            questionsArray = createArray(questionSets.length);
+            for (j=0; j<questionSets.length; j++){
+                qset = questionSets[j];
+                senseindex = qset.getAttribute('senseindex');
+                questionsArray[+senseindex] = qset.innerHTML;
+            }
+            this.questions = questionsArray;
         }
 
         // Grab the categoryContainer and create (DOM) arrays of headers and descriptions
@@ -325,11 +335,16 @@ eleventyNavigation:
         const headers = categoryContainer.getElementsByTagName("h2");
         const descriptions = categoryContainer.getElementsByTagName("p");
 
+        // Grab the questionset container and create a DOM array of category questionsets
+        const categoryQuestionsets = document.querySelectorAll('#questionset-container .category-questionset');
+
         // create and fill an array of Category
         catArray = createArray(headers.length);
-        for (i=0 ; i<headers.length ; i++)
-            catArray[i] = new Category(headers[i].innerHTML, descriptions[i].innerHTML);
-
+        for (i=0 ; i<headers.length ; i++) {
+            senseQSets = categoryQuestionsets[i].querySelectorAll('.category-sense-questions')
+            //console.log(senseQSets)
+            catArray[i] = new Category(headers[i], descriptions[i], senseQSets);
+        }
         return catArray;
     }
 
@@ -382,7 +397,7 @@ eleventyNavigation:
     // constants for structures of html elements
     const categoryArray = createCategoryArray();
     const progressGrid = createProgressGrid();
-    //categoryArray.consolelog();
+    categoryArray.consolelog();
     //progressGrid.consolelog();
 
     // other constants
