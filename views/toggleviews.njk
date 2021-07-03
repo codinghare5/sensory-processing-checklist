@@ -354,8 +354,7 @@ eleventyNavigation:
             accordionCollapse.appendChild(questionArray[senseindex][catindex]);
 
             // attach event listener to question the $ notation is jQuery
-            str = '#' + accordionCollapse.id;
-            $(str).on('hidden.bs.collapse',function(){
+            accordionCollapse.addEventListener('hidden.bs.collapse',function(){
                 console.log("collapse hidden function " + this.id);
                 senseindex = this.getAttribute("senseindex");
                 catindex = this.getAttribute("catindex");

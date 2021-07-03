@@ -1,0 +1,326 @@
+---
+layout: layouts/base.njk
+title: Simple View
+eleventyNavigation:
+  key: Simple View
+  parent: Views
+  order: 5
+---
+<div class="container-xl p-4">
+    <h1 class="text-center"> Sensory Processing Checklist Questions</h1>
+
+    {# Instructions #}
+    <h2>Instructions</h2>
+    <p>Please answer the question according to the following options:</p>
+    <ul>
+        <li><strong>Was True</strong>: was true at any time in the past.</li>
+        <li><strong>True</strong>: True now (if it was true and is true now tick both answers)</li>
+        <li><strong>Not Sure</strong>: Not sure or don't know</li>
+         <li><strong>False</strong>: False (if the statement is not true)</li>
+    </ul>
+    <p>Please try to answer all the questions.</p>
+
+    <h3>Navigation</h3>
+    <p>The simplest way to work your way through the questions is simply to answer them in order presented, 
+    clicking the next button when you are ready to move forward. The progress grid highlights the column for
+    the questions that are currently being answered.</p>
+
+    <p>The progress grid will be coloured in as you answer the questions. This will provide you with an interim 
+    indication of the results.</p>
+
+    <p>If you want to move to a different set of answers, simply click on the appropriate column of the progress grid.</p>
+
+    <h3>Saving results</h3>
+    <p>It is possible to save answers and read them in again. To do so, click the save and read buttons below.<br>
+    Files will be downloaded to your download folder.</p>
+</div>
+
+{# context menu #}
+<nav class="d-flex justify-content-center pb-4">
+    {# button to save question answers #}
+    <button class="col-3 bg-info fs-5 rounded" id="savebutton" type="button">Save Answer File</button>
+    {# button to save question answers #}
+    <button class="col-3 bg-info fs-5 rounded" id="readbutton" type="button">Read Answer File</button>
+    {# button to show results #}
+    <button class="col-4 bg-info fs-5 rounded" id="resultsbutton" type="button">Show Results</button>
+</nav>
+
+{# Create Category name placeholder #}
+<h2 class="text-center pb-2" id="category-name"> {{ categorysummary[0].name }} </h2>
+
+{# create progress bar #}
+<div class="container-xl bg-white pb-3 px-5" id="progress-grid">
+    <div class="row">
+        {% for metacat in meta %}
+            {% for category in metacat.categories %}
+                {% set catindex = category.index %}
+        
+                <div class="col p-0 progress-column" style="border: 2px solid LightGray" 
+                            catindex="{{ catindex - 1 }}">
+                    {% for sense in category.senses %}
+                    <div class="progress-item" 
+                        style="width: auto; height:20px; border: 1px solid; border-color: LightGray;"
+                        senseindex="{{ loop.index - 1 }}">
+                    </div>
+                    {% endfor %}
+                </div>
+
+            {% endfor %}
+        {% endfor %}
+    </div>
+</div>
+
+{# Create Area to hold information about the category - put the text for the first category in it 
+    This should be an accordion #}
+<div class="accordion py-3" id="category-description">
+  <div class="accordion-item">
+    <h2 class="accordion-header">
+      <button class="accordion-button" type="button" data-bs-toggle="collapse" 
+                data-bs-target="#category-collapse" aria-expanded="true" 
+                aria-controls="categorycollapse"
+                id="category-description-button">
+            About {{ categoryinfo[0].name }}
+      </button>
+    </h2>
+    <div id="category-collapse" class="accordion-collapse collapse show" 
+            aria-labelledby="category-description-header" 
+            data-bs-parent="#category-description">
+      <div class="accordion-body" id="category-description-body">
+        {{ categoryinfo[0].description}}
+      </div>
+    </div>
+  </div>
+</div>
+
+{# body #}
+<div class="container-xl m-3">
+    {# button to open all accordions #}
+    <div class="pt-3">
+     <button class="col-3 bg-info fs-5 rounded float-end mt-1 mb-2" id="openallbutton" type="button">Open All</button>
+    </div>
+    {# body accordion of sets of questions labelled by sense #}
+    <div class="accordion" id="bodyaccordion">
+        {# create a set of sense accordions #}
+        {% for sense in questions %}
+            <div class="accordion-item">
+                {% set sensestr = sense.sense | lower %}
+                <h2 class="accordion-header" id="{{ sensestr }}-accordion-header">
+                    <button class="accordion-button" type="button" 
+                            data-bs-toggle="collapse" 
+                            data-bs-target="#{{ sensestr }}-collapse" 
+                            aria-expanded="false" 
+                            aria-controls="{{ sensestr }}-collapse">
+                        {{ sense.sense }} Questions
+                    </button>
+                </h2>
+                <div id="{{ sensestr }}-collapse" class="accordion-collapse collapse" 
+                        aria-labelledby="{{ sensestr }}-accordion-header" data-bs-parent="#bodyaccordion">
+                    <div class="accordion-body">
+                        <p>{{ sense.sense }} questions for this category will go here.</p>
+                    </div>
+                </div>
+            </div> {# end accordion item #}
+        {% endfor %}
+    </div> {# end accordion #}
+
+    {# next and previous buttons #}
+    <nav class="pt-3">
+        <button class="col-3 bg-info fs-5 rounded float-start" id="previousbutton" type="button">Previous</button>
+        <button class="col-3 bg-info fs-5 rounded float-end" id="nextbutton" type="button">Next</button>
+    </nav>
+</div> {# end container#}
+
+
+{#=============================== END BASIC PAGE LAYOUT =================================================#}
+
+
+
+{#=======================================================================================================#}
+
+
+
+{#===================== START COMPONENTS TO BE USED WITH JAVASCRIPT =====================================#}
+
+{# Create header for category names and paragraphs for category descriptions #}
+{# Creating them together inside a <div> with and id makes them easy to extract in javascript #}
+<div id="category-container"> {# simply holds <p> elements of category descriptions for easy retrieval #}
+    {% for cat in categoryinfo %}
+        <h2 style="display:none" catindex="{{ cat.index }}"> {{ cat.name }}</h2>
+        <p style="display:none" catindex="{{ cat.index }}"> {{ cat.description }}</p>
+    {% endfor %}
+</div>
+
+{#===================== END COMPONENTS TO BE USED WITH JAVASCRIPT =====================================#}
+
+
+
+{#=======================================================================================================#}
+
+
+
+{#====================================== JAVASCRIPT =======================================================#}
+
+<script>
+    // Functions 
+    ///////////////////////////////////////////////////////////////////////////////////////
+
+    // Generic Functions
+    ////////////////////////////////////////////////////////////////////////////////////////
+
+    // create array script copied from internet
+    // usage:
+    //      createArray() creates empty 1D array
+    //      createArray(2) creates 1D array of length 2
+    //      createArray(3, 2) creates 2D array, first dimension length 3, second dimension length 2
+    //      createArray(3,3,3,3) creates a 4D array where all dimensions have length 3
+    function createArray(length) {
+        var arr = new Array(length || 0),
+            i = length;
+
+        if (arguments.length > 1) {
+            var args = Array.prototype.slice.call(arguments, 1);
+            while(i--) arr[length-1 - i] = createArray.apply(this, args);
+        }
+
+        return arr;
+    }
+
+    // function to add the same event listener to every element in an array. 
+    Array.prototype.addEventListener = function(eventname, eventfunction) {
+        for (i=0 ; i<this.length ; i++)
+            this[i].addEventListener(eventname, eventfunction);
+    };
+
+    // create a function to console log every element in an array
+    Array.prototype.consolelog = function() {
+        for (i=0 ; i<this.length ; i++)
+            console.log(this[i]);
+    };
+
+   
+  
+    // Functions that manipulate html elements in some way
+    /////////////////////////////////////////////////////////////////////
+
+    //function to set or remove the progress grid highlight:
+    //  just set the color
+    //      - LightGray for no highlight
+    //      - Black for highlight
+    // or change colours to suit
+    function setProgressGridHighlight(catindex, colour){
+        item = progressGrid[+catindex].column;
+        item.style.borderColor = colour;
+    }
+
+    // displayCategory
+    // changes html inner of
+    //      category-name
+    //      category-description-header
+    //      category-description-body
+    // also highlights the correct column in the progress grid
+    //
+    // Assumes currentindex is declared somewhere and has an appropriate value
+    function displayCategory(catindex) {
+        console.log("in displayCategory: " + catindex + ' ' + currentIndex);
+        if (+catindex == +currentIndex)
+            return; // nothing to do
+
+        // set category header and description
+        console.log("setting category info for category " + catindex);
+        item = categoryArray[+catindex];
+        categoryTitle.innerHTML = item.name;
+        categoryButton.innerHTML =  'About ' + item.name;
+        categoryBody.innerHTML = item.description;
+
+        setProgressGridHighlight(currentIndex,"LightGrey");
+        setProgressGridHighlight(catindex, "Black")
+        currentIndex = catindex;
+    }
+
+
+
+    // create an array of information to do with each category:
+    //      - name (for the header)
+    //      - description (for the category description)
+    // This will be used to set html inners for the elements with ids
+    //      - category-name and 
+    //      - category-description-body
+    function createCategoryArray() {
+
+        // (local) constructor for Category
+        function Category(name,description){
+            this.name = name;
+            this.description = description;
+        }
+
+        // Grab the categoryContainer and create (DOM) arrays of headers and descriptions
+        const categoryContainer = document.getElementById("category-container")
+        const headers = categoryContainer.getElementsByTagName("h2");
+        const descriptions = categoryContainer.getElementsByTagName("p");
+
+        // create and fill an array of Category
+        catArray = createArray(headers.length);
+        for (i=0 ; i<headers.length ; i++)
+            catArray[i] = new Category(headers[i].innerHTML, descriptions[i].innerHTML);
+
+        return catArray;
+    }
+
+    // Create progress grid column array
+    //  This is a list of the columns of the grid where each item contains
+    //      a progress-column
+    //      an array of progress-item
+    // An array of ProgressGrid is returned
+    function createProgressGrid() {
+
+        // (local) constructor for ProgressGrid
+        // column is a DOM object with class progress-column
+        function ProgressGrid(column, catindex){
+            this.column = column;
+
+            items = column.querySelectorAll(".progress-item");
+            itemsArray = createArray(items, length);
+            for (i=0 ; i<items.length ; i++) {
+                item = items[i];
+                itemsArray[+item.getAttribute("senseindex")] = item;
+                item.addEventListener("click", function(){ displayCategory(catindex); });
+            }
+
+            this.senseboxes = itemsArray
+        }
+
+        const pGrid = document.getElementById("progress-grid");
+        const progressColumnList = pGrid.querySelectorAll(".progress-column");
+        const progressArray = createArray(progressColumnList.length);
+        for (j=0 ; j<progressArray.length ; j++){
+            item = progressColumnList[j];
+            catindex = item.getAttribute("catindex");
+            progressArray[+catindex] = new ProgressGrid(item, catindex);
+        }
+
+        return progressArray;
+    }
+
+
+    // constants for particular html elements
+    const categoryTitle = document.getElementById('category-name');
+    const categoryButton = document.getElementById('category-description-button');
+    const categoryBody = document.getElementById('category-description-body');
+
+    // constants for structures of html elements
+    const categoryArray = createCategoryArray();
+    const progressGrid = createProgressGrid();
+    //categoryArray.consolelog();
+    //progressGrid.consolelog();
+
+    // other constants
+    var currentIndex = 0;
+    setProgressGridHighlight(0,"Black")
+
+    // add event listeners
+
+
+
+
+
+</script>
