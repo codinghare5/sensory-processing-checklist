@@ -127,7 +127,7 @@ code {
 
 /* Header */
 .home {
-  padding: 1rem 1rem;
+  padding: 1rem 1rem 1rem 0;
   float: left;
   font-size: 1em; /* 16px /16 */
   margin: 0 !important;
@@ -261,8 +261,10 @@ a[href].direct-link:focus:visited,
   color: #aaa;
 }
 
-section > button {
-  display: block;
+section button {
+  display: flex;
+  justify-content: center;
+  min-width: 15ch;
 }
 
 div.tab-pane > article {

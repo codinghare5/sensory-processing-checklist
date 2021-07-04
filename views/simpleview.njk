@@ -6,7 +6,7 @@ eleventyNavigation:
   parent: Views
   order: 5
 ---
-<div class="container-xl p-4">
+<section class="container-xl p-4">
     <h1 class="text-center"> Sensory Processing Checklist Questions</h1>
 
     {# Instructions #}
@@ -30,24 +30,30 @@ eleventyNavigation:
     <h3>Saving results</h3>
     <p>It is possible to save answers and read them in again. To do so, click the save and read buttons below.<br>
     Files will be downloaded to your download folder.</p>
-</div>
+</section>
 
+<!-- Context menu ---------------------------------------------------------------------------- -->
 {# context menu #}
-<nav class="d-flex justify-content-center pb-4">
-    {# button to save question answers #}
-    <button class="col-3 bg-info fs-5 rounded" id="savebutton" type="button">Save Answer File</button>
-    {# button to save question answers #}
-    <button class="col-3 bg-info fs-5 rounded" id="readbutton" type="button">Read Answer File</button>
-    {# button to show results #}
-    <button class="col-4 bg-info fs-5 rounded" id="resultsbutton" type="button">Show Results</button>
-</nav>
+<section class="container-xl card mb-2">
+    <nav class="d-flex justify-content-around py-4">
+        {# button to save question answers #}
+        <button class="p-2 bg-info fs-5 rounded" id="savebutton" type="button">Save Answer File</button>
+        {# button to save question answers #}
+        <button class="p-2 bg-info fs-5 rounded" id="readbutton" type="button">Read Answer File</button>
+        {# button to show results #}
+        <button class="p-2 bg-info fs-5 rounded" id="resultsbutton" type="button">Show Results</button>
+    </nav>
+</section>
 
 {# Create Category name placeholder #}
-<h2 class="text-center pb-2" id="category-name"> {{ categorysummary[0].name }} </h2>
+<h2 class="text-center py-2" id="category-name"> {{ categorysummary[0].name }} </h2>
 
+{# wrap everything below category name in a card #}
+<div class='container-xl card py-2 mb-4'>
+<!-- Progress bar ---------------------------------------------------------------------------- -->
 {# create progress bar #}
-<div class="container-xl bg-white pb-3 px-5" id="progress-grid">
-    <div class="row">
+<section class="container-xl py-3 px-5" id="progress-grid">
+    <div class="row bg-white">
         {% for metacat in meta %}
             {% for category in metacat.categories %}
                 {% set catindex = category.index %}
@@ -65,35 +71,42 @@ eleventyNavigation:
             {% endfor %}
         {% endfor %}
     </div>
-</div>
+</section>
 
-{# Create Area to hold information about the category - put the text for the first category in it 
-    This should be an accordion #}
-<div class="accordion py-3" id="category-description">
-  <div class="accordion-item">
-    <h2 class="accordion-header">
-      <button class="accordion-button" type="button" data-bs-toggle="collapse" 
-                data-bs-target="#category-collapse" aria-expanded="true" 
-                aria-controls="categorycollapse"
-                id="category-description-button">
-            About {{ categoryinfo[0].name }}
-      </button>
-    </h2>
-    <div id="category-collapse" class="accordion-collapse collapse show" 
-            aria-labelledby="category-description-header" 
-            data-bs-parent="#category-description">
-      <div class="accordion-body" id="category-description-body">
-        {{ categoryinfo[0].description}}
+<!-- Information about the category ---------------------------------------------------------------------------- -->
+{# Wrap it inside a container, so it desn't stand out #}
+<section class="container-xl">
+    {# Create Area to hold information about the category - put the text for the first category in it 
+        This should be an accordion #}
+    <div class="accordion py-3" id="category-description">
+      <div class="accordion-item">
+        <h2 class="accordion-header">
+          <button class="accordion-button" type="button" data-bs-toggle="collapse" 
+                    data-bs-target="#category-collapse" aria-expanded="true" 
+                    aria-controls="categorycollapse"
+                    id="category-description-button">
+                About {{ categoryinfo[0].name }}
+          </button>
+        </h2>
+        <div id="category-collapse" class="accordion-collapse collapse show" 
+                aria-labelledby="category-description-header" 
+                data-bs-parent="#category-description">
+          <div class="accordion-body" id="category-description-body">
+            {{ categoryinfo[0].description}}
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-</div>
+</section>
+
+<!-- END Information about the category ---------------------------------------------------------------------------- -->
 
 {# body #}
-<div class="container-xl m-3">
+<!-- Container with the set of questions ---------------------------------------------------------------------------- -->
+<section class="container-xl">
     {# button to open all accordions #}
     <div class="pt-3">
-     <button class="col-3 bg-info fs-5 rounded float-end mt-1 mb-2" id="openallbutton" type="button">Open All</button>
+     <button class="p-2 bg-info fs-5 rounded float-end my-2" id="openallbutton" type="button">Open All</button>
     </div>
     {# body accordion of sets of questions labelled by sense #}
     <div class="accordion" id="bodyaccordion">
@@ -121,11 +134,14 @@ eleventyNavigation:
     </div> {# end accordion #}
 
     {# next and previous buttons #}
-    <nav class="pt-3">
-        <button class="col-3 bg-info fs-5 rounded float-start" id="previousbutton" type="button">Previous</button>
-        <button class="col-3 bg-info fs-5 rounded float-end" id="nextbutton" type="button">Next</button>
-    </nav>
-</div> {# end container#}
+    <div>
+        <nav class="d-flex justify-content-between py-3">
+            <button class="p-2 bg-info fs-5 rounded" id="previousbutton" type="button">Previous</button>
+            <button class="p-2 bg-info fs-5 rounded" id="nextbutton" type="button">Next</button>
+        </nav>
+    </div>
+</section> {# end container#}
+</div>
 
 
 {#=============================== END BASIC PAGE LAYOUT =================================================#}
@@ -436,7 +452,6 @@ eleventyNavigation:
 
         if(event.target.id == 'nextbutton') {
             var newIndex = currentIndex;
-            console.log(categoryArray.length);
             +currentIndex < categoryArray.length -1 ? ++newIndex: newIndex=0;
             displayCategory(+newIndex);
         }
