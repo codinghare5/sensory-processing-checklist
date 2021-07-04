@@ -421,9 +421,26 @@ eleventyNavigation:
     var currentIndex = 10; // doesn't matter what the value is as long as it isn't 0
     displayCategory(0);
 
-    // add event listeners
+    // Add Event Listeners
 
+    // get next and previous buttons
+    prevButton = document.getElementById('previousbutton');
+    nextButton = document.getElementById('nextbutton');
+    categoryNavigationButtons = [prevButton, nextButton];
+    categoryNavigationButtons.addEventListener('click', function(event) {
+        if(event.target.id == 'previousbutton') {
+            var newIndex = currentIndex;
+            +currentIndex > 0 ? --newIndex: newIndex = categoryArray.length -1;
+            displayCategory(+newIndex);
+        }
 
+        if(event.target.id == 'nextbutton') {
+            var newIndex = currentIndex;
+            console.log(categoryArray.length);
+            +currentIndex < categoryArray.length -1 ? ++newIndex: newIndex=0;
+            displayCategory(+newIndex);
+        }
+    });
 
 
 
