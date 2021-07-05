@@ -45,7 +45,7 @@ eleventyNavigation:
     </nav>
 </section>
 
-
+<!-- Category name ---------------------------------------------------------------------------- -->
 {# wrap everything into a card class #}
 <div class='container-xl card py-2 mb-4'>
     {# Create Category name placeholder #}
@@ -137,7 +137,7 @@ eleventyNavigation:
     <div>
         <nav class="d-flex justify-content-between py-3">
             <button class="p-2 bg-info rounded" id="previousbutton" type="button">Previous</button>
-            <button class="p-2 bg-info rounded" id="nextbutton" type="button">Next</button>
+            <button class="p-2 bg-info rounded" id="nextbutton" type="button" nextevent="next">Next</button>
         </nav>
     </div>
 </section> {# end container#}
@@ -407,7 +407,6 @@ eleventyNavigation:
         return progressArray;
     }
 
-
     /////////////////////////////////   End Functions  /////////////////////////////////////////////
 
     // Variables
@@ -430,7 +429,7 @@ eleventyNavigation:
     // constants for structures of html elements
     const categoryArray = createCategoryArray();
     const progressGrid = createProgressGrid();
-    categoryArray.consolelog();
+    //categoryArray.consolelog();
     //progressGrid.consolelog();
 
     // other constants
@@ -443,6 +442,25 @@ eleventyNavigation:
     prevButton = document.getElementById('previousbutton');
     nextButton = document.getElementById('nextbutton');
     categoryNavigationButtons = [prevButton, nextButton];
+    resultsButton = document.getElementById('resultsbutton');
+
+    function checkEdgeCases(currentCategry){
+        if(currentCategry < 0 || currentCategry.typeOf === 'NaN') currentCategry = 10;
+        +currentIndex === 0 ? prevButton.disabled = true : prevButton.disabled = false;
+        if(+currentIndex === categoryArray.length -1){
+            nextButton.innerHTML = 'Show results';
+            nextButton.setAttribute('nextevent', 'show');
+        }
+        else {
+            if(nextButton.innerHTML === 'Show results') {
+                nextButton.innerHTML = 'Next';
+                nextButton.setAttribute('nextevent', 'next');
+            }
+        }
+    }
+    // We are displaying category, so check at load
+    checkEdgeCases(+currentIndex);
+
     categoryNavigationButtons.addEventListener('click', function(event) {
         if(event.target.id == 'previousbutton') {
             var newIndex = currentIndex;
@@ -451,12 +469,14 @@ eleventyNavigation:
         }
 
         if(event.target.id == 'nextbutton') {
-            var newIndex = currentIndex;
-            +currentIndex < categoryArray.length -1 ? ++newIndex: newIndex=0;
-            displayCategory(+newIndex);
+            if(event.target.getAttribute('nextevent') == 'next'){
+                var newIndex = currentIndex;
+                +currentIndex < categoryArray.length -1 ? ++newIndex: newIndex=0;
+                displayCategory(+newIndex);
+            }
+            else if (event.target.getAttribute('nextevent') == 'show') console.log('Showing results somewhere.');
         }
+        checkEdgeCases(+currentIndex);
     });
-
-
 
 </script>
