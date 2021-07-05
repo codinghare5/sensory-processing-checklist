@@ -265,6 +265,11 @@ section button {
   display: flex;
   justify-content: center;
   min-width: 15ch;
+  border: none;
+}
+
+#savebutton, #readbutton, #resultsbutton, #previousbutton, #nextbutton, #openallbutton {
+  font-size: 1.25rem !important;
 }
 
 div.tab-pane > article {
@@ -434,6 +439,10 @@ h1, .h1, h2, .h2, h3, .h3, h4, .h4, h5, .h5, h6, .h6 {
   margin-bottom: 3rem;
 }
 
+.text-center {
+  margin-bottom: 1.5rem;
+}
+
 /* Sidebar and body END */
 
 /* Accorion fix */
@@ -484,9 +493,17 @@ h1, .h1, h2, .h2, h3, .h3, h4, .h4, h5, .h5, h6, .h6 {
   button.nav-link.active {
     font-weight: 600;
   }
+  /* make buttons to wrap text on tablets and samller */
+  section button {
+    min-width: min-content;
+  }
+  #savebutton, #readbutton, #resultsbutton, #previousbutton, #nextbutton, #openallbutton {
+    font-size: 1rem !important;
+  }
 
   /* Tablet and mobile gap between tabs and sidebar */
   .row:nth-of-type(2) {
     margin-top: 0.5em;
   }
+
 }
