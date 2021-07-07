@@ -296,6 +296,75 @@ eleventyNavigation:
         item.style.borderColor = colour;
     }
 
+    // Event function to control behaviour of checkbox buttons for the questions
+    function addEventListenertoQuestionButtons() {
+        const questionButtons = document.querySelectorAll(".form-check-input");
+        for (i=0 ; i<questionButtons.length ; i++) {
+            questionButtons[i].addEventListener('change', function() {
+                console.log(this.id + ' ' + this.getAttribute("question_id"));
+                
+                const formwrapper = document.getElementById(this.getAttribute("question_id"));
+                var currentvalue = formwrapper.getAttribute("value");
+                const thisvalue = this.getAttribute("value");
+                const buttons = formwrapper.getElementsByTagName("input");
+                const falsebutton = buttons[3];
+                const notsurebutton = buttons[2]
+                const truebutton = buttons[1];
+                const wastruebutton = buttons[0];
+                //console.log(buttons);
+      
+                var newvalue;
+                if (!this.checked) { // button was checked before the change
+                    if (this == falsebutton) { // if false button do nothing else
+                        falsebutton.checked=true;
+                    }
+                    else {
+                        newvalue = +currentvalue - +thisvalue; //+thisvalue converts thisvalue to an int
+                        if (newvalue == 0){ // no buttons are active
+                            falsebutton.checked=true;
+                            formwrapper.setAttribute("value",0);
+                        }
+                        else { // one other button is active (can't be more than one)
+                            formwrapper.setAttribute("value",newvalue);
+                        }
+                    } 
+                }
+                else { // the button was not active
+                    //console.log(this.checked);
+                    if (this === falsebutton) {
+                        //console.log("It is false button.");
+                        formwrapper.setAttribute("value",0);
+                        for (j=0; j<buttons.length - 1 ; j++)
+                            buttons[j].checked=false;
+                    }
+                    else {
+                        //console.log("It is NOT false button.");
+                        falsebutton.checked=false;
+                        if (this === notsurebutton) {
+                            //console.log("It is not-sure button.");
+                            truebutton.checked=false;
+                            wastruebutton.checked=false;
+                            formwrapper.setAttribute("value",1);
+                        }
+                        else { // button is either wastruebutton or nowtruebutton
+                            //console.log("First two buttons.");
+                            if (notsurebutton.checked){
+                                //console.log("It is not-sure button.");
+                                notsurebutton.checked=false;
+                                falsebutton.checked=false;
+                                currentvalue = 0;
+                            }
+                            newvalue = +currentvalue + +thisvalue;
+                            //console.log('currentvalue: ' + currentvalue + ' thisvalue: ' + thisvalue + ' newvalue: ' + newvalue);
+                            formwrapper.setAttribute("value",newvalue)
+                        }
+                    }
+                } 
+                console.log('form value:' + formwrapper.getAttribute("value"));
+            }); // end event function definition
+        } // end loop through buttons
+    } // end function
+
     // displayCategory
     // changes html inner of
     //      category-name
@@ -324,9 +393,10 @@ eleventyNavigation:
         // set body accordion bodyies
         console.log("setting accordion bodies");
         console.log(item);
-        for (var i=0; i<accordionBodies.length; i++)
-            accordionBodies[i].innerHTML = item.questions[i];
-
+        for (var i=0; i<accordionBodies.length; i++) {
+            thebody = accordionBodies[i]
+            thebody.replaceChild(item.questions[i],thebody.childNodes[0]); // newnode THEN oldnode
+        }
     }
 
 
@@ -349,7 +419,7 @@ eleventyNavigation:
             for (var j=0; j<questionSets.length; j++){
                 qset = questionSets[j];
                 senseindex = qset.getAttribute('senseindex');
-                questionsArray[+senseindex] = qset.innerHTML;
+                questionsArray[+senseindex] = qset;
             }
             this.questions = questionsArray;
         }
@@ -438,6 +508,7 @@ eleventyNavigation:
     displayCategory(0);
 
     // Add Event Listeners
+    addEventListenertoQuestionButtons();
 
     // get next and previous buttons
     prevButton = document.getElementById('previousbutton');
