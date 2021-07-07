@@ -125,8 +125,7 @@ eleventyNavigation:
                 </h2>
                 <div id="{{ sensestr }}-collapse" class="accordion-collapse collapse" 
                         aria-labelledby="{{ sensestr }}-accordion-header" data-bs-parent="#bodyaccordion">
-                    <div class="accordion-body">
-                        {{ sense.sense }} questions for this category will go here.
+                    <div class="accordion-body" parentnode="">
                     </div>
                 </div>
             </div> {# end accordion item #}
@@ -304,29 +303,37 @@ eleventyNavigation:
     // also highlights the correct column in the progress grid
     //
     // Assumes currentindex is declared somewhere and has an appropriate value
-    function displayCategory(catindex) {
-        console.log("in displayCategory: " + catindex + ' ' + currentIndex);
-        if (+catindex == +currentIndex)
-            return; // nothing to do
+    function displayCategory(newIndex) {
+        console.log("in displayCategory: " + newIndex + ' ' + currentIndex);
+        if (+newIndex == +currentIndex)
+        return; // nothing to do
+        if(currentIndex < 0) currentIndex = 0;
 
         // set category header and description
-        console.log("setting category info for category " + catindex);
-        const item = categoryArray[+catindex];
-        categoryTitle.innerHTML = item.name;
-        categoryButton.innerHTML =  'About ' + item.name;
-        categoryBody.innerHTML = item.description;
+        console.log("setting category info for category " + newIndex);
+        const newItem = categoryArray[+newIndex];
+        categoryTitle.innerHTML = newItem.name;
+        categoryButton.innerHTML =  'About ' + newItem.name;
+        categoryBody.innerHTML = newItem.description;
 
         // sort out the highlighting of the progress grid columns
         setProgressGridHighlight(currentIndex,"LightGrey");
-        setProgressGridHighlight(catindex, "Black")
-        currentIndex = catindex;
+        setProgressGridHighlight(newIndex, "Black");
 
         // set body accordion bodyies
-        console.log("setting accordion bodies");
-        console.log(item);
-        for (var i=0; i<accordionBodies.length; i++)
-            accordionBodies[i].innerHTML = item.questions[i];
-
+        //console.log("setting accordion bodies");
+        currentSet = categoryArray[+currentIndex];
+        //console.log(newItem);
+        //console.log(currentSet);
+        //currentSetChildNodes = currentSet.getElementsByTagName('fieldset');
+        //senseQSets = categoryQuestionsets[currentIndex].querySelectorAll('.category-sense-questions');
+        for (var i=0; i<accordionBodies.length; i++){
+            accordionBodies[i].innerHTML = '';
+            accordionBodies[i].appendChild(newItem.questions[i]);
+            console.log(newItem);
+        }
+        addEventListenersToButtonsInsideAccordionBodies(accordionBodies);
+        currentIndex = newIndex;
     }
 
 
@@ -365,9 +372,9 @@ eleventyNavigation:
         // create and fill an array of Category
         catArray = createArray(headers.length);
         for (i=0 ; i<headers.length ; i++) {
-            senseQSets = categoryQuestionsets[i].querySelectorAll('.category-sense-questions')
-            //console.log(senseQSets)
-            catArray[i] = new Category(headers[i], descriptions[i], senseQSets);
+            senseQSets = categoryQuestionsets[i].querySelectorAll('.category-sense-questions');
+            catArray[i] = {'name' : headers[i].innerHTML, 'description' : descriptions[i].innerHTML, 'questions' : senseQSets};
+            //console.log(catArray[i]);
         }
         return catArray;
     }
@@ -435,7 +442,7 @@ eleventyNavigation:
                 itemsArray[+item.getAttribute("senseindex")] = item;
                 item.addEventListener("click", function(){ 
                     displayCategory(catindex);
-                    addEventListenersToButtonsInsideAccordionBodies(accordionBodies);
+                    checkEdgeCases(catindex);
                 });
             }
 
@@ -469,17 +476,19 @@ eleventyNavigation:
     // Body
     openAllButton = document.getElementById('openallbutton');
     const accordionBodies = document.querySelectorAll('#bodyaccordion .accordion-body');
-    console.log(accordionBodies);
+    //console.log(accordionBodies);
 
     // constants for structures of html elements
     const categoryArray = createCategoryArray();
     const progressGrid = createProgressGrid();
+    // Grab the questionset container and create a DOM array of category questionsets
+    const categoryQuestionsets = document.querySelectorAll('#questionset-container .category-questionset');
     //const questionArray = createArray(+numberOfSenses, +numberOfCategories);
-    categoryArray.consolelog();
+    //categoryArray.consolelog();
     //progressGrid.consolelog();
 
     // other constants
-    var currentIndex = 10; // doesn't matter what the value is as long as it isn't 0
+    var currentIndex = -1; // doesn't matter what the value is as long as it isn't 0
     displayCategory(0);
 
 // Add Event Listeners
@@ -597,7 +606,6 @@ eleventyNavigation:
             else if (event.target.getAttribute('nextevent') == 'show') console.log('Showing results somewhere.');
         }
         checkEdgeCases(+currentIndex);
-        addEventListenersToButtonsInsideAccordionBodies(accordionBodies);
     });
 
     addEventListenersToButtonsInsideAccordionBodies(accordionBodies);
