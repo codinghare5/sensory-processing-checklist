@@ -102,8 +102,8 @@ eleventyNavigation:
 <!-- END Information about the category ---------------------------------------------------------------------------- -->
 
 {# body #}
-<!-- Container with the set of questions ---------------------------------------------------------------------------- -->
-<section class="container-xl">
+<!-- Container with the set of questions #questionset ---------------------------------------------------------------------------- -->
+<section class="container-xl" id="questionset">
     {# button to open all accordions #}
     <div class="pt-3">
      <button class="p-2 bg-info fs-5 rounded float-end my-2" id="openallbutton" type="button">Open All</button>
@@ -115,7 +115,7 @@ eleventyNavigation:
             <div class="accordion-item">
                 {% set sensestr = sense.sense | lower %}
                 <h2 class="accordion-header" id="{{ sensestr }}-accordion-header">
-                    <button class="accordion-button" type="button" 
+                    <button class="accordion-button collapsed" type="button" 
                             data-bs-toggle="collapse" 
                             data-bs-target="#{{ sensestr }}-collapse" 
                             aria-expanded="false" 
@@ -311,7 +311,7 @@ eleventyNavigation:
 
         // set category header and description
         console.log("setting category info for category " + catindex);
-        var item = categoryArray[+catindex];
+        const item = categoryArray[+catindex];
         categoryTitle.innerHTML = item.name;
         categoryButton.innerHTML =  'About ' + item.name;
         categoryBody.innerHTML = item.description;
@@ -372,6 +372,50 @@ eleventyNavigation:
         return catArray;
     }
 
+    // create a structure for question answers
+    function createJsonAnswers(questionArray) {
+        jsonstruct = {"type": "SPCR", "version": 1, "questionStatus": []};
+
+        function Status(senseindex,catindex,values){
+            this.senseindex = senseindex;
+            this.categoryindex = catindex;
+            this.values = values;
+        }
+
+        for (i=0 ; i<questionArray.length ; i++){
+            for (j=0 ; j<questionArray[i].length ; j++){
+                questionAccordion = questionArray[i][j];
+                senseindex = questionAccordion.getAttribute("senseindex");
+                catindex = questionAccordion.getAttribute("catindex");
+                //console.log('coords:'+ senseindex + ' ' + catindex);
+
+                // grab fieldsets
+                questions = questionAccordion.getElementsByTagName("fieldset");
+                //console.log('number of questions:' + questions.length);
+
+                //create array of question values
+                values = [];
+                sum = 0;
+                for (k=0 ; k<questions.length ; k++){
+                    value = questions[k].getAttribute("value");
+                    values[k] = +value;
+                    sum += +value;
+                }
+                //console.log("values: " + values);
+                if (sum == 0)
+                    values = 0;
+                //console.log("values: " + values);
+
+                qstatus = new Status(senseindex,catindex,values);
+                //console.log(qstatus.senseindex + ' ' + qstatus.categoryindex + ' ' +   qstatus.answers);
+                //console.log(JSON.stringify(qstatus));
+                jsonstruct.questionStatus.push(qstatus);
+            }
+        }
+
+        return jsonstruct;
+    }
+
     // Create progress grid column array
     //  This is a list of the columns of the grid where each item contains
     //      a progress-column
@@ -389,7 +433,10 @@ eleventyNavigation:
             for (i=0 ; i<items.length ; i++) {
                 item = items[i];
                 itemsArray[+item.getAttribute("senseindex")] = item;
-                item.addEventListener("click", function(){ displayCategory(catindex); });
+                item.addEventListener("click", function(){ 
+                    displayCategory(catindex);
+                    addEventListenersToButtonsInsideAccordionBodies(accordionBodies);
+                });
             }
 
             this.senseboxes = itemsArray
@@ -421,22 +468,21 @@ eleventyNavigation:
 
     // Body
     openAllButton = document.getElementById('openallbutton');
-    accordionBodies = document.querySelectorAll('#bodyaccordion .accordion-body');
+    const accordionBodies = document.querySelectorAll('#bodyaccordion .accordion-body');
     console.log(accordionBodies);
-    
-
 
     // constants for structures of html elements
     const categoryArray = createCategoryArray();
     const progressGrid = createProgressGrid();
-    //categoryArray.consolelog();
+    //const questionArray = createArray(+numberOfSenses, +numberOfCategories);
+    categoryArray.consolelog();
     //progressGrid.consolelog();
 
     // other constants
     var currentIndex = 10; // doesn't matter what the value is as long as it isn't 0
     displayCategory(0);
 
-    // Add Event Listeners
+// Add Event Listeners
 
     // get next and previous buttons
     prevButton = document.getElementById('previousbutton');
@@ -461,6 +507,80 @@ eleventyNavigation:
     // We are displaying category, so check at load
     checkEdgeCases(+currentIndex);
 
+    // Add event listeners to current fieldsets
+    function addEventListenersToButtonsInsideAccordionBodies(accordionBodies){
+        if(accordionBodies){
+            for(let body of accordionBodies){
+                const fieldsets = body.querySelectorAll('fieldset');
+                for(let field of fieldsets){
+                    // local CONSTANTS
+                    constants = [];
+                    var currentvalue = field.getAttribute("value");
+                    const buttons = field.getElementsByTagName("input");
+                    const falsebutton = buttons[3];
+                    const notsurebutton = buttons[2]
+                    const truebutton = buttons[1];
+                    const wastruebutton = buttons[0];
+
+                    for(let btn of buttons){
+                        btn.addEventListener('change', function(){
+                            const thisvalue = this.getAttribute("value");
+                            var newvalue;
+                            if (!this.checked) {
+                                //console.log(this.checked);
+                                if (this == falsebutton) { // if false button do nothing else
+                                falsebutton.checked=true;
+                                } else {
+                                    //this.removeAttribute('checked');
+                                    newvalue = +currentvalue - +thisvalue; //+thisvalue converts thisvalue to an int
+                                    if (newvalue == 0){ // no buttons are active
+                                        falsebutton.checked=true;
+                                        field.setAttribute("value",0);
+                                    }
+                                    else { // one other button is active (can't be more than one)
+                                        field.setAttribute("value",newvalue);
+                                    }
+                                } 
+                            }
+                            else { // the button was not active
+                                //console.log(this.checked);
+                                if (this === falsebutton) {
+                                    //console.log("It is false button.");
+                                    field.setAttribute("value",0);
+                                    for (j=0; j<buttons.length - 1 ; j++)
+                                        buttons[j].checked=false;
+                                }
+                                else {
+                                    //console.log("It is NOT false button.");
+                                    falsebutton.checked=false;
+                                    if (this === notsurebutton) {
+                                        //console.log("It is not-sure button.");
+                                        truebutton.checked=false;
+                                        wastruebutton.checked=false;
+                                        field.setAttribute("value",1);
+                                    }
+                                    else { // button is either wastruebutton or nowtruebutton
+                                        //console.log("First two buttons.");
+                                        if (notsurebutton.checked){
+                                            //console.log("It is not-sure button.");
+                                            notsurebutton.checked=false;
+                                            falsebutton.checked=false;
+                                            currentvalue = 0;
+                                        }
+                                        newvalue = +currentvalue + +thisvalue;
+                                        //console.log('currentvalue: ' + currentvalue + ' thisvalue: ' + thisvalue + ' newvalue: ' + newvalue);
+                                        field.setAttribute("value",newvalue)
+                                    }
+                                }
+                                //this.setAttribute("checked", "checked");
+                            }   
+                        });
+                    }
+                }
+            }
+        }
+    }
+
     categoryNavigationButtons.addEventListener('click', function(event) {
         if(event.target.id == 'previousbutton') {
             var newIndex = currentIndex;
@@ -477,6 +597,15 @@ eleventyNavigation:
             else if (event.target.getAttribute('nextevent') == 'show') console.log('Showing results somewhere.');
         }
         checkEdgeCases(+currentIndex);
+        addEventListenersToButtonsInsideAccordionBodies(accordionBodies);
+    });
+
+    addEventListenersToButtonsInsideAccordionBodies(accordionBodies);
+
+    // Saving the answers
+    saveButton = document.getElementById("savebutton");
+    saveButton.addEventListener('click', function(){
+        //answers = JSON.stringify(createJsonAnswers(categoryArray))
     });
 
 </script>
