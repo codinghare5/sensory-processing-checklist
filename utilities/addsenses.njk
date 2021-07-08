@@ -1,0 +1,87 @@
+---
+layout: layouts/base.njk
+title: Add Senses
+eleventyNavigation:
+  key: Add Senses
+  parent: Utilities
+  order: 1
+---
+
+<section class="container-xl p-4">
+    <h1 class="text-center pb-2"> Add More Questions</h1>
+
+    <!-- Text box to enter the name of the new sense -->
+    <div class="d-inline-flex">
+        <label class="fs-3" for="sensename">
+            Name of Sense: 
+        </label>
+        <input type="text" id="sensename" rows=12 class="w-auto fs-3 ms-2">
+        <button class="p-2 ms-5 bg-info rounded" id="savebutton" type="button">Add Sense</button>
+    </div>
+    <p class="pt-3"> Existing Senses: <p>
+    <ol class="d-inline-flex">
+        {% for sense in questions %}
+            <li class="mx-3">{{ sense.sense }}</li>
+        {% endfor %}
+    </ol>
+</section>
+
+<!-- Context menu ---------------------------------------------------------------------------- -->
+{# context menu #}
+<section class="container-xl card mb-2">
+    <nav class="d-flex justify-content-around py-4">
+        <button class="p-2 bg-info rounded" id="savebutton" type="button">Save JSON File</button>
+        {# button to save question answers #}
+        <button class="p-2 bg-info rounded" id="readbutton" type="button">Read JSON File</button>
+        {# button to show results #}
+        <button class="p-2 bg-info rounded" id="resultsbutton" type="button">View JSON</button>
+    </nav>
+</section>
+
+{# wrap everything into a card class #}
+<div class='container-xl card py-2 mb-4'>
+    {# Create Category name placeholder #}
+    <h2 class="p-3" id="category-name"> {{ categorysummary[0].name }} </h2>
+<!-- Progress bar ---------------------------------------------------------------------------- -->
+{# create progress bar #}
+<section class="container-xl py-3 px-4" id="progress-grid">
+    <div class="row bg-white">
+        {% for metacat in meta %}
+            {% for category in metacat.categories %}
+                {% set catindex = category.index %}
+        
+                <div class="col p-0 progress-column" style="border: 2px solid LightGray" 
+                            catindex="{{ catindex - 1 }}">
+                    {% for sense in category.senses %}
+                    <div class="progress-item" 
+                        style="width: auto; height:20px; border: 1px solid; border-color: LightGray;"
+                        senseindex="{{ loop.index - 1 }}">
+                    </div>
+                    {% endfor %}
+                </div>
+
+            {% endfor %}
+        {% endfor %}
+    </div>
+</section>
+
+<section class="container-xl py-3 px-4" id="input-section">
+    <!-- Text area to input the questions -->
+    <label for="question-textarea">
+        Enter questions for category here
+    </label>
+    <textarea id="questions-textarea" rows=12 class="w-100"></textarea>
+
+    {# next and previous buttons #}
+    <div>
+        <nav class="d-flex justify-content-between py-3">
+            <button class="p-2 bg-info rounded" id="previousbutton" type="button">Previous</button>
+            <button class="p-2 bg-info rounded" id="nextbutton" type="button" nextevent="next">Next</button>
+        </nav>
+    </div>
+</section>
+</div> {# end card #}
+
+<section class="container-xl py-3 px-4" id="view-area">
+    <p>view of json goes here</p>
+</section>
