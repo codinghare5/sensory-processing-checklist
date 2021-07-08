@@ -340,20 +340,20 @@ eleventyNavigation:
         else if (+value == 1)
             progressItem.style.background = "HoneyDew"; 
         else {
-            switch(senseindex) {
-                case '0': progressItem.style.background = "Red";
+            switch(+senseindex) {
+                case 0: progressItem.style.background = "Red";
                         break;
-                case '1': progressItem.style.background = "Orange";
+                case 1: progressItem.style.background = "Orange";
                         break;
-                case '2': progressItem.style.background = "Yellow";
+                case 2: progressItem.style.background = "Yellow";
                         break;
-                case '3': progressItem.style.background = "Green";
+                case 3: progressItem.style.background = "Green";
                         break;
-                case '4': progressItem.style.background = "Blue";
+                case 4: progressItem.style.background = "Blue";
                         break;
-                case '5': progressItem.style.background = "Indigo";
+                case 5: progressItem.style.background = "Indigo";
                         break;
-                case '6': progressItem.style.background = "Violet";
+                case 6: progressItem.style.background = "Violet";
                         break;                
             }
         }
@@ -475,7 +475,17 @@ eleventyNavigation:
         console.log("in displayCategory: " + newIndex + ' ' + currentIndex);
         if (+newIndex == +currentIndex)
         return; // nothing to do
-        if(currentIndex < 0) currentIndex = 0;
+
+        // colour in appropriate parts of progressGrid (will catch unclosed accordions)
+        if (currentIndex < 0)
+            currentIndex = 0 ;
+        else {
+            questionsArray = categoryArray[+currentIndex].questions;
+            for (var i=0; i<questionsArray.length ; i++) {
+                var val = getQuestionValues(questionsArray[i], "max");
+                colourProgressGridCell(currentIndex, i ,val);
+            }
+        }
 
         // set category header and description
         console.log("setting category info for category " + newIndex);
@@ -488,16 +498,10 @@ eleventyNavigation:
         setProgressGridHighlight(currentIndex,"LightGrey");
         setProgressGridHighlight(newIndex, "Black");
 
-        // set body accordion bodyies
-        //console.log("setting accordion bodies");
-        currentSet = categoryArray[+currentIndex];
-
+        // set body accordion bodies
         for (var i=0; i<accordionBodies.length; i++){
             thebody = accordionBodies[i];
             thebody.replaceChild(newItem.questions[i],thebody.childNodes[0]); // newnode THEN oldnode
-            // accordionBodies[i].innerHTML = '';
-            // accordionBodies[i].appendChild(newItem.questions[i]);
-            // console.log(newItem);
         }
 
         currentIndex = newIndex;
