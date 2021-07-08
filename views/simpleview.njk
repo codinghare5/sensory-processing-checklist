@@ -551,7 +551,7 @@ eleventyNavigation:
     }
 
     // create a structure for question answers
-    function createJsonAnswers(questionArray) {
+    function createJsonAnswers(categoryArray) {
         jsonstruct = {"type": "SPCR", "version": 1, "questionStatus": []};
 
         function Status(senseindex,catindex,values){
@@ -560,31 +560,15 @@ eleventyNavigation:
             this.values = values;
         }
 
-        for (i=0 ; i<questionArray.length ; i++){
-            for (j=0 ; j<questionArray[i].length ; j++){
-                questionAccordion = questionArray[i][j];
-                senseindex = questionAccordion.getAttribute("senseindex");
-                catindex = questionAccordion.getAttribute("catindex");
-                //console.log('coords:'+ senseindex + ' ' + catindex);
-
-                // grab fieldsets
-                questions = questionAccordion.getElementsByTagName("fieldset");
-                //console.log('number of questions:' + questions.length);
-
-                //create array of question values
-                values = [];
-                sum = 0;
-                for (k=0 ; k<questions.length ; k++){
-                    value = questions[k].getAttribute("value");
-                    values[k] = +value;
-                    sum += +value;
-                }
-                //console.log("values: " + values);
-                if (sum == 0)
-                    values = 0;
+        for (i=0 ; i<categoryArray.length ; i++){
+            var category = categoryArray[i];
+            var questionsArray = category.questions;
+            for (j=0 ; j<questionsArray.length ; j++){
+                var qset = questionsArray[j];
+                var values = getQuestionValues(qset,"array");
                 //console.log("values: " + values);
 
-                qstatus = new Status(senseindex,catindex,values);
+                var qstatus = new Status(j,i,values);
                 //console.log(qstatus.senseindex + ' ' + qstatus.categoryindex + ' ' +   qstatus.answers);
                 //console.log(JSON.stringify(qstatus));
                 jsonstruct.questionStatus.push(qstatus);
@@ -699,7 +683,8 @@ eleventyNavigation:
     // Saving the answers
     saveButton = document.getElementById("savebutton");
     saveButton.addEventListener('click', function(){
-        //answers = JSON.stringify(createJsonAnswers(categoryArray))
+        answers = JSON.stringify(createJsonAnswers(categoryArray));
+        console.log(answers);
     });
 
 </script>
