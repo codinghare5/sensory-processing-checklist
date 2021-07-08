@@ -124,7 +124,8 @@ eleventyNavigation:
                     </button>
                 </h2>
                 <div id="{{ sensestr }}-collapse" class="accordion-collapse collapse" 
-                        aria-labelledby="{{ sensestr }}-accordion-header" data-bs-parent="#bodyaccordion">
+                        aria-labelledby="{{ sensestr }}-accordion-header" data-bs-parent="#bodyaccordion"
+                        senseindex="{{ loop.index - 1 }}">
                     <div class="accordion-body" parentnode="">
                     </div>
                 </div>
@@ -280,6 +281,15 @@ eleventyNavigation:
             console.log(this[i]);
     };
 
+    // convert Nodelists and HTLMCollections (and any other array like objects to an array.
+    function convertToArray(arrayLikeObject) {
+        var newArray = createArray(arrayLikeObject.length)
+        for (var i=0 ; i<newArray.length; i++)
+            newArray[i] = arrayLikeObject[i];
+
+        return newArray;
+    }
+
    
   
     // Functions that manipulate html elements in some way
@@ -324,7 +334,7 @@ eleventyNavigation:
     //      6   balance         violet
     // Change all these colours here so they are all in one place.
     function colourProgressGridCell(catindex, senseindex, value) {
-        progressItem = progressArray[senseindex][catindex];
+        progressItem = progressGrid[catindex].senseboxes[senseindex];
         if (+value == 0)
             progressItem.style.background = "WhiteSmoke";
         else if (+value == 1)
@@ -348,6 +358,40 @@ eleventyNavigation:
             }
         }
     }
+
+    // getQuestionValues(node, "max"|"array")
+    //  Gets the fieldsets from node (accordion body or collapse)
+    //  Then iterates through the fieldsets to create an array of values
+    //      if "max" set then returns the max value of the array of values
+    //      if "array" set (or neither set) then return the array of values
+    // returns 0 in both cases if all questions values are 0
+    function getQuestionValues(node,returnType){
+        var questions = node.getElementsByTagName("fieldset");
+
+        //create array of question values
+        var values = [];
+        var sum = 0;
+        var max = 0;
+        for (var k=0 ; k<questions.length ; k++){
+            var val = questions[k].getAttribute("value");
+            values[k] = +val;
+            sum += +val;
+            if (+max < +val)
+                max = val;
+        }
+
+        if (sum == 0) {
+            values = 0;
+            return 0;
+        }
+        else {
+            if (returnType == "max")
+                return max;
+            else
+                return values;
+        }
+    }
+
 
     // Event function to control behaviour of checkbox buttons for the questions
     function addEventListenerToQuestionButtons() {
@@ -599,7 +643,8 @@ eleventyNavigation:
     // Body
     openAllButton = document.getElementById('openallbutton');
     const accordionBodies = document.querySelectorAll('#bodyaccordion .accordion-body');
-    //console.log(accordionBodies);
+    const accordionCollapses = convertToArray(document.querySelectorAll('#bodyaccordion .accordion-collapse'));
+    console.log(accordionCollapses);
 
     // constants for structures of html elements
     const categoryArray = createCategoryArray();
@@ -641,6 +686,11 @@ eleventyNavigation:
         checkEdgeCases(+currentIndex);
     });
 
+    // add eventlisteners to body accordion collapse elements
+    accordionCollapses.addEventListener('hide.bs.collapse', function() {
+        var value = getQuestionValues(this, "max");
+        colourProgressGridCell(currentIndex, this.getAttribute('senseindex'),value);
+    });
   
     // Saving the answers
     saveButton = document.getElementById("savebutton");
