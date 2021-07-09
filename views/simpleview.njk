@@ -400,16 +400,17 @@ eleventyNavigation:
     function setQuestionValues(node, senseindex, catindex, answers){
         var questions = node.getElementsByTagName("fieldset");
         var values = answers.questionStatus[catindex][senseindex];
-        //console.log(questions.length);
-        if(values.length){
-            for(let i=0; i < values.length; i++){
-                var buttons = questions[i].getElementsByTagName("input");
-                if(+values[i] == 5) { buttons[0].click(); buttons[1].click()};
-                if(+values[i] == 2) buttons[0].click();
-                if(+values[i] == 3) buttons[1].click();
-                if(+values[i] == 1) buttons[2].click();
+        console.log(values);
+        for(let i=0; i < values.length; i++){
+            var buttons = questions[i].getElementsByTagName("input");
+            if(values.length){
+                if(values[i]){
+                    if(+values[i] == 5) { buttons[3].click(); buttons[0].click(); buttons[1].click()};
+                    if(+values[i] == 2) { buttons[3].click(); buttons[0].click() };
+                    if(+values[i] == 3) { buttons[3].click(); buttons[1].click() };
+                    if(+values[i] == 1) { buttons[3].click(); buttons[2].click() };
+                }
             }
-            progressGrid[+catindex].senseboxes[+senseindex].click();
         }
     }
 
@@ -583,7 +584,8 @@ eleventyNavigation:
             this.categoryindex = catindex;
             this.values = values;
         }
-
+        
+        if(saveread == "read") displayCategory(0);
         for (i=0 ; i<categoryArray.length ; i++){
             var category = categoryArray[i];
             var questionsArray = category.questions;
@@ -601,8 +603,12 @@ eleventyNavigation:
                     jsonstruct.questionStatus[i][j] = values;
                 }
             }
+            if(saveread == "read" && (i < categoryArray.length -1)) nextButton.click();
+            if(saveread == "read" && (i == categoryArray.length -1)) {
+                prevButton.click();
+                nextButton.click();
+            }
         }
-        if(saveread == "read") nextButton.click();
 
         return jsonstruct;
     }
