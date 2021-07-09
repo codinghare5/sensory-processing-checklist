@@ -39,7 +39,7 @@ eleventyNavigation:
         {# button to save question answers #}
         <button class="p-2 bg-info rounded" id="savebutton" type="button">Save Answer File</button>
         {# button to save question answers #}
-        <button class="p-2 bg-info rounded" id="readbutton" type="button">Read Answer File</button>
+        <input class="p-2 bg-info rounded" id="readbutton" id="readfile" type="file" accept="application/json"/>
         {# button to show results #}
         <button class="p-2 bg-info rounded" id="resultsbutton" type="button">Show Results</button>
     </nav>
@@ -391,14 +391,30 @@ eleventyNavigation:
                 return values;
         }
     }
-
+    
+    // setQuestionValues edits DOM
+    function setQuestionValues(node, senseindex, catindex, answers){
+        var questions = node.getElementsByTagName("fieldset");
+        var values = answers.questionStatus[catindex][senseindex];
+        //console.log(questions.length);
+        for(let i=0; i < values.length; i++){
+            if(values.length){
+                var buttons = questions[i].getElementsByTagName("input");
+                if(+values[i] == 5) { buttons[0].click(); buttons[1].click()};
+                if(+values[i] == 2) buttons[0].click();
+                if(+values[i] == 3) buttons[1].click();
+                if(+values[i] == 1) buttons[2].click();
+            }
+            progressGrid[+catindex].senseboxes[+senseindex].click();
+        }
+    }
 
     // Event function to control behaviour of checkbox buttons for the questions
     function addEventListenerToQuestionButtons() {
         const questionButtons = document.querySelectorAll(".form-check-input");
         for (i=0 ; i<questionButtons.length ; i++) {
             questionButtons[i].addEventListener('change', function() {
-                console.log(this.id + ' ' + this.getAttribute("question_id"));
+                //console.log(this.id + ' ' + this.getAttribute("question_id"));
                 
                 const formwrapper = document.getElementById(this.getAttribute("question_id"));
                 var currentvalue = formwrapper.getAttribute("value");
@@ -457,7 +473,7 @@ eleventyNavigation:
                         }
                     }
                 } 
-                console.log('form value:' + formwrapper.getAttribute("value"));
+                //console.log('form value:' + formwrapper.getAttribute("value"));
             }); // end event function definition
         } // end loop through buttons
     } // end function
@@ -472,7 +488,7 @@ eleventyNavigation:
     //
     // Assumes currentindex is declared somewhere and has an appropriate value
     function displayCategory(newIndex) {
-        console.log("in displayCategory: " + newIndex + ' ' + currentIndex);
+        //console.log("in displayCategory: " + newIndex + ' ' + currentIndex);
         if (+newIndex == +currentIndex)
         return; // nothing to do
 
@@ -488,7 +504,7 @@ eleventyNavigation:
         }
 
         // set category header and description
-        console.log("setting category info for category " + newIndex);
+        //console.log("setting category info for category " + newIndex);
         const newItem = categoryArray[+newIndex];
         categoryTitle.innerHTML = newItem.name;
         categoryButton.innerHTML =  'About ' + newItem.name;
@@ -551,7 +567,10 @@ eleventyNavigation:
     }
 
     // create a structure for question answers
-    function createJsonAnswers(categoryArray) {
+    function createJsonAnswers(categoryArray, saveread, answers=[]) {
+        if(saveread == "read"){
+            if(answers.length == 0) return;
+        }
         jsonstruct = {"type": "SPCR", "version": 1, "questionStatus": []};
 
         function Status(senseindex,catindex,values){
@@ -563,17 +582,20 @@ eleventyNavigation:
         for (i=0 ; i<categoryArray.length ; i++){
             var category = categoryArray[i];
             var questionsArray = category.questions;
+            jsonstruct.questionStatus[i] = [];
             for (j=0 ; j<questionsArray.length ; j++){
                 var qset = questionsArray[j];
-                var values = getQuestionValues(qset,"array");
-                //console.log("values: " + values);
-
-                var qstatus = new Status(j,i,values);
-                //console.log(qstatus.senseindex + ' ' + qstatus.categoryindex + ' ' +   qstatus.answers);
-                //console.log(JSON.stringify(qstatus));
-                jsonstruct.questionStatus.push(qstatus);
+                if(saveread == "read"){
+                    setQuestionValues(qset, j, i, answers);
+                }
+                else {
+                    var values = getQuestionValues(qset,"array");
+                    var qstatus = new Status(j,i,values);
+                    jsonstruct.questionStatus[i][j] = values;
+                }
             }
         }
+        if(saveread == "read") nextButton.click();
 
         return jsonstruct;
     }
@@ -632,13 +654,13 @@ eleventyNavigation:
     openAllButton = document.getElementById('openallbutton');
     const accordionBodies = document.querySelectorAll('#bodyaccordion .accordion-body');
     const accordionCollapses = convertToArray(document.querySelectorAll('#bodyaccordion .accordion-collapse'));
-    console.log(accordionCollapses);
+    //console.log(accordionCollapses);
 
     // constants for structures of html elements
     const categoryArray = createCategoryArray();
     const progressGrid = createProgressGrid();
     //categoryArray.consolelog();
-    progressGrid.consolelog();
+    //progressGrid.consolelog();
 
     // get next and previous buttons
     prevButton = document.getElementById('previousbutton');
@@ -683,8 +705,31 @@ eleventyNavigation:
     // Saving the answers
     saveButton = document.getElementById("savebutton");
     saveButton.addEventListener('click', function(){
-        answers = JSON.stringify(createJsonAnswers(categoryArray));
+        answers = JSON.stringify(createJsonAnswers(categoryArray, "save"));
         console.log(answers);
+
+        // download answers as a json file. The below is convoluted but 
+        // there does not seem to be a simpler way.
+        const a = document.createElement("a"); // create an empty link
+        file = new Blob([answers],{type: "text/plain"});
+        //console.log(file);
+        a.href = URL.createObjectURL(file);
+        a.download = "answers.json"; //download to answers.json
+        a.click();
     });
 
+    // Loading the answers
+    loadButton = document.getElementById("readbutton");
+    loadButton.addEventListener('change',async function(event) {
+        const fileList = event.target.files;
+        file = fileList[0];
+        const reader = new FileReader();
+        reader.addEventListener('loadend', () => {
+            var answers = reader.result;
+            answers = JSON.parse(answers);
+            console.log(answers?.questionStatus);
+            createJsonAnswers(categoryArray, "read", answers);
+        });
+        reader.readAsText(file);
+    });
 </script>
