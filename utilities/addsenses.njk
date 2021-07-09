@@ -6,24 +6,31 @@ eleventyNavigation:
   parent: Utilities
   order: 1
 ---
-
+{#=================================    LAYOUT   ==================================#}
+{#================================================================================#}
 <section class="container-xl p-4">
-    <h1 class="text-center pb-2"> Add More Questions</h1>
+    <h1 class="text-center pb-2"> Add and Edit Questions</h1>
 
     <!-- Text box to enter the name of the new sense -->
     <div class="d-inline-flex">
-        <label class="fs-3" for="sensename">
-            Name of Sense: 
+        <label class="fs-3" for="choosesense">
+            Name of Sense to Edit:
         </label>
-        <input type="text" id="sensename" rows=12 class="w-auto fs-3 ms-2">
+        <select id="choosesense" class="fs-3 ps-2 ms-1">
+            {% for sense in questions %}
+                <option value="{{ sense.sense }}">
+                    {{ sense.sense }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="d-inline-flex mt-3">
+        <label class="fs-3" for="addsenseinput">
+            Name of Sense to Add: 
+        </label>
+        <input type="text" id="addsenseinput" rows=12 class="w-auto fs-3 ms-2">
         <button class="p-2 ms-5 bg-info rounded" id="savebutton" type="button">Add Sense</button>
     </div>
-    <p class="pt-3"> Existing Senses: <p>
-    <ol class="d-inline-flex">
-        {% for sense in questions %}
-            <li class="mx-3">{{ sense.sense }}</li>
-        {% endfor %}
-    </ol>
 </section>
 
 <!-- Context menu ---------------------------------------------------------------------------- -->
@@ -40,8 +47,7 @@ eleventyNavigation:
 
 {# wrap everything into a card class #}
 <div class='container-xl card py-2 mb-4'>
-    {# Create Category name placeholder #}
-    <h2 class="p-3" id="category-name"> {{ categorysummary[0].name }} </h2>
+    
 <!-- Progress bar ---------------------------------------------------------------------------- -->
 {# create progress bar #}
 <section class="container-xl py-3 px-4" id="progress-grid">
@@ -65,18 +71,28 @@ eleventyNavigation:
     </div>
 </section>
 
+{# Create Category name placeholder #}
+<h2 class="p-3" id="category-name"> 
+    {{ categorysummary[0].name }} for {{ questions[0].sense}}
+</h2>
+
 <section class="container-xl py-3 px-4" id="input-section">
     <!-- Text area to input the questions -->
     <label for="question-textarea">
-        Enter questions for category here
+        Add or edit questions for category here
     </label>
     <textarea id="questions-textarea" rows=12 class="w-100"></textarea>
 
     {# next and previous buttons #}
     <div>
-        <nav class="d-flex justify-content-between py-3">
-            <button class="p-2 bg-info rounded" id="previousbutton" type="button">Previous</button>
-            <button class="p-2 bg-info rounded" id="nextbutton" type="button" nextevent="next">Next</button>
+        <nav class="d-flex justify-content-between py-2"> {#  category nav buttons #}
+            <button class="p-2 bg-info rounded" id="previous-category-button" type="button" nextevent="previous">Previous Category</button>
+            <button class="p-2 bg-info rounded" id="next-category-button" type="button" nextevent="next">Next Category</button>
+        </nav>
+        <nav class="d-flex justify-content-between py-3 pt-0"> {# sense nav buttons#}
+            <button class="p-2 bg-info rounded" id="previous-sense-button" type="button" nextevent="previous">Previous Sense</button>
+            <button class="p-2 bg-info rounded" id="next-sense-button" type="button" nextevent="next">Next Sense</button>
+            </div>
         </nav>
     </div>
 </section>
@@ -85,3 +101,10 @@ eleventyNavigation:
 <section class="container-xl py-3 px-4" id="view-area">
     <p>view of json goes here</p>
 </section>
+
+{#===============================   END LAYOUT   ==================================#}
+{#================================================================================#}
+
+
+{#============================== START DATA CONTAINERS ==============================#}
+{#================================================================================#}
