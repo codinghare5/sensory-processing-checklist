@@ -39,6 +39,7 @@ eleventyNavigation:
         {# button to save question answers #}
         <button class="p-2 bg-info rounded" id="savebutton" type="button">Save Answer File</button>
         {# button to save question answers #}
+        {# input type='file' is best for loading a file in #}
         <input class="p-2 bg-info rounded" id="readbutton" id="readfile" type="file" accept="application/json"/>
         {# button to show results #}
         <button class="p-2 bg-info rounded" id="resultsbutton" type="button">Show Results</button>
@@ -392,13 +393,16 @@ eleventyNavigation:
         }
     }
     
-    // setQuestionValues edits DOM
+    // setQuestionValues Gets the fieldsets from node (accordion body or collapse)
+    // Then iterates through relevant values array from answers read form the file
+    // If values are there, this function clicks correct buttons and fires most of the events
+    // Fieldsets get correct values, progress grid colours, the state has been loaded.
     function setQuestionValues(node, senseindex, catindex, answers){
         var questions = node.getElementsByTagName("fieldset");
         var values = answers.questionStatus[catindex][senseindex];
         //console.log(questions.length);
-        for(let i=0; i < values.length; i++){
-            if(values.length){
+        if(values.length){
+            for(let i=0; i < values.length; i++){
                 var buttons = questions[i].getElementsByTagName("input");
                 if(+values[i] == 5) { buttons[0].click(); buttons[1].click()};
                 if(+values[i] == 2) buttons[0].click();
@@ -567,6 +571,7 @@ eleventyNavigation:
     }
 
     // create a structure for question answers
+    // I have reused this function, as it has got the for loop
     function createJsonAnswers(categoryArray, saveread, answers=[]) {
         if(saveread == "read"){
             if(answers.length == 0) return;
@@ -582,13 +587,15 @@ eleventyNavigation:
         for (i=0 ; i<categoryArray.length ; i++){
             var category = categoryArray[i];
             var questionsArray = category.questions;
+            // prepare 2nd dimension of the array
             jsonstruct.questionStatus[i] = [];
             for (j=0 ; j<questionsArray.length ; j++){
                 var qset = questionsArray[j];
+
                 if(saveread == "read"){
                     setQuestionValues(qset, j, i, answers);
                 }
-                else {
+                else { // "save"
                     var values = getQuestionValues(qset,"array");
                     var qstatus = new Status(j,i,values);
                     jsonstruct.questionStatus[i][j] = values;
@@ -719,17 +726,35 @@ eleventyNavigation:
     });
 
     // Loading the answers
+    // loadButton is an input, so we need 'change' event to fire
     loadButton = document.getElementById("readbutton");
     loadButton.addEventListener('change',async function(event) {
+        // input gives us the fileList object
         const fileList = event.target.files;
         file = fileList[0];
+
+        // we need a FileReader instance
         const reader = new FileReader();
+        // we have to add event listener to the instance before we continue
         reader.addEventListener('loadend', () => {
-            var answers = reader.result;
-            answers = JSON.parse(answers);
-            console.log(answers?.questionStatus);
-            createJsonAnswers(categoryArray, "read", answers);
+            try {
+                // after event load ends we get and object reader.result
+                var answers = reader.result;
+                answers = JSON.parse(answers);
+                console.log(answers?.questionStatus);
+                createJsonAnswers(categoryArray, "read", answers);
+            }
+            catch (err) {
+                console.log(err.message);
+            }
         });
-        reader.readAsText(file);
+        // let's read the file, as event listener is prepared
+        try {
+            reader.readAsText(file);
+        }
+        catch (err){
+            return;
+            console.log('Try to pick up a file!');
+        }
     });
 </script>
