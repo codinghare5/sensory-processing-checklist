@@ -18,7 +18,7 @@ eleventyNavigation:
         </label>
         <select id="choosesense" class="fs-3 p-1 ps-2 ms-1">
             {% for sense in categoryquestions[0].senses %}
-                <option value="{{ sense.sense | lower}}">
+                <option value="{{ loop.index}}">
                     {{ sense.sense }}
                 </option>
             {% endfor %}
@@ -187,4 +187,125 @@ eleventyNavigation:
     // Functions that manipulate html elements in some way
     /////////////////////////////////////////////////////////////////////
 
+    // create an array of Sense names
+    function createSenseArray() {
+        // grab all the options from choosesense
+        var options = document.querySelectorAll("#choosesense option");
+        var senseArray = createArray(options.length);
+        for (var i=0; i<options.length; i++)
+            senseArray[i] = options[i].innerHTML.trim();
+
+        return senseArray;
+    }
+
+    // create an array of Category. This should match categoryquestions.json:
+    //      - category (category name)
+    //      - index
+    //      - senses (Array)
+    //              sense  (sense name)
+    //              questions (array of question)
+    function createCategoryArray(nameArray) {
+
+        // (local) constructor for Sense
+        function Sense(senseindex,questionset){
+            this.sense = nameArray[+senseindex];
+            var qset = questionset.getElementsByTagName('p');
+            this.questions = createArray(qset.length);
+            for (var k=0; k<qset.length; k++)
+                this.questions[k] = qset[k].innerHTML.trim();
+        }
+
+        // (local) constructor for Category
+        function Category(name,catindex,questionSets){
+            this.category = name.innerHTML;
+            this.index = catindex;
+
+            // create an array of questions grouped by sense
+            var senseArray = createArray(questionSets.length);
+            for (var j=0; j<questionSets.length; j++){
+                qset = questionSets[j];
+                senseindex = qset.getAttribute('senseindex');
+                senseArray[+senseindex] = new Sense(senseindex,qset);
+            }
+            this.senses = senseArray;
+        }
+
+        // Grab the categoryContainer and create (DOM) arrays of headers and descriptions
+        const categoryContainer = document.getElementById("category-container")
+        const headers = categoryContainer.getElementsByTagName("h2");
+
+        // Grab the questionset container and create a DOM array of category questionsets
+        const categoryQuestionsets = document.querySelectorAll('#questionset-container .category-questionset');
+
+        // create and fill an array of Category
+        catArray = createArray(headers.length);
+        for (i=0 ; i<headers.length ; i++) {
+            senseQSets = categoryQuestionsets[i].querySelectorAll('.category-sense-questions');
+            catindex = headers[i].getAttribute('catindex');
+            catArray[i] = new Category(headers[i], catindex, senseQSets);
+            //console.log(catArray[i]);
+        }
+        return catArray;
+    }
+
+// Create progress grid column array
+    //  This is a list of the columns of the grid where each item contains
+    //      a progress-column
+    //      an array of progress-item
+    // An array of ProgressGrid is returned
+    function createProgressGrid() {
+
+        // (local) constructor for ProgressGrid
+        // column is a DOM object with class progress-column
+        function ProgressGrid(column, catindex){
+            this.column = column;
+
+            items = column.querySelectorAll(".progress-item");
+            itemsArray = createArray(items, length);
+            for (i=0 ; i<items.length ; i++) {
+                item = items[i];
+                itemsArray[+item.getAttribute("senseindex")] = item;
+                item.addEventListener("click", function(){ 
+                    displayCategory(catindex);
+                    checkEdgeCases(catindex);
+                });
+            }
+
+            this.senseboxes = itemsArray
+        }
+
+        const pGrid = document.getElementById("progress-grid");
+        const progressColumnList = pGrid.querySelectorAll(".progress-column");
+        const progressArray = createArray(progressColumnList.length);
+        for (j=0 ; j<progressArray.length ; j++){
+            item = progressColumnList[j];
+            catindex = item.getAttribute("catindex");
+            progressArray[+catindex] = new ProgressGrid(item, catindex);
+        }
+
+        return progressArray;
+    }
+
+       /////////////////////////////////   End Functions  /////////////////////////////////////////////
+
+    // Variables
+    ////////////////////////////////////////////////
+
+    // constants for particular html elements
+    const jsonView = document.getElementById('view-area');
+
+    // Category information element
+    const categoryTitle = document.getElementById('category-name');
+
+    // constants for structures of html elements
+    const senseNameArray = createSenseArray();
+    //senseNameArray.consolelog();
+    const categoryArray = createCategoryArray(senseNameArray);
+    const progressGrid = createProgressGrid();
+    //categoryArray.consolelog();
+    //progressGrid.consolelog();
+
+
+    // set things up
+    jsonView.innerHTML = '<pre>' + JSON.stringify(categoryArray, null, 3) + '</pre>';
 </script>
