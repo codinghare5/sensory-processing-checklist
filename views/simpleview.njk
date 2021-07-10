@@ -29,7 +29,7 @@ eleventyNavigation:
 
     <h3>Saving results</h3>
     <p>It is possible to save answers and read them in again. To do so, click the save and read buttons below.<br>
-    Files will be downloaded to your download folder.</p>
+    Files will be downloaded to your download folder. The default file name is answers.json</p>
 </section>
 
 <!-- Context menu ---------------------------------------------------------------------------- -->
@@ -39,7 +39,8 @@ eleventyNavigation:
         {# button to save question answers #}
         <button class="p-2 bg-info rounded" id="savebutton" type="button">Save Answer File</button>
         {# button to save question answers #}
-        <button class="p-2 bg-info rounded" id="readbutton" type="button">Read Answer File</button>
+        {# input type='file' is best for loading a file in #}
+        <input class="p-2 bg-info rounded" id="readbutton" id="readfile" type="file" accept="application/json"/>
         {# button to show results #}
         <button class="p-2 bg-info rounded" id="resultsbutton" type="button">Show Results</button>
     </nav>
@@ -104,10 +105,6 @@ eleventyNavigation:
 {# body #}
 <!-- Container with the set of questions #questionset ---------------------------------------------------------------------------- -->
 <section class="container-xl" id="questionset">
-    {# button to open all accordions #}
-    <div class="pt-3">
-     <button class="p-2 bg-info fs-5 rounded float-end my-2" id="openallbutton" type="button">Open All</button>
-    </div>
     {# body accordion of sets of questions labelled by sense #}
     <div class="accordion" id="bodyaccordion">
         {# create a set of sense accordions #}
@@ -123,10 +120,11 @@ eleventyNavigation:
                         {{ sense.sense }} Questions
                     </button>
                 </h2>
-                <div id="{{ sensestr }}-collapse" class="accordion-collapse collapse" 
+                 <div id="{{ sensestr }}-collapse" class="accordion-collapse collapse" 
                         aria-labelledby="{{ sensestr }}-accordion-header" data-bs-parent="#bodyaccordion"
                         senseindex="{{ loop.index - 1 }}">
-                    <div class="accordion-body" parentnode="">
+                    <div class="accordion-body">
+                        <p>{{ sense.sense }} questions for this category will go here.</p>
                     </div>
                 </div>
             </div> {# end accordion item #}
@@ -295,21 +293,6 @@ eleventyNavigation:
     // Functions that manipulate html elements in some way
     /////////////////////////////////////////////////////////////////////
 
-     function checkEdgeCases(currentCategry){
-        if(currentCategry < 0 || currentCategry.typeOf === 'NaN') currentCategry = 10;
-        +currentIndex === 0 ? prevButton.disabled = true : prevButton.disabled = false;
-        if(+currentIndex === categoryArray.length -1){
-            nextButton.innerHTML = 'Show results';
-            nextButton.setAttribute('nextevent', 'show');
-        }
-        else {
-            if(nextButton.innerHTML === 'Show results') {
-                nextButton.innerHTML = 'Next';
-                nextButton.setAttribute('nextevent', 'next');
-            }
-        }
-    }
-
     //function to set or remove the progress grid highlight:
     //  just set the color
     //      - LightGray for no highlight
@@ -391,14 +374,32 @@ eleventyNavigation:
                 return values;
         }
     }
+    
+    // setQuestionValues(answers) answers is a JSON structure.
+    // fills in appropriate values in categoryArray
+    // colours in the progress grid appropriately
+    function setQuestionValues(answers){
+        // first clear the progress grid by colouring all cells white
+        for (let i=0; i<progressGrid.length; i++)
+            progressGrid[i].clear();
 
+        questionStatus = answers.questionStatus;
+        // run through items in answers setting values appropriately
+        for (var i=0; i<questionStatus.length; i++){
+            item = questionStatus[i];
+            catindex = item.categoryindex;
+            questionsets = categoryArray[catindex].setAnswers(item.senseindex, item.values);           
+        }
+
+        displayCategory(answers.currentIndex, 1);
+    }
 
     // Event function to control behaviour of checkbox buttons for the questions
     function addEventListenerToQuestionButtons() {
         const questionButtons = document.querySelectorAll(".form-check-input");
         for (i=0 ; i<questionButtons.length ; i++) {
             questionButtons[i].addEventListener('change', function() {
-                console.log(this.id + ' ' + this.getAttribute("question_id"));
+                //console.log(this.id + ' ' + this.getAttribute("question_id"));
                 
                 const formwrapper = document.getElementById(this.getAttribute("question_id"));
                 var currentvalue = formwrapper.getAttribute("value");
@@ -457,7 +458,7 @@ eleventyNavigation:
                         }
                     }
                 } 
-                console.log('form value:' + formwrapper.getAttribute("value"));
+                //console.log('form value:' + formwrapper.getAttribute("value"));
             }); // end event function definition
         } // end loop through buttons
     } // end function
@@ -471,43 +472,59 @@ eleventyNavigation:
     // also highlights the correct column in the progress grid
     //
     // Assumes currentindex is declared somewhere and has an appropriate value
-    function displayCategory(newIndex) {
-        console.log("in displayCategory: " + newIndex + ' ' + currentIndex);
+    function displayCategory(newIndex,noColourChange) {
+        //console.log("in displayCategory: " + newIndex + ' ' + currentIndex);
         if (+newIndex == +currentIndex)
         return; // nothing to do
 
         // colour in appropriate parts of progressGrid (will catch unclosed accordions)
-        if (currentIndex < 0)
-            currentIndex = 0 ;
-        else {
-            questionsArray = categoryArray[+currentIndex].questions;
-            for (var i=0; i<questionsArray.length ; i++) {
-                var val = getQuestionValues(questionsArray[i], "max");
-                colourProgressGridCell(currentIndex, i ,val);
+        if (!noColourChange){
+            if (+currentIndex < 0)
+                currentIndex = 0 ;
+            else {
+                questionsArray = categoryArray[+currentIndex].questions;
+                for (var i=0; i<questionsArray.length ; i++) {
+                    var val = getQuestionValues(questionsArray[i], "max");
+                    colourProgressGridCell(+currentIndex, i ,val);
+                }
             }
         }
 
         // set category header and description
-        console.log("setting category info for category " + newIndex);
+        //console.log("setting category info for category " + newIndex);
         const newItem = categoryArray[+newIndex];
         categoryTitle.innerHTML = newItem.name;
         categoryButton.innerHTML =  'About ' + newItem.name;
         categoryBody.innerHTML = newItem.description;
 
         // sort out the highlighting of the progress grid columns
-        setProgressGridHighlight(currentIndex,"LightGrey");
-        setProgressGridHighlight(newIndex, "Black");
+        setProgressGridHighlight(+currentIndex,"LightGrey");
+        setProgressGridHighlight(+newIndex, "Black");
 
         // set body accordion bodies
         for (var i=0; i<accordionBodies.length; i++){
             thebody = accordionBodies[i];
-            thebody.replaceChild(newItem.questions[i],thebody.childNodes[0]); // newnode THEN oldnode
+            thebody.replaceChild(newItem.questions[i],thebody.children[0]); // newnode THEN oldnode
         }
 
-        currentIndex = newIndex;
+        currentIndex = +newIndex;
+
+        // make sure next and previous buttons are set correctly.
+        if(+currentIndex == (categoryArray.length -1)){
+            nextButton.innerHTML = 'Show results';
+            nextButton.setAttribute('nextevent', 'show');
+        }
+        else {
+            if(nextButton.innerHTML === 'Show results') {
+                nextButton.innerHTML = 'Next';
+                nextButton.setAttribute('nextevent', 'next');
+            }
+        }
+        if (+currentIndex == 0)
+            prevButton.style.color = "LightGray";
+        else
+            prevButton.style.color = "Black";
     }
-
-
 
     // create an array of information to do with each category:
     //      - name (for the header)
@@ -517,20 +534,69 @@ eleventyNavigation:
     //      - category-description-body
     function createCategoryArray() {
 
-        // (local) constructor for Category
-        function Category(name,description,questionSets){
-            this.name = name.innerHTML;
+        function Category(header, index, description, questionSets){
+            this.name = header.innerHTML;
             this.description = description.innerHTML;
+            this.index = index;
 
             // create an array of questions grouped by sense
-            questionsArray = createArray(questionSets.length);
+            var senseArray = createArray(questionSets.length);
             for (var j=0; j<questionSets.length; j++){
                 qset = questionSets[j];
                 senseindex = qset.getAttribute('senseindex');
-                questionsArray[+senseindex] = qset;
+                senseArray[+senseindex] = qset;
             }
-            this.questions = questionsArray;
+            this.questions = senseArray;
         }
+
+        // function to set all questions to false (default)
+        // used when reading in answers
+        Category.prototype.setFalse = function(senseindex){
+            var item = this.questions[+senseindex];
+            var fieldsets = item.getElementsByTagName("fieldset");
+
+            for(let i=0; i < fieldsets.length; i++){
+                var buttons = fieldsets[i].getElementsByTagName("input");
+                buttons[3].click();
+            }    
+        };
+
+        // function to set all questions depending on an array of values.
+        // if values is 0 then set all answers to false
+        // Otherwise go through the array setting answers and then setting the 
+        //  appropriate colour in the progress grid.
+        Category.prototype.setAnswers = function(senseindex, values){
+            if (+values === 0) {
+                this.setFalse(senseindex);
+                return;
+            }
+
+            var item = this.questions[+senseindex];
+            var fieldsets = item.getElementsByTagName("fieldset");
+
+            var maxval = 0;
+            for(var i=0; i < fieldsets.length; i++){
+                var buttons = fieldsets[i].getElementsByTagName("input");
+                buttons[3].click(); // set to False before we do anything else.
+                val = +values[i];
+                if (+maxval < +val)
+                    maxval = val;
+                if (val > 0){
+                    switch (val)
+                    {
+                        case 1: buttons[2].click(); // 'Not Sure'
+                                break;
+                        case 2: buttons[0].click(); // 'Was True'
+                                break;
+                        case 3: buttons[1].click(); // 'True Now'
+                                break;
+                        case 5: buttons[0].click();
+                                buttons[1].click();
+                    }
+                }
+            }
+            colourProgressGridCell(this.index, senseindex, maxval);
+        };
 
         // Grab the categoryContainer and create (DOM) arrays of headers and descriptions
         const categoryContainer = document.getElementById("category-container")
@@ -544,7 +610,7 @@ eleventyNavigation:
         catArray = createArray(headers.length);
         for (i=0 ; i<headers.length ; i++) {
             senseQSets = categoryQuestionsets[i].querySelectorAll('.category-sense-questions');
-            catArray[i] = {'name' : headers[i].innerHTML, 'description' : descriptions[i].innerHTML, 'questions' : senseQSets};
+            catArray[i] = new Category(headers[i], i, descriptions[i], senseQSets);
             //console.log(catArray[i]);
         }
         return catArray;
@@ -552,7 +618,10 @@ eleventyNavigation:
 
     // create a structure for question answers
     function createJsonAnswers(categoryArray) {
-        jsonstruct = {"type": "SPCR", "version": 1, "questionStatus": []};
+        jsonstruct = {"type": "SPCR", 
+                        "version": 1, 
+                        "currentIndex": currentIndex,
+                        "questionStatus": []};
 
         function Status(senseindex,catindex,values){
             this.senseindex = senseindex;
@@ -597,12 +666,19 @@ eleventyNavigation:
                 itemsArray[+item.getAttribute("senseindex")] = item;
                 item.addEventListener("click", function(){ 
                     displayCategory(catindex);
-                    checkEdgeCases(catindex);
                 });
             }
 
-            this.senseboxes = itemsArray
+            this.senseboxes = itemsArray;
         }
+
+        ProgressGrid.prototype.clear = function(){
+            for (var i=0; i<this.senseboxes.length; i++){
+                var item = this.senseboxes[i];
+                item.style.background = "White";
+            }   
+        };
+
 
         const pGrid = document.getElementById("progress-grid");
         const progressColumnList = pGrid.querySelectorAll(".progress-column");
@@ -622,6 +698,9 @@ eleventyNavigation:
     ////////////////////////////////////////////////
 
     // constants for particular html elements
+    resultsButton = document.getElementById('resultsbutton');
+    saveButton = document.getElementById("savebutton");
+    loadButton = document.getElementById("readbutton");
 
     // Category information elements
     const categoryTitle = document.getElementById('category-name');
@@ -629,62 +708,90 @@ eleventyNavigation:
     const categoryBody = document.getElementById('category-description-body');
 
     // Body
-    openAllButton = document.getElementById('openallbutton');
     const accordionBodies = document.querySelectorAll('#bodyaccordion .accordion-body');
     const accordionCollapses = convertToArray(document.querySelectorAll('#bodyaccordion .accordion-collapse'));
-    console.log(accordionCollapses);
+    console.log(accordionBodies);
+
+    // previous and next buttons
+    prevButton = document.getElementById('previousbutton');
+    nextButton = document.getElementById('nextbutton');
 
     // constants for structures of html elements
     const categoryArray = createCategoryArray();
     const progressGrid = createProgressGrid();
-    //categoryArray.consolelog();
+    categoryArray.consolelog();
     progressGrid.consolelog();
-
-    // get next and previous buttons
-    prevButton = document.getElementById('previousbutton');
-    nextButton = document.getElementById('nextbutton');
-    categoryNavigationButtons = [prevButton, nextButton];
-    resultsButton = document.getElementById('resultsbutton');
 
     // other constants
     var currentIndex = -1; // doesn't matter what the value is as long as it isn't 0
     displayCategory(0);
-    
-     // We are displaying category, so check at load
-    checkEdgeCases(+currentIndex);
 
-    // Add Event Listeners
+    //////////////////////////// END GLOBAL VARIABLES ///////////////////////////////////
+    
+    /////////////////////////////// Add Event Listeners //////////////////////////////////
     addEventListenerToQuestionButtons();
     
-    categoryNavigationButtons.addEventListener('click', function(event) {
-        if(event.target.id == 'previousbutton') {
-            var newIndex = currentIndex;
-            +currentIndex > 0 ? --newIndex: newIndex = categoryArray.length -1;
-            displayCategory(+newIndex);
-        }
+    prevButton.addEventListener('click', function() {
+        if (+currentIndex != 0)
+            displayCategory(+currentIndex - 1);
+    });
 
-        if(event.target.id == 'nextbutton') {
-            if(event.target.getAttribute('nextevent') == 'next'){
-                var newIndex = currentIndex;
-                +currentIndex < categoryArray.length -1 ? ++newIndex: newIndex=0;
-                displayCategory(+newIndex);
-            }
-            else if (event.target.getAttribute('nextevent') == 'show') console.log('Showing results somewhere.');
-        }
-        checkEdgeCases(+currentIndex);
+    nextButton.addEventListener('click', function(){
+        if (this.getAttribute('nextevent') != 'show')
+            displayCategory(+currentIndex + 1);
     });
 
     // add eventlisteners to body accordion collapse elements
     accordionCollapses.addEventListener('hide.bs.collapse', function() {
         var value = getQuestionValues(this, "max");
-        colourProgressGridCell(currentIndex, this.getAttribute('senseindex'),value);
+        colourProgressGridCell(+currentIndex, this.getAttribute('senseindex'),value);
     });
   
     // Saving the answers
-    saveButton = document.getElementById("savebutton");
     saveButton.addEventListener('click', function(){
-        answers = JSON.stringify(createJsonAnswers(categoryArray));
+        answers = JSON.stringify(createJsonAnswers(categoryArray, "save"));
         console.log(answers);
+
+        // download answers as a json file. The below is convoluted but 
+        // there does not seem to be a simpler way.
+        const a = document.createElement("a"); // create an empty link
+        file = new Blob([answers],{type: "text/plain"});
+        //console.log(file);
+        a.href = URL.createObjectURL(file);
+        a.download = "answers.json"; //download to answers.json
+        a.click();
     });
 
+    // Loading the answers
+    // loadButton is an input, so we need 'change' event to fire
+    loadButton.addEventListener('change',async function(event) {
+        // input gives us the fileList object
+        const fileList = event.target.files;
+        file = fileList[0];
+
+        // we need a FileReader instance
+        const reader = new FileReader();
+        // we have to add event listener to the instance before we continue
+        reader.addEventListener('loadend', () => {
+            try {
+                // after event load ends we get and object reader.result
+                var answers = reader.result;
+                answers = JSON.parse(answers);
+                console.log(answers);
+
+                setQuestionValues(answers);                
+            }
+            catch (err) {
+                console.log(err.message);
+            }
+        });
+        // let's read the file, as event listener is prepared
+        try {
+            reader.readAsText(file);
+        }
+        catch (err){
+            return;
+            alert('Cannot read file');
+        }
+    });
 </script>
