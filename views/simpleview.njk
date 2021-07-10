@@ -389,7 +389,7 @@ eleventyNavigation:
             item = questionStatus[i];
             catindex = item.categoryindex;
             senseindex = item.senseindex;
-            questionsets = categoryArray[catindex].setAnswers(catindex,senseindex,item.values);           
+            questionsets = categoryArray[catindex].setAnswers(item.values);           
         }
 
         currentIndex = answers.currentIndex;
@@ -534,9 +534,10 @@ eleventyNavigation:
     //      - category-description-body
     function createCategoryArray() {
 
-        function Category(name, description, questionSets){
+        function Category(name, index, description, questionSets){
             this.category = name.innerHTML;
             this.description = description.innerHTML;
+            this.index = index;
 
             // create an array of questions grouped by sense
             var senseArray = createArray(questionSets.length);
@@ -566,7 +567,7 @@ eleventyNavigation:
         // if values is 0 then set all answers to false
         // Otherwise go through the array setting answers and then setting the 
         //  appropriate colour in the progress grid.
-        Category.prototype.setAnswers = function(catindex,senseindex,values){
+        Category.prototype.setAnswers = function(catindex,values){
             if (+values === 0) {
                 this.setFalse();
                 return;
@@ -576,10 +577,13 @@ eleventyNavigation:
                 var item = this.questions[k];
                 var fieldsets = item.getElementsByTagName("fieldset");
 
+                var maxval = 0;
                 for(var i=0; i < fieldsets.length; i++){
                     var buttons = fieldsets[i].getElementsByTagName("input");
                     buttons[3].click(); // set to False before we do anything else.
                     val = +values[i];
+                    if (+maxval < +val)
+                        maxval = val;
                     if (val > 0){
                         switch (val)
                         {
@@ -592,9 +596,9 @@ eleventyNavigation:
                             case 5: buttons[0].click();
                                     buttons[1].click();
                         }
-                        colourProgressGridCell(catindex, senseindex, +values[i]);
                     }
                 }
+                colourProgressGridCell(this.index, k, maxval);
             }
         };
 
@@ -610,7 +614,7 @@ eleventyNavigation:
         catArray = createArray(headers.length);
         for (i=0 ; i<headers.length ; i++) {
             senseQSets = categoryQuestionsets[i].querySelectorAll('.category-sense-questions');
-            catArray[i] = new Category(headers[i], descriptions[i], senseQSets);
+            catArray[i] = new Category(headers[i], i, descriptions[i], senseQSets);
             //console.log(catArray[i]);
         }
         return catArray;
