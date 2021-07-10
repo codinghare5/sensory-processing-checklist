@@ -388,12 +388,10 @@ eleventyNavigation:
         for (var i=0; i<questionStatus.length; i++){
             item = questionStatus[i];
             catindex = item.categoryindex;
-            senseindex = item.senseindex;
-            questionsets = categoryArray[catindex].setAnswers(item.values);           
+            questionsets = categoryArray[catindex].setAnswers(item.senseindex, item.values);           
         }
 
-        currentIndex = answers.currentIndex;
-        displayCategory(currentIndex);
+        displayCategory(answers.currentIndex, 1);
     }
 
     // Event function to control behaviour of checkbox buttons for the questions
@@ -474,19 +472,21 @@ eleventyNavigation:
     // also highlights the correct column in the progress grid
     //
     // Assumes currentindex is declared somewhere and has an appropriate value
-    function displayCategory(newIndex) {
+    function displayCategory(newIndex,noColourChange) {
         //console.log("in displayCategory: " + newIndex + ' ' + currentIndex);
         if (+newIndex == +currentIndex)
         return; // nothing to do
 
         // colour in appropriate parts of progressGrid (will catch unclosed accordions)
-        if (+currentIndex < 0)
-            currentIndex = 0 ;
-        else {
-            questionsArray = categoryArray[+currentIndex].questions;
-            for (var i=0; i<questionsArray.length ; i++) {
-                var val = getQuestionValues(questionsArray[i], "max");
-                colourProgressGridCell(+currentIndex, i ,val);
+        if (!noColourChange){
+            if (+currentIndex < 0)
+                currentIndex = 0 ;
+            else {
+                questionsArray = categoryArray[+currentIndex].questions;
+                for (var i=0; i<questionsArray.length ; i++) {
+                    var val = getQuestionValues(questionsArray[i], "max");
+                    colourProgressGridCell(+currentIndex, i ,val);
+                }
             }
         }
 
@@ -551,55 +551,51 @@ eleventyNavigation:
 
         // function to set all questions to false (default)
         // used when reading in answers
-        Category.prototype.setFalse = function(){
-            for (var k=0; k<this.questions.length; k++) {
-                var item = this.questions[k];
-                var fieldsets = item.getElementsByTagName("fieldset");
+        Category.prototype.setFalse = function(senseindex){
+            var item = this.questions[+senseindex];
+            var fieldsets = item.getElementsByTagName("fieldset");
 
-                for(let i=0; i < fieldsets.length; i++){
-                    var buttons = fieldsets[i].getElementsByTagName("input");
-                    buttons[3].click();
-                }    
-            }
+            for(let i=0; i < fieldsets.length; i++){
+                var buttons = fieldsets[i].getElementsByTagName("input");
+                buttons[3].click();
+            }    
         };
 
         // function to set all questions depending on an array of values.
         // if values is 0 then set all answers to false
         // Otherwise go through the array setting answers and then setting the 
         //  appropriate colour in the progress grid.
-        Category.prototype.setAnswers = function(values){
+        Category.prototype.setAnswers = function(senseindex, values){
             if (+values === 0) {
-                this.setFalse();
+                this.setFalse(senseindex);
                 return;
             }
 
-            for (var k=0; k<this.questions.length; k++) {
-                var item = this.questions[k];
-                var fieldsets = item.getElementsByTagName("fieldset");
+            var item = this.questions[+senseindex];
+            var fieldsets = item.getElementsByTagName("fieldset");
 
-                var maxval = 0;
-                for(var i=0; i < fieldsets.length; i++){
-                    var buttons = fieldsets[i].getElementsByTagName("input");
-                    buttons[3].click(); // set to False before we do anything else.
-                    val = +values[i];
-                    if (+maxval < +val)
-                        maxval = val;
-                    if (val > 0){
-                        switch (val)
-                        {
-                            case 1: buttons[2].click(); // 'Not Sure'
-                                    break;
-                            case 2: buttons[0].click(); // 'Was True'
-                                    break;
-                            case 3: buttons[1].click(); // 'True Now'
-                                    break;
-                            case 5: buttons[0].click();
-                                    buttons[1].click();
-                        }
+            var maxval = 0;
+            for(var i=0; i < fieldsets.length; i++){
+                var buttons = fieldsets[i].getElementsByTagName("input");
+                buttons[3].click(); // set to False before we do anything else.
+                val = +values[i];
+                if (+maxval < +val)
+                    maxval = val;
+                if (val > 0){
+                    switch (val)
+                    {
+                        case 1: buttons[2].click(); // 'Not Sure'
+                                break;
+                        case 2: buttons[0].click(); // 'Was True'
+                                break;
+                        case 3: buttons[1].click(); // 'True Now'
+                                break;
+                        case 5: buttons[0].click();
+                                buttons[1].click();
                     }
                 }
-                colourProgressGridCell(this.index, k, maxval);
             }
+            colourProgressGridCell(this.index, senseindex, maxval);
         };
 
         // Grab the categoryContainer and create (DOM) arrays of headers and descriptions
