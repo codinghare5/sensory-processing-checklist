@@ -298,8 +298,8 @@ eleventyNavigation:
 
      function checkEdgeCases(currentCategry){
         if(currentCategry < 0 || currentCategry.typeOf === 'NaN') currentCategry = 10;
-        +currentIndex === 0 ? prevButton.disabled = true : prevButton.disabled = false;
-        if(+currentIndex === categoryArray.length -1){
+        +currentCategry === 0 ? prevButton.disabled = true : prevButton.disabled = false;
+        if(+currentCategry === (categoryArray.length -1)){
             nextButton.innerHTML = 'Show results';
             nextButton.setAttribute('nextevent', 'show');
         }
@@ -399,16 +399,24 @@ eleventyNavigation:
     // Fieldsets get correct values, progress grid colours, the state has been loaded.
     function setQuestionValues(node, senseindex, catindex, answers){
         var questions = node.getElementsByTagName("fieldset");
-        var values = answers.questionStatus[catindex][senseindex];
-        console.log(values);
-        for(let i=0; i < values.length; i++){
+        var values = answers.questionStatus[+catindex][+senseindex];
+
+        for(let i=0; i < questions.length; i++){
             var buttons = questions[i].getElementsByTagName("input");
+            if(+questions[i].getAttribute("value") !== 0){
+                buttons[0].checked=false;
+                buttons[1].checked=false;
+                buttons[2].checked=false;
+                buttons[3].checked=true;
+                questions[i].setAttribute("value", 0);
+            }
+
             if(values.length){
-                if(values[i]){
-                    if(+values[i] == 5) { buttons[3].click(); buttons[0].click(); buttons[1].click()};
-                    if(+values[i] == 2) { buttons[3].click(); buttons[0].click() };
-                    if(+values[i] == 3) { buttons[3].click(); buttons[1].click() };
-                    if(+values[i] == 1) { buttons[3].click(); buttons[2].click() };
+                if(+values[i]){
+                    if(+values[i] == 5) { buttons[0].click(); buttons[1].click()};
+                    if(+values[i] == 2) { buttons[0].click() };
+                    if(+values[i] == 3) { buttons[1].click() };
+                    if(+values[i] == 1) { buttons[2].click() };
                 }
             }
         }
@@ -498,13 +506,13 @@ eleventyNavigation:
         return; // nothing to do
 
         // colour in appropriate parts of progressGrid (will catch unclosed accordions)
-        if (currentIndex < 0)
+        if (+currentIndex < 0)
             currentIndex = 0 ;
         else {
             questionsArray = categoryArray[+currentIndex].questions;
             for (var i=0; i<questionsArray.length ; i++) {
                 var val = getQuestionValues(questionsArray[i], "max");
-                colourProgressGridCell(currentIndex, i ,val);
+                colourProgressGridCell(+currentIndex, i ,val);
             }
         }
 
@@ -516,8 +524,8 @@ eleventyNavigation:
         categoryBody.innerHTML = newItem.description;
 
         // sort out the highlighting of the progress grid columns
-        setProgressGridHighlight(currentIndex,"LightGrey");
-        setProgressGridHighlight(newIndex, "Black");
+        setProgressGridHighlight(+currentIndex,"LightGrey");
+        setProgressGridHighlight(+newIndex, "Black");
 
         // set body accordion bodies
         for (var i=0; i<accordionBodies.length; i++){
@@ -525,7 +533,8 @@ eleventyNavigation:
             thebody.replaceChild(newItem.questions[i],thebody.childNodes[0]); // newnode THEN oldnode
         }
 
-        currentIndex = newIndex;
+        currentIndex = +newIndex;
+        //console.log(currentIndex);
     }
 
 
@@ -584,9 +593,8 @@ eleventyNavigation:
             this.categoryindex = catindex;
             this.values = values;
         }
-        
-        if(saveread == "read") displayCategory(0);
-        for (i=0 ; i<categoryArray.length ; i++){
+
+        for (i=0 ; i<categoryArray.length; i++){
             var category = categoryArray[i];
             var questionsArray = category.questions;
             // prepare 2nd dimension of the array
@@ -599,14 +607,15 @@ eleventyNavigation:
                 }
                 else { // "save"
                     var values = getQuestionValues(qset,"array");
-                    var qstatus = new Status(j,i,values);
+                    //var qstatus = new Status(j,i,values);
                     jsonstruct.questionStatus[i][j] = values;
                 }
             }
-            if(saveread == "read" && (i < categoryArray.length -1)) nextButton.click();
-            if(saveread == "read" && (i == categoryArray.length -1)) {
+            if(saveread == "read" && (i < (categoryArray.length -1))) nextButton.click();
+            if(saveread == "read" && (i == (categoryArray.length -1))) {
                 prevButton.click();
                 nextButton.click();
+                // displayCategory(categoryArray.length -1);
             }
         }
 
@@ -693,15 +702,19 @@ eleventyNavigation:
     
     categoryNavigationButtons.addEventListener('click', function(event) {
         if(event.target.id == 'previousbutton') {
-            var newIndex = currentIndex;
-            +currentIndex > 0 ? --newIndex: newIndex = categoryArray.length -1;
+            var newIndex = +currentIndex;
+            +currentIndex > 0 ? --newIndex: newIndex = 0;
+            console.log(+currentIndex);
+            console.log(+newIndex);
             displayCategory(+newIndex);
         }
 
         if(event.target.id == 'nextbutton') {
             if(event.target.getAttribute('nextevent') == 'next'){
-                var newIndex = currentIndex;
-                +currentIndex < categoryArray.length -1 ? ++newIndex: newIndex=0;
+                var newIndex = +currentIndex;
+                +currentIndex < categoryArray.length -1 ? ++newIndex: newIndex=categoryArray.length -1;
+                console.log(+currentIndex);
+                console.log(+newIndex);
                 displayCategory(+newIndex);
             }
             else if (event.target.getAttribute('nextevent') == 'show') console.log('Showing results somewhere.');
@@ -712,7 +725,7 @@ eleventyNavigation:
     // add eventlisteners to body accordion collapse elements
     accordionCollapses.addEventListener('hide.bs.collapse', function() {
         var value = getQuestionValues(this, "max");
-        colourProgressGridCell(currentIndex, this.getAttribute('senseindex'),value);
+        colourProgressGridCell(+currentIndex, this.getAttribute('senseindex'),value);
     });
   
     // Saving the answers
@@ -748,6 +761,10 @@ eleventyNavigation:
                 var answers = reader.result;
                 answers = JSON.parse(answers);
                 console.log(answers?.questionStatus);
+                if(+currentIndex==categoryArray.length-1){
+                    prevButton.click();
+                }
+                displayCategory(0);
                 createJsonAnswers(categoryArray, "read", answers);
             }
             catch (err) {
