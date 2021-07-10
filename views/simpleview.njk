@@ -105,10 +105,6 @@ eleventyNavigation:
 {# body #}
 <!-- Container with the set of questions #questionset ---------------------------------------------------------------------------- -->
 <section class="container-xl" id="questionset">
-    {# button to open all accordions #}
-    <div class="pt-3">
-     <button class="p-2 bg-info fs-5 rounded float-end my-2" id="openallbutton" type="button">Open All</button>
-    </div>
     {# body accordion of sets of questions labelled by sense #}
     <div class="accordion" id="bodyaccordion">
         {# create a set of sense accordions #}
@@ -124,11 +120,11 @@ eleventyNavigation:
                         {{ sense.sense }} Questions
                     </button>
                 </h2>
-                <div id="{{ sensestr }}-collapse" class="accordion-collapse collapse" 
+                 <div id="{{ sensestr }}-collapse" class="accordion-collapse collapse" 
                         aria-labelledby="{{ sensestr }}-accordion-header" data-bs-parent="#bodyaccordion"
                         senseindex="{{ loop.index - 1 }}">
-                    <div class="accordion-body" parentnode="">
-                        <p> questions for {{ sensestr }} go here </p>
+                    <div class="accordion-body">
+                        <p>{{ sense.sense }} questions for this category will go here.</p>
                     </div>
                 </div>
             </div> {# end accordion item #}
@@ -297,21 +293,6 @@ eleventyNavigation:
     // Functions that manipulate html elements in some way
     /////////////////////////////////////////////////////////////////////
 
-     function checkEdgeCases(currentCategry){
-        if(currentCategry < 0 ) currentCategry = 0;
-        +currentCategry === 0 ? prevButton.disabled = true : prevButton.disabled = false;
-        if(+currentCategry === (categoryArray.length -1)){
-            nextButton.innerHTML = 'Show results';
-            nextButton.setAttribute('nextevent', 'show');
-        }
-        else {
-            if(nextButton.innerHTML === 'Show results') {
-                nextButton.innerHTML = 'Next';
-                nextButton.setAttribute('nextevent', 'next');
-            }
-        }
-    }
-
     //function to set or remove the progress grid highlight:
     //  just set the color
     //      - LightGray for no highlight
@@ -402,13 +383,13 @@ eleventyNavigation:
         for (let i=0; i<progressGrid.length; i++)
             progressGrid[i].clear();
 
+        questionStatus = answers.questionStatus;
         // run through items in answers setting values appropriately
-        for (let i=0; i<questionStatus.length; i++){
-            qitem = questionstatus[i];
-            values = item.values;
-            catindex = +item.catindex;
-            senseindex = +item.senseindex;
-            questionsets = categoryArray[catindex].setValues(values);           
+        for (var i=0; i<questionStatus.length; i++){
+            item = questionStatus[i];
+            catindex = item.categoryindex;
+            senseindex = item.senseindex;
+            questionsets = categoryArray[catindex].setAnswers(catindex,senseindex,item.values);           
         }
 
         currentIndex = answers.currentIndex;
@@ -523,14 +504,27 @@ eleventyNavigation:
         // set body accordion bodies
         for (var i=0; i<accordionBodies.length; i++){
             thebody = accordionBodies[i];
-            thebody.replaceChild(newItem.questions[i],thebody.childNodes[0]); // newnode THEN oldnode
+            thebody.replaceChild(newItem.questions[i],thebody.children[0]); // newnode THEN oldnode
         }
 
         currentIndex = +newIndex;
-        checkEdgeCases(+currentIndex);
+
+        // make sure next and previous buttons are set correctly.
+        if(+currentIndex == (categoryArray.length -1)){
+            nextButton.innerHTML = 'Show results';
+            nextButton.setAttribute('nextevent', 'show');
+        }
+        else {
+            if(nextButton.innerHTML === 'Show results') {
+                nextButton.innerHTML = 'Next';
+                nextButton.setAttribute('nextevent', 'next');
+            }
+        }
+        if (+currentIndex == 0)
+            prevButton.style.color = "LightGray";
+        else
+            prevButton.style.color = "Black";
     }
-
-
 
     // create an array of information to do with each category:
     //      - name (for the header)
@@ -551,18 +545,18 @@ eleventyNavigation:
                 senseindex = qset.getAttribute('senseindex');
                 senseArray[+senseindex] = qset;
             }
-            this.senses = senseArray;
+            this.questions = senseArray;
         }
 
         // function to set all questions to false (default)
         // used when reading in answers
         Category.prototype.setFalse = function(){
-            for (var k=0; k<this.senses.length; k++) {
-                var item = this.senses[k];
+            for (var k=0; k<this.questions.length; k++) {
+                var item = this.questions[k];
                 var fieldsets = item.getElementsByTagName("fieldset");
 
-                for(let i=0; i < questions.length; i++){
-                    var buttons = questions[i].getElementsByTagName("input");
+                for(let i=0; i < fieldsets.length; i++){
+                    var buttons = fieldsets[i].getElementsByTagName("input");
                     buttons[3].click();
                 }    
             }
@@ -572,18 +566,18 @@ eleventyNavigation:
         // if values is 0 then set all answers to false
         // Otherwise go through the array setting answers and then setting the 
         //  appropriate colour in the progress grid.
-        Category.prototype.setAnswers = function(values){
+        Category.prototype.setAnswers = function(catindex,senseindex,values){
             if (+values === 0) {
                 this.setFalse();
                 return;
             }
 
-            for (var k=0; k<this.senses.length; k++) {
-                var item = this.senses[k];
+            for (var k=0; k<this.questions.length; k++) {
+                var item = this.questions[k];
                 var fieldsets = item.getElementsByTagName("fieldset");
 
-                for(let i=0; i < questions.length; i++){
-                    var buttons = questions[i].getElementsByTagName("input");
+                for(var i=0; i < fieldsets.length; i++){
+                    var buttons = fieldsets[i].getElementsByTagName("input");
                     buttons[3].click(); // set to False before we do anything else.
                     val = +values[i];
                     if (val > 0){
@@ -679,7 +673,7 @@ eleventyNavigation:
         }
 
         ProgressGrid.prototype.clear = function(){
-            for (i=0; i<this.senseboxes.length; i++){
+            for (var i=0; i<this.senseboxes.length; i++){
                 var item = this.senseboxes[i];
                 item.style.background = "White";
             }   
@@ -704,6 +698,9 @@ eleventyNavigation:
     ////////////////////////////////////////////////
 
     // constants for particular html elements
+    resultsButton = document.getElementById('resultsbutton');
+    saveButton = document.getElementById("savebutton");
+    loadButton = document.getElementById("readbutton");
 
     // Category information elements
     const categoryTitle = document.getElementById('category-name');
@@ -711,52 +708,37 @@ eleventyNavigation:
     const categoryBody = document.getElementById('category-description-body');
 
     // Body
-    openAllButton = document.getElementById('openallbutton');
     const accordionBodies = document.querySelectorAll('#bodyaccordion .accordion-body');
     const accordionCollapses = convertToArray(document.querySelectorAll('#bodyaccordion .accordion-collapse'));
-    //console.log(accordionCollapses);
+    console.log(accordionBodies);
+
+    // previous and next buttons
+    prevButton = document.getElementById('previousbutton');
+    nextButton = document.getElementById('nextbutton');
 
     // constants for structures of html elements
     const categoryArray = createCategoryArray();
     const progressGrid = createProgressGrid();
     categoryArray.consolelog();
-    //progressGrid.consolelog();
-
-    // get next and previous buttons
-    prevButton = document.getElementById('previousbutton');
-    nextButton = document.getElementById('nextbutton');
-    categoryNavigationButtons = [prevButton, nextButton];
-    resultsButton = document.getElementById('resultsbutton');
+    progressGrid.consolelog();
 
     // other constants
     var currentIndex = -1; // doesn't matter what the value is as long as it isn't 0
     displayCategory(0);
-    
-     // We are displaying category, so check at load
-    checkEdgeCases(+currentIndex);
 
-    // Add Event Listeners
+    //////////////////////////// END GLOBAL VARIABLES ///////////////////////////////////
+    
+    /////////////////////////////// Add Event Listeners //////////////////////////////////
     addEventListenerToQuestionButtons();
     
-    categoryNavigationButtons.addEventListener('click', function(event) {
-        if(event.target.id == 'previousbutton') {
-            var newIndex = +currentIndex;
-            +currentIndex > 0 ? --newIndex: newIndex = 0;
-            console.log(+currentIndex);
-            console.log(+newIndex);
-            displayCategory(+newIndex);
-        }
+    prevButton.addEventListener('click', function() {
+        if (+currentIndex != 0)
+            displayCategory(+currentIndex - 1);
+    });
 
-        if(event.target.id == 'nextbutton') {
-            if(event.target.getAttribute('nextevent') == 'next'){
-                var newIndex = +currentIndex;
-                +currentIndex < categoryArray.length -1 ? ++newIndex: newIndex=categoryArray.length -1;
-                console.log(+currentIndex);
-                console.log(+newIndex);
-                displayCategory(+newIndex);
-            }
-            else if (event.target.getAttribute('nextevent') == 'show') console.log('Showing results somewhere.');
-        }
+    nextButton.addEventListener('click', function(){
+        if (this.getAttribute('nextevent') != 'show')
+            displayCategory(+currentIndex + 1);
     });
 
     // add eventlisteners to body accordion collapse elements
@@ -766,7 +748,6 @@ eleventyNavigation:
     });
   
     // Saving the answers
-    saveButton = document.getElementById("savebutton");
     saveButton.addEventListener('click', function(){
         answers = JSON.stringify(createJsonAnswers(categoryArray, "save"));
         console.log(answers);
@@ -783,7 +764,6 @@ eleventyNavigation:
 
     // Loading the answers
     // loadButton is an input, so we need 'change' event to fire
-    loadButton = document.getElementById("readbutton");
     loadButton.addEventListener('change',async function(event) {
         // input gives us the fileList object
         const fileList = event.target.files;
@@ -802,7 +782,7 @@ eleventyNavigation:
                 setQuestionValues(answers);                
             }
             catch (err) {
-                alert(err.message);
+                console.log(err.message);
             }
         });
         // let's read the file, as event listener is prepared
