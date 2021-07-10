@@ -29,7 +29,7 @@ eleventyNavigation:
 
     <h3>Saving results</h3>
     <p>It is possible to save answers and read them in again. To do so, click the save and read buttons below.<br>
-    Files will be downloaded to your download folder.</p>
+    Files will be downloaded to your download folder. The default file name is answers.json</p>
 </section>
 
 <!-- Context menu ---------------------------------------------------------------------------- -->
@@ -128,6 +128,7 @@ eleventyNavigation:
                         aria-labelledby="{{ sensestr }}-accordion-header" data-bs-parent="#bodyaccordion"
                         senseindex="{{ loop.index - 1 }}">
                     <div class="accordion-body" parentnode="">
+                        <p> questions for {{ sensestr }} go here </p>
                     </div>
                 </div>
             </div> {# end accordion item #}
@@ -297,7 +298,7 @@ eleventyNavigation:
     /////////////////////////////////////////////////////////////////////
 
      function checkEdgeCases(currentCategry){
-        if(currentCategry < 0 || currentCategry.typeOf === 'NaN') currentCategry = 10;
+        if(currentCategry < 0 ) currentCategry = 0;
         +currentCategry === 0 ? prevButton.disabled = true : prevButton.disabled = false;
         if(+currentCategry === (categoryArray.length -1)){
             nextButton.innerHTML = 'Show results';
@@ -393,33 +394,25 @@ eleventyNavigation:
         }
     }
     
-    // setQuestionValues Gets the fieldsets from node (accordion body or collapse)
-    // Then iterates through relevant values array from answers read form the file
-    // If values are there, this function clicks correct buttons and fires most of the events
-    // Fieldsets get correct values, progress grid colours, the state has been loaded.
-    function setQuestionValues(node, senseindex, catindex, answers){
-        var questions = node.getElementsByTagName("fieldset");
-        var values = answers.questionStatus[+catindex][+senseindex];
+    // setQuestionValues(answers) answers is a JSON structure.
+    // fills in appropriate values in categoryArray
+    // colours in the progress grid appropriately
+    function setQuestionValues(answers){
+        // first clear the progress grid by colouring all cells white
+        for (let i=0; i<progressGrid.length; i++)
+            progressGrid[i].clear();
 
-        for(let i=0; i < questions.length; i++){
-            var buttons = questions[i].getElementsByTagName("input");
-            if(+questions[i].getAttribute("value") !== 0){
-                buttons[0].checked=false;
-                buttons[1].checked=false;
-                buttons[2].checked=false;
-                buttons[3].checked=true;
-                questions[i].setAttribute("value", 0);
-            }
-
-            if(values.length){
-                if(+values[i]){
-                    if(+values[i] == 5) { buttons[0].click(); buttons[1].click()};
-                    if(+values[i] == 2) { buttons[0].click() };
-                    if(+values[i] == 3) { buttons[1].click() };
-                    if(+values[i] == 1) { buttons[2].click() };
-                }
-            }
+        // run through items in answers setting values appropriately
+        for (let i=0; i<questionStatus.length; i++){
+            qitem = questionstatus[i];
+            values = item.values;
+            catindex = +item.catindex;
+            senseindex = +item.senseindex;
+            questionsets = categoryArray[catindex].setValues(values);           
         }
+
+        currentIndex = answers.currentIndex;
+        displayCategory(currentIndex);
     }
 
     // Event function to control behaviour of checkbox buttons for the questions
@@ -534,7 +527,7 @@ eleventyNavigation:
         }
 
         currentIndex = +newIndex;
-        //console.log(currentIndex);
+        checkEdgeCases(+currentIndex);
     }
 
 
@@ -547,20 +540,69 @@ eleventyNavigation:
     //      - category-description-body
     function createCategoryArray() {
 
-        // (local) constructor for Category
-        function Category(name,description,questionSets){
-            this.name = name.innerHTML;
+        function Category(name, description, questionSets){
+            this.category = name.innerHTML;
             this.description = description.innerHTML;
 
             // create an array of questions grouped by sense
-            questionsArray = createArray(questionSets.length);
+            var senseArray = createArray(questionSets.length);
             for (var j=0; j<questionSets.length; j++){
                 qset = questionSets[j];
                 senseindex = qset.getAttribute('senseindex');
-                questionsArray[+senseindex] = qset;
+                senseArray[+senseindex] = qset;
             }
-            this.questions = questionsArray;
+            this.senses = senseArray;
         }
+
+        // function to set all questions to false (default)
+        // used when reading in answers
+        Category.prototype.setFalse = function(){
+            for (var k=0; k<this.senses.length; k++) {
+                var item = this.senses[k];
+                var fieldsets = item.getElementsByTagName("fieldset");
+
+                for(let i=0; i < questions.length; i++){
+                    var buttons = questions[i].getElementsByTagName("input");
+                    buttons[3].click();
+                }    
+            }
+        };
+
+        // function to set all questions depending on an array of values.
+        // if values is 0 then set all answers to false
+        // Otherwise go through the array setting answers and then setting the 
+        //  appropriate colour in the progress grid.
+        Category.prototype.setAnswers = function(values){
+            if (+values === 0) {
+                this.setFalse();
+                return;
+            }
+
+            for (var k=0; k<this.senses.length; k++) {
+                var item = this.senses[k];
+                var fieldsets = item.getElementsByTagName("fieldset");
+
+                for(let i=0; i < questions.length; i++){
+                    var buttons = questions[i].getElementsByTagName("input");
+                    buttons[3].click(); // set to False before we do anything else.
+                    val = +values[i];
+                    if (val > 0){
+                        switch (val)
+                        {
+                            case 1: buttons[2].click(); // 'Not Sure'
+                                    break;
+                            case 2: buttons[0].click(); // 'Was True'
+                                    break;
+                            case 3: buttons[1].click(); // 'True Now'
+                                    break;
+                            case 5: buttons[0].click();
+                                    buttons[1].click();
+                        }
+                        colourProgressGridCell(catindex, senseindex, +values[i]);
+                    }
+                }
+            }
+        };
 
         // Grab the categoryContainer and create (DOM) arrays of headers and descriptions
         const categoryContainer = document.getElementById("category-container")
@@ -574,19 +616,18 @@ eleventyNavigation:
         catArray = createArray(headers.length);
         for (i=0 ; i<headers.length ; i++) {
             senseQSets = categoryQuestionsets[i].querySelectorAll('.category-sense-questions');
-            catArray[i] = {'name' : headers[i].innerHTML, 'description' : descriptions[i].innerHTML, 'questions' : senseQSets};
+            catArray[i] = new Category(headers[i], descriptions[i], senseQSets);
             //console.log(catArray[i]);
         }
         return catArray;
     }
 
     // create a structure for question answers
-    // I have reused this function, as it has got the for loop
-    function createJsonAnswers(categoryArray, saveread, answers=[]) {
-        if(saveread == "read"){
-            if(answers.length == 0) return;
-        }
-        jsonstruct = {"type": "SPCR", "version": 1, "questionStatus": []};
+    function createJsonAnswers(categoryArray) {
+        jsonstruct = {"type": "SPCR", 
+                        "version": 1, 
+                        "currentIndex": currentIndex,
+                        "questionStatus": []};
 
         function Status(senseindex,catindex,values){
             this.senseindex = senseindex;
@@ -594,28 +635,18 @@ eleventyNavigation:
             this.values = values;
         }
 
-        for (i=0 ; i<categoryArray.length; i++){
+        for (i=0 ; i<categoryArray.length ; i++){
             var category = categoryArray[i];
             var questionsArray = category.questions;
-            // prepare 2nd dimension of the array
-            jsonstruct.questionStatus[i] = [];
             for (j=0 ; j<questionsArray.length ; j++){
                 var qset = questionsArray[j];
+                var values = getQuestionValues(qset,"array");
+                //console.log("values: " + values);
 
-                if(saveread == "read"){
-                    setQuestionValues(qset, j, i, answers);
-                }
-                else { // "save"
-                    var values = getQuestionValues(qset,"array");
-                    //var qstatus = new Status(j,i,values);
-                    jsonstruct.questionStatus[i][j] = values;
-                }
-            }
-            if(saveread == "read" && (i < (categoryArray.length -1))) nextButton.click();
-            if(saveread == "read" && (i == (categoryArray.length -1))) {
-                prevButton.click();
-                nextButton.click();
-                // displayCategory(categoryArray.length -1);
+                var qstatus = new Status(j,i,values);
+                //console.log(qstatus.senseindex + ' ' + qstatus.categoryindex + ' ' +   qstatus.answers);
+                //console.log(JSON.stringify(qstatus));
+                jsonstruct.questionStatus.push(qstatus);
             }
         }
 
@@ -641,12 +672,19 @@ eleventyNavigation:
                 itemsArray[+item.getAttribute("senseindex")] = item;
                 item.addEventListener("click", function(){ 
                     displayCategory(catindex);
-                    checkEdgeCases(catindex);
                 });
             }
 
-            this.senseboxes = itemsArray
+            this.senseboxes = itemsArray;
         }
+
+        ProgressGrid.prototype.clear = function(){
+            for (i=0; i<this.senseboxes.length; i++){
+                var item = this.senseboxes[i];
+                item.style.background = "White";
+            }   
+        };
+
 
         const pGrid = document.getElementById("progress-grid");
         const progressColumnList = pGrid.querySelectorAll(".progress-column");
@@ -681,7 +719,7 @@ eleventyNavigation:
     // constants for structures of html elements
     const categoryArray = createCategoryArray();
     const progressGrid = createProgressGrid();
-    //categoryArray.consolelog();
+    categoryArray.consolelog();
     //progressGrid.consolelog();
 
     // get next and previous buttons
@@ -719,7 +757,6 @@ eleventyNavigation:
             }
             else if (event.target.getAttribute('nextevent') == 'show') console.log('Showing results somewhere.');
         }
-        checkEdgeCases(+currentIndex);
     });
 
     // add eventlisteners to body accordion collapse elements
@@ -760,15 +797,12 @@ eleventyNavigation:
                 // after event load ends we get and object reader.result
                 var answers = reader.result;
                 answers = JSON.parse(answers);
-                console.log(answers?.questionStatus);
-                if(+currentIndex==categoryArray.length-1){
-                    prevButton.click();
-                }
-                displayCategory(0);
-                createJsonAnswers(categoryArray, "read", answers);
+                console.log(answers);
+
+                setQuestionValues(answers);                
             }
             catch (err) {
-                console.log(err.message);
+                alert(err.message);
             }
         });
         // let's read the file, as event listener is prepared
@@ -777,7 +811,7 @@ eleventyNavigation:
         }
         catch (err){
             return;
-            console.log('Try to pick up a file!');
+            alert('Cannot read file');
         }
     });
 </script>
