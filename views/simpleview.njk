@@ -567,7 +567,7 @@ eleventyNavigation:
         // if values is 0 then set all answers to false
         // Otherwise go through the array setting answers and then setting the 
         //  appropriate colour in the progress grid.
-        Category.prototype.setAnswers = function(catindex,values){
+        Category.prototype.setAnswers = function(values){
             if (+values === 0) {
                 this.setFalse();
                 return;
