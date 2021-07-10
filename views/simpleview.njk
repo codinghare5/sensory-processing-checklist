@@ -336,7 +336,9 @@ eleventyNavigation:
     // Change all these colours here so they are all in one place.
     function colourProgressGridCell(catindex, senseindex, value) {
         progressItem = progressGrid[catindex].senseboxes[senseindex];
-        if (+value == 0)
+        if (+value == -1)
+            progressItem.style.background = "white";
+        else if (+value == 0)
             progressItem.style.background = "WhiteSmoke";
         else if (+value == 1)
             progressItem.style.background = "HoneyDew"; 
@@ -403,7 +405,7 @@ eleventyNavigation:
 
         for(let i=0; i < questions.length; i++){
             var buttons = questions[i].getElementsByTagName("input");
-            if(+questions[i].getAttribute("value") !== 0){
+            if(questions[i].getAttribute("value") !== 0){
                 buttons[0].checked=false;
                 buttons[1].checked=false;
                 buttons[2].checked=false;
@@ -417,8 +419,10 @@ eleventyNavigation:
                     if(+values[i] == 2) { buttons[0].click() };
                     if(+values[i] == 3) { buttons[1].click() };
                     if(+values[i] == 1) { buttons[2].click() };
+                    colourProgressGridCell(catindex, senseindex, values[i]);
                 }
             }
+            else colourProgressGridCell(catindex, senseindex, -1);
         }
     }
 
@@ -534,7 +538,7 @@ eleventyNavigation:
         }
 
         currentIndex = +newIndex;
-        //console.log(currentIndex);
+        checkEdgeCases(+currentIndex);
     }
 
 
@@ -610,12 +614,6 @@ eleventyNavigation:
                     //var qstatus = new Status(j,i,values);
                     jsonstruct.questionStatus[i][j] = values;
                 }
-            }
-            if(saveread == "read" && (i < (categoryArray.length -1))) nextButton.click();
-            if(saveread == "read" && (i == (categoryArray.length -1))) {
-                prevButton.click();
-                nextButton.click();
-                // displayCategory(categoryArray.length -1);
             }
         }
 
@@ -756,20 +754,12 @@ eleventyNavigation:
         const reader = new FileReader();
         // we have to add event listener to the instance before we continue
         reader.addEventListener('loadend', () => {
-            try {
-                // after event load ends we get and object reader.result
-                var answers = reader.result;
-                answers = JSON.parse(answers);
-                console.log(answers?.questionStatus);
-                if(+currentIndex==categoryArray.length-1){
-                    prevButton.click();
-                }
-                displayCategory(0);
-                createJsonAnswers(categoryArray, "read", answers);
-            }
-            catch (err) {
-                console.log(err.message);
-            }
+            // after event load ends we get and object reader.result
+            var answers = reader.result;
+            answers = JSON.parse(answers);
+            console.log(answers?.questionStatus);
+
+            createJsonAnswers(categoryArray, "read", answers);
         });
         // let's read the file, as event listener is prepared
         try {
