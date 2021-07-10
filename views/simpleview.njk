@@ -534,8 +534,8 @@ eleventyNavigation:
     //      - category-description-body
     function createCategoryArray() {
 
-        function Category(name, index, description, questionSets){
-            this.category = name.innerHTML;
+        function Category(header, index, description, questionSets){
+            this.name = header.innerHTML;
             this.description = description.innerHTML;
             this.index = index;
 
