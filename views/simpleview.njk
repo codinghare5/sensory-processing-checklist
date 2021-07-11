@@ -388,10 +388,10 @@ eleventyNavigation:
         for (var i=0; i<questionStatus.length; i++){
             item = questionStatus[i];
             catindex = item.categoryindex;
-            questionsets = categoryArray[catindex].setAnswers(item.senseindex, item.values);           
+            questionsets = categoryArray[+catindex].setValues(item.senseindex, item.values);
         }
 
-        displayCategory(answers.currentIndex, 1);
+        //displayCategory(answers.currentIndex, 1);
     }
 
     // Event function to control behaviour of checkbox buttons for the questions
@@ -551,13 +551,13 @@ eleventyNavigation:
 
         // function to set all questions to false (default)
         // used when reading in answers
-        Category.prototype.setFalse = function(senseindex){
-            var item = this.questions[+senseindex];
-            var fieldsets = item.getElementsByTagName("fieldset");
-
+        Category.prototype.setFalse = function(fieldsets){
+            // set false and clear all the values
             for(let i=0; i < fieldsets.length; i++){
                 var buttons = fieldsets[i].getElementsByTagName("input");
-                buttons[3].click();
+                for(let j=0; j<buttons.length-1; j++) buttons[j].checked=false;
+                buttons[3].checked=true;
+                fieldsets[i].setAttribute('value', 0);
             }    
         };
 
@@ -565,35 +565,44 @@ eleventyNavigation:
         // if values is 0 then set all answers to false
         // Otherwise go through the array setting answers and then setting the 
         //  appropriate colour in the progress grid.
-        Category.prototype.setAnswers = function(senseindex, values){
-            if (+values === 0) {
-                this.setFalse(senseindex);
-                return;
-            }
-
+        Category.prototype.setValues = function(senseindex, values){
+            // moved these two lines here, because we were using them inside .setFalse function
             var item = this.questions[+senseindex];
             var fieldsets = item.getElementsByTagName("fieldset");
+            if (+values === 0) {
+                this.setFalse(fieldsets);
+                return;
+            }
 
             var maxval = 0;
             for(var i=0; i < fieldsets.length; i++){
                 var buttons = fieldsets[i].getElementsByTagName("input");
-                buttons[3].click(); // set to False before we do anything else.
+                var currentValue = fieldsets[i].getAttribute('value');
+
+                // if there are answers for this question currentValue > 0
+                if(+currentValue) {
+                    for(let j=0; j<buttons.length-1; j++) buttons[j].checked=false;
+                }
+                else buttons[3].checked=false; // else unset to False before we do anything else.
+                
                 val = +values[i];
                 if (+maxval < +val)
                     maxval = val;
                 if (val > 0){
                     switch (val)
                     {
-                        case 1: buttons[2].click(); // 'Not Sure'
-                                break;
-                        case 2: buttons[0].click(); // 'Was True'
-                                break;
-                        case 3: buttons[1].click(); // 'True Now'
-                                break;
-                        case 5: buttons[0].click();
-                                buttons[1].click();
+                        case 1: buttons[2].checked=true; // 'Not Sure'
+                        break;
+                        case 2: buttons[0].checked=true; // 'Was True'
+                        break;
+                        case 3: buttons[1].checked=true; // 'True Now'
+                        break;
+                        case 5: buttons[0].checked=true;
+                                    buttons[1].checked=true;
                     }
                 }
+                // now we can set the fieldset's value
+                fieldsets[i].setAttribute('value', val);
             }
             colourProgressGridCell(this.index, senseindex, maxval);
         };
@@ -710,7 +719,7 @@ eleventyNavigation:
     // Body
     const accordionBodies = document.querySelectorAll('#bodyaccordion .accordion-body');
     const accordionCollapses = convertToArray(document.querySelectorAll('#bodyaccordion .accordion-collapse'));
-    console.log(accordionBodies);
+    console.log(accordionBodies); // Elizabeth's FAVOURITE
 
     // previous and next buttons
     prevButton = document.getElementById('previousbutton');
@@ -719,8 +728,8 @@ eleventyNavigation:
     // constants for structures of html elements
     const categoryArray = createCategoryArray();
     const progressGrid = createProgressGrid();
-    categoryArray.consolelog();
-    progressGrid.consolelog();
+    categoryArray.consolelog(); // Elizabeth's FAVOURITE
+    progressGrid.consolelog(); // Elizabeth's FAVOURITE
 
     // other constants
     var currentIndex = -1; // doesn't matter what the value is as long as it isn't 0
@@ -766,7 +775,7 @@ eleventyNavigation:
     // loadButton is an input, so we need 'change' event to fire
     loadButton.addEventListener('change',async function(event) {
         // input gives us the fileList object
-        const fileList = event.target.files;
+        var fileList = event.target.files;
         file = fileList[0];
 
         // we need a FileReader instance
@@ -779,7 +788,8 @@ eleventyNavigation:
                 answers = JSON.parse(answers);
                 console.log(answers);
 
-                setQuestionValues(answers);                
+                displayCategory(answers.currentIndex);
+                setQuestionValues(answers);
             }
             catch (err) {
                 console.log(err.message);
