@@ -391,7 +391,7 @@ eleventyNavigation:
             questionsets = categoryArray[+catindex].setValues(item.senseindex, item.values);
         }
 
-        //displayCategory(answers.currentIndex, 1);
+        displayCategory(answers.currentIndex, 1);
     }
 
     // Event function to control behaviour of checkbox buttons for the questions
@@ -788,8 +788,8 @@ eleventyNavigation:
                 answers = JSON.parse(answers);
                 console.log(answers);
 
-                displayCategory(answers.currentIndex);
                 setQuestionValues(answers);
+                displayCategory(answers.currentIndex);
             }
             catch (err) {
                 console.log(err.message);
