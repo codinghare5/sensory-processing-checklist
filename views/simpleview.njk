@@ -437,7 +437,7 @@ eleventyNavigation:
         for (i=0 ; i<questionButtons.length ; i++) {
             questionButtons[i].addEventListener('change', function() {
                 //console.log(this.id + ' ' + this.getAttribute("question_id"));
-                console.log("in checkbutton event listener")
+                //console.log("in checkbutton event listener")
                 
                 const formwrapper = document.getElementById(this.getAttribute("question_id"));
                 var currentvalue = formwrapper.getAttribute("value");
@@ -606,14 +606,11 @@ eleventyNavigation:
         // used when reading in answers
         Category.prototype.setFalse = function(senseindex){
             // set false and clear all the values
-            console.log('in setFalse ' + this.index + ' ' + senseindex);
+            //console.log('in setFalse ' + this.index + ' ' + senseindex);
             var item = this.questions[+senseindex];
             var fieldsets = item.getElementsByTagName("fieldset");
             for(let i=0; i < fieldsets.length; i++){
                 var buttons = fieldsets[i].getElementsByTagName("input");
-                // using click() because it taps into the event listener for 
-                // the checklist buttons
-                console.log('clicking false in setFalse: ' + i);
                 for (j=0 ; j<buttons.length - 1 ; j++)
                     buttons[j].checked = false;
                 buttons[3].checked = true;
@@ -650,16 +647,16 @@ eleventyNavigation:
                     buttons[3].checked = false;
                     switch (val)
                     {
-                        case 1: console.log('val 1, clicking Not Sure')
+                        case 1: //console.log('val 1, clicking Not Sure')
                                 buttons[2].checked = true; // 'Not Sure'
                                 break;
-                        case 2: console.log('val 2, clicking Was True')
+                        case 2: //console.log('val 2, clicking Was True')
                                 buttons[0].checked = true; // 'Was True'
                                 break;
-                        case 3: console.log('val 3, clicking True Now')
+                        case 3: //console.log('val 3, clicking True Now')
                                 buttons[1].checked = true; // 'True Now'
                                 break;
-                        case 5: console.log('val 5, clicking Was True and True Now')
+                        case 5: //console.log('val 5, clicking Was True and True Now')
                                 buttons[0].checked = true; // 'Was True' AND
                                 buttons[1].checked = true; // 'True Now'
                                 break;
