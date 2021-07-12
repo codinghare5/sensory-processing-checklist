@@ -833,25 +833,23 @@ eleventyNavigation:
         const reader = new FileReader();
         // we have to add event listener to the instance before we continue
         reader.addEventListener('loadend', () => {
-            try {
-                // after event load ends we get and object reader.result
-                var answers = reader.result;
+            // after event load ends we get and object reader.result
+            var answers = reader.result;
+            console.log(answers);
+            if (answers) {
                 answers = JSON.parse(answers);
                 console.log(answers);
-
-                setQuestionValues(answers);                
-            }
-            catch (err) {
-                console.log(err.message);
-            }
+                console.log("type: " + answers.type + " version: "+ answers.version)
+                if (answers && answers.type && answers.type == "SPCR" && answers.version == "1") {
+                    console.log(answers);
+                    setQuestionValues(answers); 
+                }
+                else alert("File is not the right kind of file.")  
+            }             
+           
         });
         // let's read the file, as event listener is prepared
-        try {
+        if (file)
             reader.readAsText(file);
-        }
-        catch (err){
-            return;
-            alert('Cannot read file');
-        }
     });
 </script>
