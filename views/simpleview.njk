@@ -40,7 +40,7 @@ eleventyNavigation:
         <button class="p-2 bg-info rounded" id="savebutton" type="button">Save Answer File</button>
         {# button to save question answers #}
         {# input type='file' is best for loading a file in #}
-        <input class="p-2 bg-info rounded" id="readbutton" id="readfile" type="file" accept="application/json"/>
+        <button class="p-2 bg-info rounded" id="readbutton" type="button">Read File</button>
         {# button to show results #}
         <button class="p-2 bg-info rounded" id="resultsbutton" type="button">Show Results</button>
     </nav>
@@ -838,35 +838,22 @@ eleventyNavigation:
 
     // Loading the answers
     // loadButton is an input, so we need 'change' event to fire
-    loadButton.addEventListener('change',async function(event) {
-        // input gives us the fileList object
-        var fileList = event.target.files;
-        file = fileList[0];
+    let fileHandle;
+    loadButton.addEventListener('click', async () => {
+        [fileHandle] = await window.showOpenFilePicker();
+        const file = await fileHandle.getFile();
+        var answers = await file.text();
 
-        // we need a FileReader instance
-        const reader = new FileReader();
-        // we have to add event listener to the instance before we continue
-        reader.addEventListener('loadend', () => {
-            // after event load ends we get and object reader.result
-            var answers = reader.result;
-            console.log(answers);
-            if (answers) {
-                answers = JSON.parse(answers);
-                //console.log(answers);
-                console.log("==================================================================")
-                console.log("type: " + answers.type + " version: "+ answers.version)
-                if (answers && answers.type && answers.type == "SPCR" && answers.version == "1") {
-                    console.log(answers);
-                    setQuestionValues(answers); 
-                }
-                else alert("File is not the right kind of file.")  
-            }             
-           
-        });
-        // let's read the file, as event listener is prepared
-        if (file){
-            reader.readAsText(file);
-            console.log('read file');
+        if (answers) {
+            answers = JSON.parse(answers);
+            //console.log(answers);
+            console.log("==================================================================")
+            console.log("type: " + answers.type + " version: "+ answers.version)
+            if (answers && answers.type && answers.type == "SPCR" && answers.version == "1") {
+                console.log(answers);
+                setQuestionValues(answers); 
+            }
+            else alert("File is not the right kind of file.");
         }
     });
 </script>
