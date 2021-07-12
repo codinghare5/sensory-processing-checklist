@@ -391,7 +391,44 @@ eleventyNavigation:
             questionsets = categoryArray[catindex].setAnswers(item.senseindex, item.values);           
         }
 
-        displayCategory(answers.currentIndex, 1);
+        // change the display if necessary
+        if (currentIndex != +answers.currentIndex) {
+            newIndex = answers.currentIndex;
+
+            // set category header and description
+            const newItem = categoryArray[+newIndex];
+            categoryTitle.innerHTML = newItem.name;
+            categoryButton.innerHTML =  'About ' + newItem.name;
+            categoryBody.innerHTML = newItem.description;
+
+            // sort out the highlighting of the progress grid columns
+            setProgressGridHighlight(+currentIndex,"LightGrey");
+            setProgressGridHighlight(+newIndex, "Black");
+
+            // set body accordion bodies
+            for (var i=0; i<accordionBodies.length; i++){
+                thebody = accordionBodies[i];
+                thebody.replaceChild(newItem.questions[i],thebody.children[0]); // newnode THEN oldnode
+            }
+
+            currentIndex = +newIndex;
+
+            // make sure next and previous buttons are set correctly.
+            if(+currentIndex == (categoryArray.length -1)){
+                nextButton.innerHTML = 'Show results';
+                nextButton.setAttribute('nextevent', 'show');
+            }
+            else {
+                if(nextButton.innerHTML === 'Show results') {
+                    nextButton.innerHTML = 'Next';
+                    nextButton.setAttribute('nextevent', 'next');
+                }
+            }
+            if (+currentIndex == 0)
+                prevButton.style.color = "LightGray";
+            else
+                prevButton.style.color = "Black";
+        }
     }
 
     // Event function to control behaviour of checkbox buttons for the questions
@@ -453,7 +490,7 @@ eleventyNavigation:
                                 currentvalue = 0;
                             }
                             newvalue = +currentvalue + +thisvalue;
-                            //console.log('currentvalue: ' + currentvalue + ' thisvalue: ' + thisvalue + ' newvalue: ' + newvalue);
+                            console.log('currentvalue: ' + currentvalue + ' thisvalue: ' + thisvalue + ' newvalue: ' + newvalue);
                             formwrapper.setAttribute("value",newvalue)
                         }
                     }
@@ -472,22 +509,16 @@ eleventyNavigation:
     // also highlights the correct column in the progress grid
     //
     // Assumes currentindex is declared somewhere and has an appropriate value
-    function displayCategory(newIndex,noColourChange) {
+    function displayCategory(newIndex) {
         //console.log("in displayCategory: " + newIndex + ' ' + currentIndex);
         if (+newIndex == +currentIndex)
-        return; // nothing to do
+            return; // nothing to do
 
         // colour in appropriate parts of progressGrid (will catch unclosed accordions)
-        if (!noColourChange){
-            if (+currentIndex < 0)
-                currentIndex = 0 ;
-            else {
-                questionsArray = categoryArray[+currentIndex].questions;
-                for (var i=0; i<questionsArray.length ; i++) {
-                    var val = getQuestionValues(questionsArray[i], "max");
-                    colourProgressGridCell(+currentIndex, i ,val);
-                }
-            }
+        questionsArray = categoryArray[+currentIndex].questions;
+        for (var i=0; i<questionsArray.length ; i++) {
+            var val = getQuestionValues(questionsArray[i], "max");
+            colourProgressGridCell(+currentIndex, i ,val);
         }
 
         // set category header and description
@@ -526,6 +557,27 @@ eleventyNavigation:
             prevButton.style.color = "Black";
     }
 
+    // like displayCategory but sets currentIndex=0
+    //  and does not do the stuff to ensure the colours for the previous category
+    //  are displayed correctly.
+    function initialDisplayCategory() {
+       currentIndex = 0;
+
+        // sort out the highlighting of the progress grid columns
+        setProgressGridHighlight(currentIndex, "Black");
+
+        // set body accordion bodies (there is a dummy child to replace)
+        const item = categoryArray[currentIndex];
+        for (var i=0; i<accordionBodies.length; i++){
+            thebody = accordionBodies[i];
+            thebody.replaceChild(item.questions[i],thebody.children[0]); // newnode THEN oldnode
+        }
+
+        // gray out preButton there is no need to do anything for nextButton
+        prevButton.style.color = "LightGray";
+
+    }
+
     // create an array of information to do with each category:
     //      - name (for the header)
     //      - description (for the category description)
@@ -557,6 +609,8 @@ eleventyNavigation:
 
             for(let i=0; i < fieldsets.length; i++){
                 var buttons = fieldsets[i].getElementsByTagName("input");
+                // using click() because it taps into the event listener for 
+                // the checklist buttons
                 buttons[3].click();
             }    
         };
@@ -565,6 +619,8 @@ eleventyNavigation:
         // if values is 0 then set all answers to false
         // Otherwise go through the array setting answers and then setting the 
         //  appropriate colour in the progress grid.
+        //  This function uses click() because it taps into the event listener for 
+        // the checklist buttons
         Category.prototype.setAnswers = function(senseindex, values){
             if (+values === 0) {
                 this.setFalse(senseindex);
@@ -574,13 +630,11 @@ eleventyNavigation:
             var item = this.questions[+senseindex];
             var fieldsets = item.getElementsByTagName("fieldset");
 
-            var maxval = 0;
+            var maxval = 0; // need to calculate the max of the list of values to set the colour in progressGrid correctly
             for(var i=0; i < fieldsets.length; i++){
                 var buttons = fieldsets[i].getElementsByTagName("input");
-                buttons[3].click(); // set to False before we do anything else.
                 val = +values[i];
-                if (+maxval < +val)
-                    maxval = val;
+                
                 if (val > 0){
                     switch (val)
                     {
@@ -590,10 +644,16 @@ eleventyNavigation:
                                 break;
                         case 3: buttons[1].click(); // 'True Now'
                                 break;
-                        case 5: buttons[0].click();
-                                buttons[1].click();
+                        case 5: buttons[0].click(); // 'Was True' AND
+                                buttons[1].click(); // 'True Now'
+                                break;
+                        case 0:
+                        default: buttons[3].click(); // set to false
+                                 val = 0; // in case val was not recognised so set to 0
                     }
                 }
+                if (+maxval < +val)
+                    maxval = val;
             }
             colourProgressGridCell(this.index, senseindex, maxval);
         };
@@ -710,7 +770,7 @@ eleventyNavigation:
     // Body
     const accordionBodies = document.querySelectorAll('#bodyaccordion .accordion-body');
     const accordionCollapses = convertToArray(document.querySelectorAll('#bodyaccordion .accordion-collapse'));
-    console.log(accordionBodies);
+    //console.log(accordionBodies);
 
     // previous and next buttons
     prevButton = document.getElementById('previousbutton');
@@ -719,12 +779,12 @@ eleventyNavigation:
     // constants for structures of html elements
     const categoryArray = createCategoryArray();
     const progressGrid = createProgressGrid();
-    categoryArray.consolelog();
-    progressGrid.consolelog();
+    //categoryArray.consolelog();
+    //progressGrid.consolelog();
 
     // other constants
-    var currentIndex = -1; // doesn't matter what the value is as long as it isn't 0
-    displayCategory(0);
+    var currentIndex;
+    initialDisplayCategory(); // sets currentIndex to 0
 
     //////////////////////////// END GLOBAL VARIABLES ///////////////////////////////////
     
