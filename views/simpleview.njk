@@ -701,6 +701,43 @@ eleventyNavigation:
         return progressArray;
     }
 
+    function setMaxValues(){
+        jsonstruct = {"type": "SPCR", 
+                        "version": 1, 
+                        "currentIndex": currentIndex,
+                        "questionStatus": []};
+
+        function Status(senseindex,catindex,values){
+            this.senseindex = senseindex;
+            this.categoryindex = catindex;
+            this.values = values;
+        }
+
+        for (i=0 ; i<categoryArray.length ; i++){
+            var category = categoryArray[i];
+            var questionsArray = category.questions;
+            var sum = 0;
+            for (j=0 ; j<questionsArray.length ; j++){
+                var qset = questionsArray[j];
+                var questions = qset.getElementsByTagName("fieldset");
+
+                //create array of question values
+                var values = [];
+                for (var k=0 ; k<questions.length ; k++){
+                    var val = 2;
+                    sum += +val;
+                    values[k] = +val;
+                }
+
+                var qstatus = new Status(j,i,values);
+                jsonstruct.questionStatus.push(qstatus);
+            }
+            console.log(sum);
+        }
+
+        return jsonstruct;
+    }
+
     /////////////////////////////////   End Functions  /////////////////////////////////////////////
 
     // Variables
@@ -719,7 +756,7 @@ eleventyNavigation:
     // Body
     const accordionBodies = document.querySelectorAll('#bodyaccordion .accordion-body');
     const accordionCollapses = convertToArray(document.querySelectorAll('#bodyaccordion .accordion-collapse'));
-    console.log(accordionBodies); // Elizabeth's FAVOURITE
+    //console.log(accordionBodies); // Elizabeth's FAVOURITE
 
     // previous and next buttons
     prevButton = document.getElementById('previousbutton');
@@ -728,8 +765,8 @@ eleventyNavigation:
     // constants for structures of html elements
     const categoryArray = createCategoryArray();
     const progressGrid = createProgressGrid();
-    categoryArray.consolelog(); // Elizabeth's FAVOURITE
-    progressGrid.consolelog(); // Elizabeth's FAVOURITE
+    //categoryArray.consolelog(); // Elizabeth's FAVOURITE
+    //progressGrid.consolelog(); // Elizabeth's FAVOURITE
 
     // other constants
     var currentIndex = -1; // doesn't matter what the value is as long as it isn't 0
@@ -782,18 +819,13 @@ eleventyNavigation:
         const reader = new FileReader();
         // we have to add event listener to the instance before we continue
         reader.addEventListener('loadend', () => {
-            try {
-                // after event load ends we get and object reader.result
-                var answers = reader.result;
-                answers = JSON.parse(answers);
-                console.log(answers);
+            // after event load ends we get and object reader.result
+            var answers = reader.result;
+            answers = JSON.parse(answers);
+            console.log(answers);
 
-                setQuestionValues(answers);
-                displayCategory(answers.currentIndex);
-            }
-            catch (err) {
-                console.log(err.message);
-            }
+            setQuestionValues(answers);
+            displayCategory(answers.currentIndex);
         });
         // let's read the file, as event listener is prepared
         try {
