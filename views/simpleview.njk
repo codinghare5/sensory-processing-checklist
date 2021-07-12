@@ -437,6 +437,7 @@ eleventyNavigation:
         for (i=0 ; i<questionButtons.length ; i++) {
             questionButtons[i].addEventListener('change', function() {
                 //console.log(this.id + ' ' + this.getAttribute("question_id"));
+                //console.log("in checkbutton event listener")
                 
                 const formwrapper = document.getElementById(this.getAttribute("question_id"));
                 var currentvalue = formwrapper.getAttribute("value");
@@ -490,7 +491,7 @@ eleventyNavigation:
                                 currentvalue = 0;
                             }
                             newvalue = +currentvalue + +thisvalue;
-                            console.log('currentvalue: ' + currentvalue + ' thisvalue: ' + thisvalue + ' newvalue: ' + newvalue);
+                            //console.log('currentvalue: ' + currentvalue + ' thisvalue: ' + thisvalue + ' newvalue: ' + newvalue);
                             formwrapper.setAttribute("value",newvalue)
                         }
                     }
@@ -605,15 +606,18 @@ eleventyNavigation:
         // used when reading in answers
         Category.prototype.setFalse = function(senseindex){
             // set false and clear all the values
-             var item = this.questions[+senseindex];
+            console.log('in setFalse ' + this.index + ' ' + senseindex);
+            var item = this.questions[+senseindex];
             var fieldsets = item.getElementsByTagName("fieldset");
             for(let i=0; i < fieldsets.length; i++){
                 var buttons = fieldsets[i].getElementsByTagName("input");
                 // using click() because it taps into the event listener for 
                 // the checklist buttons
+                console.log('clicking false: ' + i);
                 buttons[3].click();
             }    
         };
+
 
         // function to set all questions depending on an array of values.
         // if values is 0 then set all answers to false
@@ -623,7 +627,10 @@ eleventyNavigation:
         // the checklist buttons
         Category.prototype.setValues = function(senseindex, values){
             if (+values === 0) {
-                this.setFalse(senseindex);
+
+                // bind makes sure that 'this' does not get copied. We do not want 'this' to be
+                // copied because it is a large structure and we need the event listeners.
+                this.setFalse.bind(this,senseindex); 
                 return;
             }
 
@@ -631,25 +638,31 @@ eleventyNavigation:
             var fieldsets = item.getElementsByTagName("fieldset");
 
             var maxval = 0; // need to calculate the max of the list of values to set the colour in progressGrid correctly
-            for(var i=0; i < fieldsets.length; i++){
+            for(let i=0; i < fieldsets.length; i++){
                 var buttons = fieldsets[i].getElementsByTagName("input");
-                val = +values[i];
-                
-                if (val > 0){
+                val = +values[i];  
+                // need to click false to stop buttons being unset
+                buttons[3].click();
+                if (val > 0 ) {  // 0 case (False) already sorted.
                     switch (val)
                     {
-                        case 1: buttons[2].click(); // 'Not Sure'
+                        case 1: //console.log('val 1, clicking Not Sure')
+                                buttons[2].click(); // 'Not Sure'
                                 break;
-                        case 2: buttons[0].click(); // 'Was True'
+                        case 2: //console.log('val 2, clicking Was True')
+                                buttons[0].click(); // 'Was True'
                                 break;
-                        case 3: buttons[1].click(); // 'True Now'
-                                break;
-                        case 5: buttons[0].click(); // 'Was True' AND
+                        case 3: //console.log('val 3, clicking True Now')
                                 buttons[1].click(); // 'True Now'
                                 break;
-                        case 0:
+                        case 5: //console.log('val 5, clicking Was True and True Now')
+                                buttons[0].click(); // 'Was True' AND
+                                buttons[1].click(); // 'True Now'
+                                break;
                         default: buttons[3].click(); // set to false
+                                 fieldsets[i].value = 0;
                                  val = 0; // in case val was not recognised so set to 0
+                                 console.log('default val now 0, clicking False');
                     }
                 }
                 if (+maxval < +val)
@@ -838,7 +851,8 @@ eleventyNavigation:
             console.log(answers);
             if (answers) {
                 answers = JSON.parse(answers);
-                console.log(answers);
+                //console.log(answers);
+                console.log("==================================================================")
                 console.log("type: " + answers.type + " version: "+ answers.version)
                 if (answers && answers.type && answers.type == "SPCR" && answers.version == "1") {
                     console.log(answers);
@@ -849,7 +863,9 @@ eleventyNavigation:
            
         });
         // let's read the file, as event listener is prepared
-        if (file)
+        if (file){
             reader.readAsText(file);
+            console.log('read file');
+        }
     });
 </script>
