@@ -321,7 +321,7 @@ eleventyNavigation:
         if (+value == 0)
             progressItem.style.background = "WhiteSmoke";
         else if (+value == 1)
-            progressItem.style.background = "HoneyDew"; 
+            progressItem.style.background = "AntiqueWhite"; 
         else {
             switch(+senseindex) {
                 case 0: progressItem.style.background = "Red";
@@ -603,8 +603,10 @@ eleventyNavigation:
 
         // function to set all questions to false (default)
         // used when reading in answers
-        Category.prototype.setFalse = function(fieldsets){
+        Category.prototype.setFalse = function(senseindex){
             // set false and clear all the values
+             var item = this.questions[+senseindex];
+            var fieldsets = item.getElementsByTagName("fieldset");
             for(let i=0; i < fieldsets.length; i++){
                 var buttons = fieldsets[i].getElementsByTagName("input");
                 // using click() because it taps into the event listener for 
@@ -619,9 +621,9 @@ eleventyNavigation:
         //  appropriate colour in the progress grid.
         //  This function uses click() because it taps into the event listener for 
         // the checklist buttons
-        Category.prototype.setAnswers = function(senseindex, values){
+        Category.prototype.setValues = function(senseindex, values){
             if (+values === 0) {
-                this.setFalse(fieldsets);
+                this.setFalse(senseindex);
                 return;
             }
 
@@ -816,7 +818,7 @@ eleventyNavigation:
         file = new Blob([answers],{type: "text/plain"});
         //console.log(file);
         a.href = URL.createObjectURL(file);
-        a.download = "answers.json"; //download to answers.json
+        a.download = "answers.spcr"; //download to answers.json
         a.click();
     });
 
