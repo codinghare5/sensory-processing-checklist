@@ -12,6 +12,15 @@ module.exports = function(eleventyConfig) {
   eleventyConfig.addPlugin(pluginSyntaxHighlight);
   eleventyConfig.addPlugin(pluginNavigation);
 
+  eleventyConfig.browserSyncConfig = {
+    port: 3000,
+    https: {
+      key: "localhost-key.pem",
+      cert: "localhost.pem"
+    }
+  };
+
+
   // https://www.11ty.dev/docs/data-deep-merge/
   eleventyConfig.setDataDeepMerge(true);
 
