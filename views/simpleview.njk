@@ -29,7 +29,7 @@ eleventyNavigation:
 
     <h3>Saving results</h3>
     <p>It is possible to save answers and read them in again. To do so, click the save and read buttons below.<br>
-    Files will be downloaded to your download folder. The default file name is answers.json</p>
+    Files will be downloaded to your download folder. The default file name is answers-spcr.json</p>
 </section>
 
 <!-- Context menu ---------------------------------------------------------------------------- -->
@@ -815,10 +815,10 @@ eleventyNavigation:
         // download answers as a json file. The below is convoluted but 
         // there does not seem to be a simpler way.
         const a = document.createElement("a"); // create an empty link
-        file = new Blob([answers],{type: "text/plain"});
+        file = new Blob([answers],{type: "application/json"});
         //console.log(file);
         a.href = URL.createObjectURL(file);
-        a.download = "answers.spcr"; //download to answers.json
+        a.download = "answers-spcr.json"; //download to answers.json
         a.click();
     });
 
