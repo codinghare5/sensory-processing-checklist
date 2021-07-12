@@ -388,7 +388,7 @@ eleventyNavigation:
         for (var i=0; i<questionStatus.length; i++){
             item = questionStatus[i];
             catindex = item.categoryindex;
-            questionsets = categoryArray[+catindex].setValues(item.senseindex, item.values);
+            categoryArray[+catindex].setValues(item.senseindex, item.values);
         }
 
         // change the display if necessary
@@ -437,7 +437,7 @@ eleventyNavigation:
         for (i=0 ; i<questionButtons.length ; i++) {
             questionButtons[i].addEventListener('change', function() {
                 //console.log(this.id + ' ' + this.getAttribute("question_id"));
-                //console.log("in checkbutton event listener")
+                console.log("in checkbutton event listener")
                 
                 const formwrapper = document.getElementById(this.getAttribute("question_id"));
                 var currentvalue = formwrapper.getAttribute("value");
@@ -642,20 +642,21 @@ eleventyNavigation:
                 var buttons = fieldsets[i].getElementsByTagName("input");
                 val = +values[i];  
                 // need to click false to stop buttons being unset
+                console.log("setting false ", this.index);
                 buttons[3].click();
                 if (val > 0 ) {  // 0 case (False) already sorted.
                     switch (val)
                     {
-                        case 1: //console.log('val 1, clicking Not Sure')
+                        case 1: console.log('val 1, clicking Not Sure')
                                 buttons[2].click(); // 'Not Sure'
                                 break;
-                        case 2: //console.log('val 2, clicking Was True')
+                        case 2: console.log('val 2, clicking Was True')
                                 buttons[0].click(); // 'Was True'
                                 break;
-                        case 3: //console.log('val 3, clicking True Now')
+                        case 3: console.log('val 3, clicking True Now')
                                 buttons[1].click(); // 'True Now'
                                 break;
-                        case 5: //console.log('val 5, clicking Was True and True Now')
+                        case 5: console.log('val 5, clicking Was True and True Now')
                                 buttons[0].click(); // 'Was True' AND
                                 buttons[1].click(); // 'True Now'
                                 break;
