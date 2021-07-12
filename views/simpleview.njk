@@ -613,8 +613,11 @@ eleventyNavigation:
                 var buttons = fieldsets[i].getElementsByTagName("input");
                 // using click() because it taps into the event listener for 
                 // the checklist buttons
-                console.log('clicking false: ' + i);
-                buttons[3].click();
+                console.log('clicking false in setFalse: ' + i);
+                for (j=0 ; j<buttons.length - 1 ; j++)
+                    buttons[j].checked = false;
+                buttons[3].checked = true;
+                fieldsets[i].setAttribute("value",0);
             }    
         };
 
@@ -626,46 +629,45 @@ eleventyNavigation:
         //  This function uses click() because it taps into the event listener for 
         // the checklist buttons
         Category.prototype.setValues = function(senseindex, values){
-            if (+values === 0) {
 
-                // bind makes sure that 'this' does not get copied. We do not want 'this' to be
-                // copied because it is a large structure and we need the event listeners.
-                this.setFalse.bind(this,senseindex); 
+            if (+values == 0){
+                this.setFalse(senseindex);
                 return;
             }
 
             var item = this.questions[+senseindex];
             var fieldsets = item.getElementsByTagName("fieldset");
-
             var maxval = 0; // need to calculate the max of the list of values to set the colour in progressGrid correctly
             for(let i=0; i < fieldsets.length; i++){
                 var buttons = fieldsets[i].getElementsByTagName("input");
                 val = +values[i];  
                 // need to click false to stop buttons being unset
-                console.log("setting false ", this.index);
-                buttons[3].click();
+                for (j=0 ; j<buttons.length - 1 ; j++)
+                    buttons[j].checked = false;
+                buttons[3].checked = true;
+
                 if (val > 0 ) {  // 0 case (False) already sorted.
+                    buttons[3].checked = false;
                     switch (val)
                     {
                         case 1: console.log('val 1, clicking Not Sure')
-                                buttons[2].click(); // 'Not Sure'
+                                buttons[2].checked = true; // 'Not Sure'
                                 break;
                         case 2: console.log('val 2, clicking Was True')
-                                buttons[0].click(); // 'Was True'
+                                buttons[0].checked = true; // 'Was True'
                                 break;
                         case 3: console.log('val 3, clicking True Now')
-                                buttons[1].click(); // 'True Now'
+                                buttons[1].checked = true; // 'True Now'
                                 break;
                         case 5: console.log('val 5, clicking Was True and True Now')
-                                buttons[0].click(); // 'Was True' AND
-                                buttons[1].click(); // 'True Now'
+                                buttons[0].checked = true; // 'Was True' AND
+                                buttons[1].checked = true; // 'True Now'
                                 break;
-                        default: buttons[3].click(); // set to false
-                                 fieldsets[i].value = 0;
-                                 val = 0; // in case val was not recognised so set to 0
-                                 console.log('default val now 0, clicking False');
+                        default: val = 0; // in case val was not recognised so set to 0
+                                 console.log('default val now 0: False');                                 
                     }
                 }
+                fieldsets[i].setAttribute("value", val);
                 if (+maxval < +val)
                     maxval = val;
             }
