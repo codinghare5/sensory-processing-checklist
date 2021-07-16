@@ -1,4 +1,3 @@
-
 // Functions 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -100,7 +99,7 @@ function colourProgressGridCell(catindex, senseindex, value) {
 //      if "max" set then returns the max value of the array of values
 //      if "array" set (or neither set) then return the array of values
 // returns 0 in both cases if all questions values are 0
-function getQuestionValues(node,returnType){
+function getQuestionValues(node, returnType){
     var questions = node.getElementsByTagName("fieldset");
 
     let values = [];
@@ -179,7 +178,6 @@ function addEventListenerToQuestionButtons() {
     const questionButtons = document.querySelectorAll(".form-check-input");
     for (i=0 ; i<questionButtons.length ; i++) {
         questionButtons[i].addEventListener('change', function() {
-            
             const formwrapper = document.getElementById(this.getAttribute("question_id"));
             let currentvalue = formwrapper.getAttribute("value");
             const thisvalue = this.getAttribute("value");
@@ -280,6 +278,18 @@ function initialDisplayCategory(categoryArray) {
 }
 
 
+function checkAnswerBoxesByOption(buttons, option){ // There should be 4 buttons, so there is 4 values per option
+    const OPTIONS = {
+        '0' : [0, 0, 0, 1],
+        '1' : [0, 0, 1, 0],
+        '2' : [1, 0, 0, 0],
+        '3' : [0, 1, 0, 0],
+        '5' : [1, 1, 0, 0]
+    }
+    for(let i=0; i < buttons.length; i++) buttons[i].checked = OPTIONS[option][i];
+}
+
+
 // create an array of information to do with each category:
 //      - name (for the header)
 //      - description (for the category description)
@@ -303,62 +313,24 @@ function createCategoryArray() {
         this.questions = senseArray;
     }
 
-    // function to set all questions to false (default)
-    // used when reading in answers
     Category.prototype.setFalse = function(senseindex){
-        let item = this.questions[+senseindex];
-        let fieldsets = item.getElementsByTagName("fieldset");
-        for(let i=0; i < fieldsets.length; i++){
-            let buttons = fieldsets[i].getElementsByTagName("input");
-            for (j=0 ; j<buttons.length - 1 ; j++)
-                buttons[j].checked = false;
-            buttons[3].checked = true;
-            fieldsets[i].setAttribute("value",0);
-        }    
-    };
+        this.setValues(senseindex, 0);
+    }
 
     // Function to set all questions depending on an array of values.
     // if values is 0 then set all answers to false
     // Otherwise go through the array setting answers and then setting the 
     //  appropriate colour in the progress grid.
     Category.prototype.setValues = function(senseindex, values){
-        if (+values == 0){
-            this.setFalse(senseindex);
-            return;
-        }
-
         let item = this.questions[+senseindex];
         let fieldsets = item.getElementsByTagName("fieldset");
         let maxval = 0; // need to calculate the max of the list of values to set the colour in progressGrid correctly
         for(let i=0; i < fieldsets.length; i++){
             let buttons = fieldsets[i].getElementsByTagName("input");
-            let val = +values[i];
-            // need to click false to stop buttons being unset
-            for (j=0 ; j<buttons.length - 1 ; j++)
-                buttons[j].checked = false;
-            buttons[3].checked = true;
-
-            if (val > 0 ) {  // 0 case (False) already sorted.
-                buttons[3].checked = false;
-                switch (val)
-                {
-                    case 1: //console.log('val 1, clicking Not Sure')
-                            buttons[2].checked = true; // 'Not Sure'
-                            break;
-                    case 2: //console.log('val 2, clicking Was True')
-                            buttons[0].checked = true; // 'Was True'
-                            break;
-                    case 3: //console.log('val 3, clicking True Now')
-                            buttons[1].checked = true; // 'True Now'
-                            break;
-                    case 5: //console.log('val 5, clicking Was True and True Now')
-                            buttons[0].checked = true; // 'Was True' AND
-                            buttons[1].checked = true; // 'True Now'
-                            break;
-                    default: val = 0; // in case val was not recognised so set to 0
-                                console.log('default val now 0: False');                                 
-                }
-            }
+            let val = +values == 0 ? 0 : +values[i];
+            if(val > 5) val = 0;
+            checkAnswerBoxesByOption(buttons, val);
+            
             fieldsets[i].setAttribute("value", val);
             if (+maxval < +val)
                 maxval = val;
