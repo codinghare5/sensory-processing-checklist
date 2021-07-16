@@ -177,56 +177,21 @@ function setQuestionValues(answers){
 function addEventListenerToQuestionButtons() {
     const questionButtons = document.querySelectorAll(".form-check-input");
     for (i=0 ; i<questionButtons.length ; i++) {
-        questionButtons[i].addEventListener('change', function() {
-            const formwrapper = document.getElementById(this.getAttribute("question_id"));
+        questionButtons[i].addEventListener('change', function(event) {
+            const formwrapper = event.path.find(element => element.tagName == 'FIELDSET');
             let currentvalue = formwrapper.getAttribute("value");
             const thisvalue = this.getAttribute("value");
             const buttons = formwrapper.getElementsByTagName("input");
-            const falsebutton = buttons[3];
-            const notsurebutton = buttons[2]
-            const truebutton = buttons[1];
-            const wastruebutton = buttons[0];
-    
-            var newvalue;
-            if (!this.checked) { // button was checked before the change
-                if (this == falsebutton) { // if false button do nothing else
-                    falsebutton.checked=true;
-                }
-                else {
-                    newvalue = +currentvalue - +thisvalue; //+thisvalue converts thisvalue to an int
-                    if (newvalue == 0){ // no buttons are active
-                        falsebutton.checked=true;
-                        formwrapper.setAttribute("value",0);
-                    }
-                    else { // one other button is active (can't be more than one)
-                        formwrapper.setAttribute("value",newvalue);
-                    }
-                } 
-            }
-            else { // the button was not active
-                if (this === falsebutton) {  //console.log("It is false button.");
-                    formwrapper.setAttribute("value",0);
-                    for (j=0; j<buttons.length - 1 ; j++)
-                        buttons[j].checked=false;
-                }
-                else {  //console.log("It is NOT false button.");
-                    falsebutton.checked=false;
-                    if (this === notsurebutton) {  //console.log("It is not-sure button.");
-                        truebutton.checked=false;
-                        wastruebutton.checked=false;
-                        formwrapper.setAttribute("value",1);
-                    }
-                    else {  //console.log("First two buttons.");
-                        if (notsurebutton.checked){  //console.log("It is not-sure button.");
-                            notsurebutton.checked=false;
-                            falsebutton.checked=false;
-                            currentvalue = 0;
-                        }
-                        newvalue = +currentvalue + +thisvalue;
-                        formwrapper.setAttribute("value",newvalue);
-                    }
-                }
-            }
+            
+            let option = 0;
+            this.checked ?
+                +thisvalue <= 1 ? option = +thisvalue :
+                    +thisvalue == 2 && +currentvalue == 3 || +thisvalue == 3 && +currentvalue == 2 ? option = 5 : option = +thisvalue
+                                :  // else unchecked
+                +thisvalue == 2 && +currentvalue == 5 || +thisvalue == 3 && +currentvalue == 5 ? option = 5 - +thisvalue : option = 0;
+            checkAnswerBoxesByOption(buttons, option);
+            formwrapper.setAttribute("value", option);
+
         }); // end event function definition
     } // end loop through buttons
 } // end function
