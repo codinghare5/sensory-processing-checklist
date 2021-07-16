@@ -61,10 +61,10 @@ function setProgressGridHighlight(catindex, colour){
     item.style.borderColor = colour;
 }
 
-function setProgressGridHighlightMultiple(indexes, colours){
-    indexes.map(index => {
+function setProgressGridHighlightMultiple(catIndexes, colours){
+    catIndexes.map(index => {
         let item = progressGrid[+index].column;
-        item.style.borderColor = colours[indexes.indexOf(index)];
+        item.style.borderColor = colours[catIndexes.indexOf(index)];
     });
 }
 
@@ -134,6 +134,22 @@ function setCategoryData(catIndex){
 }
 
 
+function setPrevNextButtons(currentIndex){
+    if(+currentIndex == (categoryArray.length -1)){
+        nextButton.innerText = 'Show results';
+        nextButton.setAttribute('nextevent', 'show');
+    }
+    else {
+        if(nextButton.innerText === 'Show results') {
+            nextButton.innerText = 'Next';
+            nextButton.setAttribute('nextevent', 'next');
+        }
+    }
+
+    prevButton.style.color = +currentIndex == 0 ? "LightGray" : "Black";
+}
+
+
 // setQuestionValues(answers) answers is a JSON structure.
 // fills in appropriate values in categoryArray
 // colours in the progress grid appropriately
@@ -150,26 +166,10 @@ function setQuestionValues(answers){
     // change the display if necessary
     if (currentIndex != +answers.currentIndex) {
         newIndex = answers.currentIndex;
-
         setCategoryData(newIndex);
 
         currentIndex = +newIndex;
-
-        // make sure next and previous buttons are set correctly.
-        if(+currentIndex == (categoryArray.length -1)){
-            nextButton.innerText = 'Show results';
-            nextButton.setAttribute('nextevent', 'show');
-        }
-        else {
-            if(nextButton.innerText === 'Show results') {
-                nextButton.innerText = 'Next';
-                nextButton.setAttribute('nextevent', 'next');
-            }
-        }
-        if (+currentIndex == 0)
-            prevButton.style.color = "LightGray";
-        else
-            prevButton.style.color = "Black";
+        setPrevNextButtons(currentIndex);
     }
 }
 
@@ -179,8 +179,6 @@ function addEventListenerToQuestionButtons() {
     const questionButtons = document.querySelectorAll(".form-check-input");
     for (i=0 ; i<questionButtons.length ; i++) {
         questionButtons[i].addEventListener('change', function() {
-            //console.log(this.id + ' ' + this.getAttribute("question_id"));
-            //console.log("in checkbutton event listener")
             
             const formwrapper = document.getElementById(this.getAttribute("question_id"));
             let currentvalue = formwrapper.getAttribute("value");
@@ -190,7 +188,6 @@ function addEventListenerToQuestionButtons() {
             const notsurebutton = buttons[2]
             const truebutton = buttons[1];
             const wastruebutton = buttons[0];
-            //console.log(buttons);
     
             var newvalue;
             if (!this.checked) { // button was checked before the change
@@ -209,7 +206,6 @@ function addEventListenerToQuestionButtons() {
                 } 
             }
             else { // the button was not active
-                //console.log(this.checked);
                 if (this === falsebutton) {  //console.log("It is false button.");
                     formwrapper.setAttribute("value",0);
                     for (j=0; j<buttons.length - 1 ; j++)
@@ -222,17 +218,14 @@ function addEventListenerToQuestionButtons() {
                         wastruebutton.checked=false;
                         formwrapper.setAttribute("value",1);
                     }
-                    else { // button is either wastruebutton or nowtruebutton
-                        //console.log("First two buttons.");
-                        if (notsurebutton.checked){
-                            //console.log("It is not-sure button.");
+                    else {  //console.log("First two buttons.");
+                        if (notsurebutton.checked){  //console.log("It is not-sure button.");
                             notsurebutton.checked=false;
                             falsebutton.checked=false;
                             currentvalue = 0;
                         }
                         newvalue = +currentvalue + +thisvalue;
-                        //console.log('currentvalue: ' + currentvalue + ' thisvalue: ' + thisvalue + ' newvalue: ' + newvalue);
-                        formwrapper.setAttribute("value",newvalue)
+                        formwrapper.setAttribute("value",newvalue);
                     }
                 }
             }
@@ -250,7 +243,6 @@ function addEventListenerToQuestionButtons() {
 //
 // Assumes currentindex is declared somewhere and has an appropriate value
 function displayCategory(newIndex) {
-    //console.log("in displayCategory: " + newIndex + ' ' + currentIndex);
     if (+newIndex == +currentIndex)
         return; // nothing to do
 
@@ -258,27 +250,14 @@ function displayCategory(newIndex) {
     questionsArray = categoryArray[+currentIndex].questions;
     for (let i=0; i<questionsArray.length ; i++) {
         let val = getQuestionValues(questionsArray[i], "max");
-        colourProgressGridCell(+currentIndex, i ,val);
+        colourProgressGridCell(+currentIndex, i, val);
     }
 
     setCategoryData(newIndex);
     currentIndex = +newIndex;
 
     // make sure next and previous buttons are set correctly.
-    if(+currentIndex == (categoryArray.length -1)){
-        nextButton.innerText = 'Show results';
-        nextButton.setAttribute('nextevent', 'show');
-    }
-    else {
-        if(nextButton.innerText === 'Show results') {
-            nextButton.innerText = 'Next';
-            nextButton.setAttribute('nextevent', 'next');
-        }
-    }
-    if (+currentIndex == 0)
-        prevButton.style.color = "LightGray";
-    else
-        prevButton.style.color = "Black";
+    setPrevNextButtons(currentIndex);
 }
 
 
@@ -287,8 +266,6 @@ function displayCategory(newIndex) {
 //  are displayed correctly.
 function initialDisplayCategory(categoryArray) {
     currentIndex = 0;
-
-    // sort out the highlighting of the progress grid columns
     setProgressGridHighlight(currentIndex, "Black");
 
     // set body accordion bodies (there is a dummy child to replace)
@@ -317,8 +294,8 @@ function createCategoryArray() {
         this.index = index;
 
         // create an array of questions grouped by sense
-        var senseArray = createArray(questionSets.length);
-        for (var j=0; j<questionSets.length; j++){
+        let senseArray = createArray(questionSets.length);
+        for (let j=0; j<questionSets.length; j++){
             qset = questionSets[j];
             senseindex = qset.getAttribute('senseindex');
             senseArray[+senseindex] = qset;
@@ -329,12 +306,10 @@ function createCategoryArray() {
     // function to set all questions to false (default)
     // used when reading in answers
     Category.prototype.setFalse = function(senseindex){
-        // set false and clear all the values
-        //console.log('in setFalse ' + this.index + ' ' + senseindex);
-        var item = this.questions[+senseindex];
-        var fieldsets = item.getElementsByTagName("fieldset");
+        let item = this.questions[+senseindex];
+        let fieldsets = item.getElementsByTagName("fieldset");
         for(let i=0; i < fieldsets.length; i++){
-            var buttons = fieldsets[i].getElementsByTagName("input");
+            let buttons = fieldsets[i].getElementsByTagName("input");
             for (j=0 ; j<buttons.length - 1 ; j++)
                 buttons[j].checked = false;
             buttons[3].checked = true;
@@ -342,14 +317,11 @@ function createCategoryArray() {
         }    
     };
 
-    // function to set all questions depending on an array of values.
+    // Function to set all questions depending on an array of values.
     // if values is 0 then set all answers to false
     // Otherwise go through the array setting answers and then setting the 
     //  appropriate colour in the progress grid.
-    //  This function uses click() because it taps into the event listener for 
-    // the checklist buttons
     Category.prototype.setValues = function(senseindex, values){
-
         if (+values == 0){
             this.setFalse(senseindex);
             return;
@@ -407,7 +379,6 @@ function createCategoryArray() {
     for (i=0 ; i<headers.length ; i++) {
         senseQSets = categoryQuestionsets[i].querySelectorAll('.category-sense-questions');
         catArray[i] = new Category(headers[i], i, descriptions[i], senseQSets);
-        //console.log(catArray[i]);
     }
     return catArray;
 }
@@ -426,16 +397,12 @@ function createJsonAnswers(categoryArray) {
     }
 
     for (i=0 ; i<categoryArray.length ; i++){
-        var category = categoryArray[i];
-        var questionsArray = category.questions;
+        let category = categoryArray[i];
+        let questionsArray = category.questions;
         for (j=0 ; j<questionsArray.length ; j++){
-            var qset = questionsArray[j];
-            var values = getQuestionValues(qset,"array");
-            //console.log("values: " + values);
-
-            var qstatus = new Status(j,i,values);
-            //console.log(qstatus.senseindex + ' ' + qstatus.categoryindex + ' ' +   qstatus.answers);
-            //console.log(JSON.stringify(qstatus));
+            let qset = questionsArray[j];
+            let values = getQuestionValues(qset,"array");
+            let qstatus = new Status(j,i,values);
             jsonstruct.questionStatus.push(qstatus);
         }
     }
@@ -449,16 +416,14 @@ function createJsonAnswers(categoryArray) {
 //      an array of progress-item
 // An array of ProgressGrid is returned
 function createProgressGrid() {
-
-    // (local) constructor for ProgressGrid
     // column is a DOM object with class progress-column
     function ProgressGrid(column, catindex){
         this.column = column;
 
         items = column.querySelectorAll(".progress-item");
         itemsArray = createArray(items, length);
-        for (i=0 ; i<items.length ; i++) {
-            item = items[i];
+        for (let i=0 ; i<items.length ; i++) {
+            let item = items[i];
             itemsArray[+item.getAttribute("senseindex")] = item;
             item.addEventListener("click", function(){ 
                 displayCategory(catindex);
@@ -469,8 +434,8 @@ function createProgressGrid() {
     }
 
     ProgressGrid.prototype.clear = function(){
-        for (var i=0; i<this.senseboxes.length; i++){
-            var item = this.senseboxes[i];
+        for (let i=0; i<this.senseboxes.length; i++){
+            let item = this.senseboxes[i];
             item.style.background = "White";
         }   
     };
@@ -478,24 +443,22 @@ function createProgressGrid() {
     const pGrid = document.getElementById("progress-grid");
     const progressColumnList = pGrid.querySelectorAll(".progress-column");
     const progressArray = createArray(progressColumnList.length);
-    for (j=0 ; j<progressArray.length ; j++){
-        item = progressColumnList[j];
-        catindex = item.getAttribute("catindex");
-        progressArray[+catindex] = new ProgressGrid(item, catindex);
+    for (catindex=0 ; catindex<progressArray.length ; catindex++){
+        let item = progressColumnList[catindex];
+        progressArray[catindex] = new ProgressGrid(item, catindex);
     }
 
     return progressArray;
 }
 
-/////////////////////////////////   End Functions  /////////////////////////////////////////////
 
-/////////////////////////////// Add Event Listeners //////////////////////////////////
+/////////////////////////////// Functions for Event Listeners //////////////////////////////////
 
 // Saving the answers
 function saveToFile(){
     answers = JSON.stringify(createJsonAnswers(categoryArray, "save"));
     console.log(answers);
-
+    
     // download answers as a json file. The below is convoluted but 
     // there does not seem to be a simpler way.
     const a = document.createElement("a"); // create an empty link
@@ -512,7 +475,7 @@ async function loadFromFile() {
     [fileHandle] = await window.showOpenFilePicker();
     const file = await fileHandle.getFile();
     var answers = await file.text();
-
+    
     if (answers) {
         answers = JSON.parse(answers);
         //console.log(answers);
@@ -525,3 +488,5 @@ async function loadFromFile() {
         else alert("File is not the right kind of file.");
     }
 }
+
+/////////////////////////////////   End Functions  /////////////////////////////////////////////
