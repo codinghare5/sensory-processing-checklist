@@ -1,7 +1,3 @@
 _site/
 node_modules/
 package-lock.json
-local+1-key.pem
-local+1.pem
-localhost.pem
-localhost-key.pem

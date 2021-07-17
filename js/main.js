@@ -25,14 +25,14 @@ function createArray(length) {
 
 // function to add the same event listener to every element in an array. 
 Array.prototype.addEventListener = function(eventname, eventfunction) {
-    for (i=0 ; i<this.length ; i++)
+    for (let i=0 ; i<this.length ; i++)
         this[i].addEventListener(eventname, eventfunction);
 };
 
 
 // create a function to console log every element in an array
 Array.prototype.consolelog = function() {
-    for (i=0 ; i<this.length ; i++)
+    for (let i=0 ; i<this.length ; i++)
         console.log(this[i]);
 };
 
@@ -40,7 +40,7 @@ Array.prototype.consolelog = function() {
 // convert Nodelists and HTLMCollections (and any other array like objects to an array.
 function convertToArray(arrayLikeObject) {
     let newArray = createArray(arrayLikeObject.length)
-    for (i=0 ; i<newArray.length; i++)
+    for (let i=0 ; i<newArray.length; i++)
         newArray[i] = arrayLikeObject[i];
 
     return newArray;
@@ -117,6 +117,14 @@ function getQuestionValues(node, returnType){
 }
 
 
+function setAccordionBodiesData(newData){
+    for (let i=0; i<accordionBodies.length; i++){
+        theBody = accordionBodies[i];
+        theBody.replaceChild(newData.questions[i],theBody.children[0]); // newnode THEN oldnode
+    }
+}
+
+
 function setCategoryData(catIndex){
     // set category header and description
     const newItem = categoryArray[+catIndex];
@@ -126,10 +134,7 @@ function setCategoryData(catIndex){
 
     setProgressGridHighlightMultiple([+currentIndex, +catIndex], ["LightGrey", "Black"]);
     // inject data into accordion bodies
-    for (var i=0; i<accordionBodies.length; i++){
-        thebody = accordionBodies[i];
-        thebody.replaceChild(newItem.questions[i],thebody.children[0]); // newnode THEN oldnode
-    }
+    setAccordionBodiesData(newItem);
 }
 
 
@@ -176,7 +181,7 @@ function setQuestionValues(answers){
 // Event function to control behaviour of checkbox buttons for the questions
 function addEventListenerToQuestionButtons() {
     const questionButtons = document.querySelectorAll(".form-check-input");
-    for (i=0 ; i<questionButtons.length ; i++) {
+    for (let i=0 ; i<questionButtons.length ; i++) {
         questionButtons[i].addEventListener('change', function(event) {
             const formwrapper = event.path.find(element => element.tagName == 'FIELDSET');
             let currentvalue = formwrapper.getAttribute("value");
@@ -184,11 +189,15 @@ function addEventListenerToQuestionButtons() {
             const buttons = formwrapper.getElementsByTagName("input");
             
             let option = 0;
-            this.checked ?
-                +thisvalue <= 1 ? option = +thisvalue :
-                    +thisvalue == 2 && +currentvalue == 3 || +thisvalue == 3 && +currentvalue == 2 ? option = 5 : option = +thisvalue
-                                :  // else unchecked
-                +thisvalue == 2 && +currentvalue == 5 || +thisvalue == 3 && +currentvalue == 5 ? option = 5 - +thisvalue : option = 0;
+            this.checked 
+                ? +thisvalue <= 1
+                    ? option = +thisvalue 
+                    : +thisvalue == 2 && +currentvalue == 3 || +thisvalue == 3 && +currentvalue == 2 
+                        ? option = 5 
+                        : option = +thisvalue
+                : +thisvalue == 2 && +currentvalue == 5 || +thisvalue == 3 && +currentvalue == 5
+                    ? option = 5 - +thisvalue 
+                    : option = 0;
             checkAnswerBoxesByOption(buttons, option);
             formwrapper.setAttribute("value", option);
 
@@ -219,7 +228,6 @@ function displayCategory(newIndex) {
     setCategoryData(newIndex);
     currentIndex = +newIndex;
 
-    // make sure next and previous buttons are set correctly.
     setPrevNextButtons(currentIndex);
 }
 
@@ -232,11 +240,8 @@ function initialDisplayCategory(categoryArray) {
     setProgressGridHighlight(currentIndex, "Black");
 
     // set body accordion bodies (there is a dummy child to replace)
-    const item = categoryArray[currentIndex];
-    for (var i=0; i<accordionBodies.length; i++){
-        thebody = accordionBodies[i];
-        thebody.replaceChild(item.questions[i],thebody.children[0]); // newnode THEN oldnode
-    }
+    const initialItem = categoryArray[currentIndex];
+    setAccordionBodiesData(initialItem);
 
     // gray out preButton there is no need to do anything for nextButton
     prevButton.style.color = "LightGray";
@@ -267,15 +272,7 @@ function createCategoryArray() {
         this.name = header.innerText;
         this.description = description.innerText;
         this.index = index;
-
-        // create an array of questions grouped by sense
-        let senseArray = createArray(questionSets.length);
-        for (let j=0; j<questionSets.length; j++){
-            qset = questionSets[j];
-            senseindex = qset.getAttribute('senseindex');
-            senseArray[+senseindex] = qset;
-        }
-        this.questions = senseArray;
+        this.questions = convertToArray(questionSets);
     }
 
     Category.prototype.setFalse = function(senseindex){
@@ -313,7 +310,7 @@ function createCategoryArray() {
 
     // create and fill an array of Category
     catArray = createArray(headers.length);
-    for (i=0 ; i<headers.length ; i++) {
+    for (let i=0 ; i<headers.length ; i++) {
         senseQSets = categoryQuestionsets[i].querySelectorAll('.category-sense-questions');
         catArray[i] = new Category(headers[i], i, descriptions[i], senseQSets);
     }
@@ -333,10 +330,11 @@ function createJsonAnswers(categoryArray) {
         this.values = values;
     }
 
-    for (i=0 ; i<categoryArray.length ; i++){
+    for (let i=0 ; i<categoryArray.length ; i++){
         let category = categoryArray[i];
         let questionsArray = category.questions;
-        for (j=0 ; j<questionsArray.length ; j++){
+
+        for (let j=0 ; j<questionsArray.length ; j++){
             let qset = questionsArray[j];
             let values = getQuestionValues(qset,"array");
             let qstatus = new Status(j,i,values);
@@ -380,7 +378,7 @@ function createProgressGrid() {
     const pGrid = document.getElementById("progress-grid");
     const progressColumnList = pGrid.querySelectorAll(".progress-column");
     const progressArray = createArray(progressColumnList.length);
-    for (catindex=0 ; catindex<progressArray.length ; catindex++){
+    for (let catindex=0 ; catindex<progressArray.length ; catindex++){
         let item = progressColumnList[catindex];
         progressArray[catindex] = new ProgressGrid(item, catindex);
     }
