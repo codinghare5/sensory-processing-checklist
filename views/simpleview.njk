@@ -294,7 +294,7 @@ eleventyNavigation:
     // add eventlisteners to body accordion collapse elements
     accordionCollapses.addEventListener('hide.bs.collapse', function() {
         var value = getQuestionValues(this, "max");
-        colourProgressGridCell(+currentIndex, this.getAttribute('senseindex'),value);
+        progressGrid[+currentIndex].colourCell(this.getAttribute('senseindex'),value);
     });
   
     // Saving the answers

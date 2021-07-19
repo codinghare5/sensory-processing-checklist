@@ -50,46 +50,68 @@ function convertToArray(arrayLikeObject) {
 // Functions that manipulate html elements in some way
 /////////////////////////////////////////////////////////////////////
 
-//function to set or remove the progress grid highlight:
-//  just set the color
-//      - LightGray for no highlight
-//      - Black for highlight
-// or change colours to suit
-function setProgressGridHighlight(catindex, colour){
-    let item = progressGrid[+catindex].column;
-    item.style.borderColor = colour;
-}
-
-function setProgressGridHighlightMultiple(catIndexes, colours){
-    catIndexes.map(index => {
-        let item = progressGrid[+index].column;
-        item.style.borderColor = colours[catIndexes.indexOf(index)];
-    });
+function setAccordionBodiesData(newData){
+    for (let i=0; i<accordionBodies.length; i++){
+        theBody = accordionBodies[i];
+        theBody.replaceChild(newData.questions[i],theBody.children[0]); // newnode THEN oldnode
+    }
 }
 
 
-// Function to colour in a cell of the progress grid
-//  colours a cell according to senseindex
-//  if value==0, the colour is whitesmoke irrespective of the sense
-//  if value==1, the colour is HoneyDew
-//  Otherwise colours are according to sense:
-//      0   vision          Red
-//      1   hearing         orange
-//      2   touch           Yellow
-//      3   smell           Green
-//      4   taste           blue
-//      5   proprioception  Indigo
-//      6   balance         violet
-// Refactor from switch statement
-function getSenseColour(senseIndex){
-    var senseColours = ["Red", "Orange", "Yellow", "Green", "Blue", "Indigo", "Violet"];
-    return senseColours[+senseIndex];
+function setCategoryData(newIndex){
+    // set category header and description
+    const newItem = categoryArray[+newIndex];
+    categoryTitle.innerText = newItem.name;
+    categoryButton.innerText =  'About ' + newItem.name;
+    categoryBody.innerText = newItem.description;
+
+    progressGrid[+currentIndex].highlight("LightGrey");
+    progressGrid[+newIndex].highlight("Black");
+    // inject data into accordion bodies
+    setAccordionBodiesData(newItem);
 }
-// Change all these colours here so they are all in one place.
-function colourProgressGridCell(catindex, senseindex, value) {
-    progressItem = progressGrid[catindex].senseboxes[senseindex];
-    progressItem.style.background = 
-        +value == 0 ? "WhiteSmoke" : +value == 1 ? "AntiqueWhite" : getSenseColour(senseindex);
+
+
+function setNavigationButtons(currentIndex){
+    if(+currentIndex == (categoryArray.length -1)){
+        nextButton.innerText = 'Show results';
+        nextButton.setAttribute('nextevent', 'show');
+    }
+    else {
+        if(nextButton.innerText === 'Show results') {
+            nextButton.innerText = 'Next';
+            nextButton.setAttribute('nextevent', 'next');
+        }
+    }
+
+    prevButton.style.color = +currentIndex == 0 ? "LightGray" : "Black";
+}
+
+
+function changeCurrentDisplay(newIndex){
+    setCategoryData(newIndex);
+    setNavigationButtons(newIndex);
+    currentIndex = +newIndex;
+}
+
+
+// setQuestionValues(answers) answers is a JSON structure.
+// fills in appropriate values in categoryArray
+// colours in the progress grid appropriately
+function setQuestionValues(answers){
+    for (let i=0; i<progressGrid.length; i++) progressGrid[i].clear();
+
+    questionStatus = answers.questionStatus;
+    for (let i=0; i<questionStatus.length; i++){
+        item = questionStatus[i];
+        catindex = item.categoryindex;
+        categoryArray[+catindex].setValues(item.senseindex, item.values);
+    }
+
+    // change the display if necessary
+    newIndex = +answers.currentIndex;
+    if (currentIndex != newIndex) 
+        changeCurrentDisplay(newIndex);
 }
 
 
@@ -114,67 +136,6 @@ function getQuestionValues(node, returnType){
     }
 
     return sum == 0 ? 0 : returnType == "max" ? max : values;
-}
-
-
-function setAccordionBodiesData(newData){
-    for (let i=0; i<accordionBodies.length; i++){
-        theBody = accordionBodies[i];
-        theBody.replaceChild(newData.questions[i],theBody.children[0]); // newnode THEN oldnode
-    }
-}
-
-
-function setCategoryData(catIndex){
-    // set category header and description
-    const newItem = categoryArray[+catIndex];
-    categoryTitle.innerText = newItem.name;
-    categoryButton.innerText =  'About ' + newItem.name;
-    categoryBody.innerText = newItem.description;
-
-    setProgressGridHighlightMultiple([+currentIndex, +catIndex], ["LightGrey", "Black"]);
-    // inject data into accordion bodies
-    setAccordionBodiesData(newItem);
-}
-
-
-function setPrevNextButtons(currentIndex){
-    if(+currentIndex == (categoryArray.length -1)){
-        nextButton.innerText = 'Show results';
-        nextButton.setAttribute('nextevent', 'show');
-    }
-    else {
-        if(nextButton.innerText === 'Show results') {
-            nextButton.innerText = 'Next';
-            nextButton.setAttribute('nextevent', 'next');
-        }
-    }
-
-    prevButton.style.color = +currentIndex == 0 ? "LightGray" : "Black";
-}
-
-
-// setQuestionValues(answers) answers is a JSON structure.
-// fills in appropriate values in categoryArray
-// colours in the progress grid appropriately
-function setQuestionValues(answers){
-    for (let i=0; i<progressGrid.length; i++) progressGrid[i].clear();
-
-    questionStatus = answers.questionStatus;
-    for (let i=0; i<questionStatus.length; i++){
-        item = questionStatus[i];
-        catindex = item.categoryindex;
-        categoryArray[+catindex].setValues(item.senseindex, item.values);
-    }
-
-    // change the display if necessary
-    if (currentIndex != +answers.currentIndex) {
-        newIndex = answers.currentIndex;
-        setCategoryData(newIndex);
-
-        currentIndex = +newIndex;
-        setPrevNextButtons(currentIndex);
-    }
 }
 
 
@@ -222,13 +183,10 @@ function displayCategory(newIndex) {
     questionsArray = categoryArray[+currentIndex].questions;
     for (let i=0; i<questionsArray.length ; i++) {
         let val = getQuestionValues(questionsArray[i], "max");
-        colourProgressGridCell(+currentIndex, i, val);
+        progressGrid[+currentIndex].colourCell(i, val);
     }
 
-    setCategoryData(newIndex);
-    currentIndex = +newIndex;
-
-    setPrevNextButtons(currentIndex);
+    changeCurrentDisplay(newIndex);
 }
 
 
@@ -237,7 +195,7 @@ function displayCategory(newIndex) {
 //  are displayed correctly.
 function initialDisplayCategory(categoryArray) {
     currentIndex = 0;
-    setProgressGridHighlight(currentIndex, "Black");
+    progressGrid[currentIndex].highlight("Black");
 
     // set body accordion bodies (there is a dummy child to replace)
     const initialItem = categoryArray[currentIndex];
@@ -297,7 +255,7 @@ function createCategoryArray() {
             if (+maxval < +val)
                 maxval = val;
         }
-        colourProgressGridCell(this.index, senseindex, maxval);
+        if(+values !== 0) progressGrid[this.index].colourCell(senseindex, maxval);
     };
 
     // Grab the categoryContainer and create (DOM) arrays of headers and descriptions
@@ -316,6 +274,7 @@ function createCategoryArray() {
     }
     return catArray;
 }
+
 
 // create a structure for question answers
 function createJsonAnswers(categoryArray) {
@@ -345,6 +304,7 @@ function createJsonAnswers(categoryArray) {
     return jsonstruct;
 }
 
+
 // Create progress grid column array
 //  This is a list of the columns of the grid where each item contains
 //      a progress-column
@@ -360,6 +320,7 @@ function createProgressGrid() {
         for (let i=0 ; i<items.length ; i++) {
             let item = items[i];
             itemsArray[+item.getAttribute("senseindex")] = item;
+
             item.addEventListener("click", function(){ 
                 displayCategory(catindex);
             });
@@ -374,6 +335,30 @@ function createProgressGrid() {
             item.style.background = "White";
         }   
     };
+
+    ProgressGrid.prototype.highlight = function(colour){
+        let item = this.column;
+        item.style.borderColor = colour;
+    }
+    
+    // TODO: how can I do this?
+    ProgressGrid.prototype.switchHighlight = function(catIndexes, colours){
+        catIndexes.map(index => {
+            let item = this[+index].column;
+            item.style.borderColor = colours[catIndexes.indexOf(index)];
+        });
+    }
+    
+    function getSenseColour(senseIndex){
+        var senseColours = ["Red", "Orange", "Yellow", "Green", "Blue", "Indigo", "Violet"];
+        return senseColours[+senseIndex];
+    }
+
+    ProgressGrid.prototype.colourCell = function (senseindex, value) {
+        cell = this.senseboxes[senseindex];
+        cell.style.background = 
+            +value == 0 ? "WhiteSmoke" : +value == 1 ? "AntiqueWhite" : getSenseColour(senseindex);
+    }
 
     const pGrid = document.getElementById("progress-grid");
     const progressColumnList = pGrid.querySelectorAll(".progress-column");
