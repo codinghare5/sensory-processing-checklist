@@ -35,8 +35,10 @@ function hexToRgbA(hex){
 function getSenseColour(senseIndex){
     const senseColours = ["Red", "Orange", "Yellow", "Green", "Blue", "Indigo", "Violet"];
     const senseColoursHex = ["#FF0000", "#FFA500", "#FFFF00", "#008000", "#0000FF", "#4B0082", "#EE82EE"];
+    const senseColoursBorderHex = ["#FF5555", "#555555", "#555555", "#558055", "#5555FF", "#4B5582", "#EEBBEE"];
     const senseColoursRGBA = senseColoursHex.map(hex => hexToRgbA(hex));
-    return +senseIndex < 0 ? senseColoursRGBA : senseColours[+senseIndex];
+    const senseColoursBorderRGBA = senseColoursBorderHex.map(hex => hexToRgbA(hex));
+    return +senseIndex < 0 ? +senseIndex < -1 ? senseColoursBorderRGBA : senseColoursRGBA : senseColours[+senseIndex];
 }
 
 function getAnswerName(answer){
@@ -63,6 +65,7 @@ function sortAnswers(answers){
 // ALSO: Give them Order number
 function setDatasetsForPolarChart(labels, answers){
     const colours = getSenseColour(-1);
+    const borderColours = getSenseColour(-2);
     var dataset = [];
     console.log(answers);
     [ ...answers.answers ].map((sense, index) => {
@@ -72,7 +75,7 @@ function setDatasetsForPolarChart(labels, answers){
             data: sense.filter(answer => answer >= 0),
             fill: true,
             backgroundColor: colours[index],
-            borderColor: colours[index],
+            borderColor: borderColours[index],
             tension: 0.1
         });
     });
@@ -241,7 +244,7 @@ var data2 = {
     datasets: [{
         order: 1,
         label: 'My First Dataset',
-        data: [65, 59, 80, 81, 56, 55, 40],
+        data: [65, 59, 80, 81, 56, 55, 60],
         fill: true,
         backgroundColor: 'rgba(251, 190, 251, 0.3)',
         borderColor: 'rgb(221,160,221)',
