@@ -407,6 +407,10 @@ h1, .h1, h2, .h2, h3, .h3, h4, .h4, h5, .h5, h6, .h6 {
   border-radius: 1rem;
 }
 
+.card canvas {
+  margin-bottom: 2rem;
+}
+
 .card-header {
   position: relative;
   padding: 2rem 2rem;

@@ -4,7 +4,7 @@ title: Simple View
 eleventyNavigation:
   key: Simple View
   parent: Views
-  order: 5
+  order: 7
 ---
 <section class="container-xl p-4">
     <h1 class="text-center"> Sensory Processing Checklist Questions</h1>
@@ -270,7 +270,10 @@ eleventyNavigation:
     const nextButton = document.getElementById('nextbutton');
 
     // constants for structures of html elements
-    const categoryArray = createCategoryArray();
+    const DISPLAY = new Display();
+    DISPLAY.createCategoryArray();
+    const categoryArray = DISPLAY.categoryArray;
+    console.log(DISPLAY.categoryArray);
     const progressGrid = createProgressGrid();
     //categoryArray.consolelog();
     //progressGrid.consolelog();
@@ -279,7 +282,8 @@ eleventyNavigation:
     var currentIndex;
     const displayObj = { resultsButton, saveButton, loadButton, categoryTitle, categoryButton, categoryBody, accordionBodies, accordionCollapses,
                                 prevButton, nextButton, categoryArray, progressGrid, currentIndex};
-    initialDisplayCategory(categoryArray); // sets currentIndex to 0
+    //initialDisplayCategory(categoryArray); // sets currentIndex to 0
+    DISPLAY.initialize();
 
     //////////////////////////// END GLOBAL VARIABLES ///////////////////////////////////
     

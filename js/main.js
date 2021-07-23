@@ -230,7 +230,7 @@ function createCategoryArray() {
         this.name = header.innerText;
         this.description = description.innerText;
         this.index = index;
-        this.questions = convertToArray(questionSets);
+        this.questions = [...questionSets];
     }
 
     Category.prototype.setFalse = function(senseindex){
@@ -269,6 +269,7 @@ function createCategoryArray() {
     // create and fill an array of Category
     catArray = createArray(headers.length);
     for (let i=0 ; i<headers.length ; i++) {
+        // sense = Sense(...)
         senseQSets = categoryQuestionsets[i].querySelectorAll('.category-sense-questions');
         catArray[i] = new Category(headers[i], i, descriptions[i], senseQSets);
     }
