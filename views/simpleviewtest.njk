@@ -244,73 +244,22 @@ eleventyNavigation:
 
 {#====================================== JAVASCRIPT ============================#}
 
-<script type="text/javascript" src="../../js/main.js"></script>
+<script type="text/javascript" src="../../js/readwrite.js"></script>
+<script type="text/javascript" src="../../js/generic.js"></script>
 <script type="text/javascript" src="../../js/class.js"></script>
 <script>
     // Variables
     ////////////////////////////////////////////////
 
-    // constants for particular html elements
-    const resultsButton = document.getElementById('resultsbutton');
-    const saveButton = document.getElementById("savebutton");
-    const loadButton = document.getElementById("readbutton");
-
-    // Category information elements
-    const categoryTitle = document.getElementById('category-name');
-    const categoryButton = document.getElementById('category-description-button');
-    const categoryBody = document.getElementById('category-description-body');
-
-    // Body
-    const accordionBodies = document.querySelectorAll('#bodyaccordion .accordion-body');
-    const accordionCollapses = convertToArray(document.querySelectorAll('#bodyaccordion .accordion-collapse'));
-    //console.log(accordionBodies);
-
-    // previous and next buttons
-    const prevButton = document.getElementById('previousbutton');
-    const nextButton = document.getElementById('nextbutton');
-
     // constants for structures of html elements
     const DISPLAY = new Display();
     DISPLAY.createCategoryArray();
-    const categoryArray = DISPLAY.categoryArray;
-    console.log(DISPLAY.categoryArray);
-    const progressGrid = createProgressGrid();
     //categoryArray.consolelog();
     //progressGrid.consolelog();
-
-    // other variables
-    var currentIndex;
-    const displayObj = { resultsButton, saveButton, loadButton, categoryTitle, categoryButton, categoryBody, accordionBodies, accordionCollapses,
-                                prevButton, nextButton, categoryArray, progressGrid, currentIndex};
-    //initialDisplayCategory(categoryArray); // sets currentIndex to 0
     DISPLAY.initialize();
 
     //////////////////////////// END GLOBAL VARIABLES ///////////////////////////////////
     
     /////////////////////////////// Add Event Listeners //////////////////////////////////
-    addEventListenerToQuestionButtons();
-    
-    prevButton.addEventListener('click', function() {
-        if (+currentIndex != 0)
-            displayCategory(+currentIndex - 1);
-    });
 
-    nextButton.addEventListener('click', function(){
-        if (this.getAttribute('nextevent') != 'show')
-            displayCategory(+currentIndex + 1);
-    });
-
-    // add eventlisteners to body accordion collapse elements
-    accordionCollapses.addEventListener('hide.bs.collapse', function() {
-        var value = getQuestionValues(this, "max");
-        progressGrid[+currentIndex].colourCell(this.getAttribute('senseindex'),value);
-    });
-  
-    // Saving the answers
-    saveButton.addEventListener('click', saveToFile);
-
-    // Loading the answers
-    // loadButton is an input, so we need 'change' event to fire
-    let fileHandle;
-    loadButton.addEventListener('click', loadFromFile);
 </script>
