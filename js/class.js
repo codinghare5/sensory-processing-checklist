@@ -130,7 +130,7 @@ class Sense{
         // change the display if necessary
         newIndex = +answers.currentIndex;
         if (currentIndex != newIndex) 
-            changeCurrentDisplay(newIndex);
+            changeDisplayedDataTo(newIndex);
     }
 
     getQuestionValues(returnType){
@@ -218,12 +218,11 @@ class Display{
         // Category information elements
         this.categoryTitle = document.getElementById('category-name');
         this.categoryButton = document.getElementById('category-description-button');
-        this.categoryBody = document.getElementById('category-description-body');
+        this.catedoryDescription = document.getElementById('category-description-body');
 
         // Body
-        this.UISenseContainers = document.querySelectorAll('#bodyaccordion .accordion-body');
+        this.sensesDataContainers = document.querySelectorAll('#bodyaccordion .accordion-body');
         this.accordionCollapses = convertToArray(document.querySelectorAll('#bodyaccordion .accordion-collapse'));
-        //console.log(UISenseContainers);
 
         // previous and next buttons
         this.prevButton = document.getElementById('previousbutton');
@@ -282,20 +281,27 @@ class Display{
     initializeAccordionCollapses(){
         this.accordionCollapses.addEventListener('hide.bs.collapse', event => {
             let senseIndex = event.target.getAttribute('senseindex');
-            let sense = this.categoryArray[this.currentIndex].senses[+senseIndex];
+            let sense = this.getCurrentCategorySenses()[+senseIndex];
             var value = sense.getQuestionValues("max");
-            this.progressGrid[+this.currentIndex].colourCell(+senseIndex, +value);
+            this.getCurrentProgressGridColumn().colourCell(+senseIndex, +value);
         });
     }
 
     initialize(){
-        let index = this.currentIndex;
-        this.progressGrid[+index].highlight("Black");
+        this.getCurrentProgressGridColumn().highlight("Black");
         this.initializeReadWrite();
         this.initializeNavButtons();
         this.initializeAccordionCollapses();
-        this.setSensesDataToDisplay(index);
-        this.prevButton.style.color = "LightGray";
+        this.setSensesDataToDisplay(this.currentIndex);
+        this.setPrevButtonStyleColor("LightGray");
+    }
+
+    setPrevButtonStyleColor(color) {
+        return this.prevButton.style.color = color;
+    }
+
+    getCurrentProgressGridColumn() {
+        return this.progressGrid[+this.currentIndex];
     }
 
     // TODO: how can I do this?
@@ -333,28 +339,37 @@ class Display{
     }
     // setAccordionBodiesData
     setSensesDataToDisplay(newIndex){
-        for (let sense=0; sense<this.UISenseContainers.length; sense++){
-            let currentSenseContainer = this.UISenseContainers[sense];
-            let categorySenseQuestions = this.categoryArray[+newIndex].senses[sense].questionsNode;
-            currentSenseContainer.replaceChild(categorySenseQuestions,currentSenseContainer.children[0]); // newnode THEN oldnode
+        for (let sense=0; sense<this.sensesDataContainers.length; sense++){
+            let currentSenseContainer = this.sensesDataContainers[sense];
+            let categorySenseQuestions = this.getCategoryDataAt(+newIndex).senses[sense].questionsNode;
+            currentSenseContainer.replaceChild(categorySenseQuestions, currentSenseContainer.children[0]); // newnode THEN oldnode
         }
     }
     // setCategoryData
     setCategoryDataToDisplay(newIndex){
-        // set category header and description
-        const newItem = this.categoryArray[+newIndex];
-        this.categoryTitle.innerText = newItem.name;
-        this.categoryButton.innerText =  'About ' + newItem.name;
-        this.categoryBody.innerText = newItem.description;
-
-        this.progressGrid[+this.currentIndex].highlight("LightGrey");
-        this.progressGrid[+newIndex].highlight("Black");
-        // inject data into accordion bodies
+        this.setCategoryHeaderAndDescription(+newIndex);
+        this.setProgressGridHighlightAt(+newIndex);
         this.setSensesDataToDisplay(+newIndex);
     }
 
-    setNavigationButtons(newIndex){
-        if(+newIndex == (this.categoryArray.length -1)){
+    setProgressGridHighlightAt(newIndex) {
+        this.getCurrentProgressGridColumn().highlight("LightGrey");
+        this.progressGrid[+newIndex].highlight("Black");
+    }
+
+    setCategoryHeaderAndDescription(newIndex) {
+        const { name, description } = this.getCategoryDataAt(+newIndex);
+        this.categoryTitle.innerText = name;
+        this.categoryButton.innerText = 'About ' + name;
+        this.catedoryDescription.innerText = description;
+    }
+
+    getCategoryDataAt(newIndex) {
+        return this.categoryArray[+newIndex];
+    }
+
+    setNavigationButtonsTo(newIndex){
+        if(this.isLastCategoryIndex(newIndex)){
             this.nextButton.innerText = 'Show results';
             this.nextButton.setAttribute('nextevent', 'show');
         }
@@ -365,12 +380,16 @@ class Display{
             }
         }
     
-        this.prevButton.style.color = +newIndex == 0 ? "LightGray" : "Black";
+        this.setPrevButtonStyleColor(+newIndex == 0 ? "LightGray" : "Black");
     }
 
-    changeCurrentDisplay(newIndex){
+    isLastCategoryIndex(newIndex) {
+        return +newIndex == (this.categoryArray.length - 1);
+    }
+
+    changeDisplayedDataTo(newIndex){
         this.setCategoryDataToDisplay(+newIndex);
-        this.setNavigationButtons(+newIndex);
+        this.setNavigationButtonsTo(+newIndex);
         this.currentIndex = +newIndex;
     }
 
@@ -379,13 +398,19 @@ class Display{
     createJsonAnswers(categoryArray){}
 
     displayCategory(newIndex){
-        // colour in appropriate parts of progressGrid (will catch unclosed accordions)
-        let sensesArray = this.categoryArray[+this.currentIndex].senses;
-        for (let sense=0; sense<sensesArray.length ; sense++) {
-            let val = sensesArray[sense].getQuestionValues("max");
-            this.progressGrid[+this.currentIndex].colourCell(+sense, +val);
-        }
+        this.goThroughCurrentSensesAndColourProgressGrid();
+        this.changeDisplayedDataTo(+newIndex);
+    }
 
-        this.changeCurrentDisplay(+newIndex);
+    getCurrentCategorySenses() {
+        return this.categoryArray[+this.currentIndex].senses;
+    }
+
+    goThroughCurrentSensesAndColourProgressGrid() {
+        let currentCategorySenses = this.getCurrentCategorySenses();
+        for (let sense = 0; sense < currentCategorySenses.length; sense++) {
+            let maxValue = currentCategorySenses[sense].getQuestionValues("max");
+            this.getCurrentProgressGridColumn().colourCell(+sense, +maxValue);
+        }
     }
 }
