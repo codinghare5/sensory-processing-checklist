@@ -1,5 +1,5 @@
-/////////////////////////////////////// CheckBox Button /////////////////////////////////////////
-class CheckBox{
+/////////////////////////////////////// Button /////////////////////////////////////////
+class Button{
     constructor(parentNode, thisNode, value){
         this.parentNode = parentNode;
         this.node = thisNode;
@@ -52,20 +52,23 @@ class Question{
     }
 
     onChangeEvent(event){
-        let currentvalue = this.parentNode.getAttribute('value');
+        const currentValue = this.parentNode.getAttribute('value');
+        const buttonValue = +event.target.value;
+        const isButtonChecked = event.target.checked;
+        const ifCheckedFalseOrNotSure = buttonValue <= 1;
+        const elseIfAlwaysTrue = buttonValue == 2 && +currentValue == 3 
+                                            || buttonValue == 3 && +currentValue == 2;
+        const uncheckedWasTrueOrTrueNow = buttonValue == 2 && +currentValue == 5 
+                                                                || buttonValue == 3 && +currentValue == 5;
         
         let option = 0;
-        event.target.checked 
-            ? +event.target.value <= 1
-                ? option = +event.target.value 
-                : +event.target.value == 2 && +currentvalue == 3 || +event.target.value == 3 && +currentvalue == 2 
-                    ? option = 5 
-                    : option = +event.target.value
-            : +event.target.value == 2 && +currentvalue == 5 || +event.target.value == 3 && +currentvalue == 5
-                ? option = 5 - +event.target.value 
-                : option = 0;
+        isButtonChecked ? 
+            ifCheckedFalseOrNotSure ? option = buttonValue 
+                : elseIfAlwaysTrue ? option = 5 : option = buttonValue
+            : uncheckedWasTrueOrTrueNow ? option = 5 - buttonValue : option = 0;
 
         this.setAnswerBoxesByValue(this.buttons, option);
+        //TODO: use JS value or HTML one?
         this.parentNode.setAttribute("value", option);
         this.value = option;
     }
@@ -73,11 +76,11 @@ class Question{
 
 /////////////////////////////////////// SENSE /////////////////////////////////////////
 class Sense{
-    constructor(categoryIndex, senseIndex, subheading, questionsContainer, aQuestionList){
+    constructor(categoryIndex, senseIndex, subheading, senseNode, aQuestionList){
         this.categoryIndex = categoryIndex;
         this.senseIndex = senseIndex;
         this.subheading = subheading;
-        this.questionsNode = questionsContainer;
+        this.node = senseNode;
         this.questions = aQuestionList;
     }
 
@@ -127,7 +130,7 @@ class Category{
         this.senses = senses;
     }
     
-    getQuestionsFor = (senseIndex) => this.senses[+senseIndex].questionsNode;
+    getQuestionsFor = (senseIndex) => this.senses[+senseIndex].node;
 }
 
 
@@ -236,7 +239,6 @@ class Display{
         this.loadButton.addEventListener('click', loadFromFile);
     }
 
-    // add eventlisteners to body accordion collapse elements
     initializeAccordionCollapses(){
         this.accordionCollapses.addEventListener('hide.bs.collapse', event => {
             let senseIndex = event.target.getAttribute('senseindex');
@@ -263,32 +265,42 @@ class Display{
         return this.progressGrid[+this.currentIndex];
     }
 
+    createButtonArrayForQuestionFrom(question, buttonNodes){
+        return [ ...buttonNodes ].map(button => new Button(question, button, button.value));
+    }
+
+    createQuestionArrayForSenseFrom(questionNodes){
+        return [ ...questionNodes ]
+            .map(question => {
+                let legend = question.querySelectorAll('legend');
+                let buttonNodes = question.querySelectorAll('input');
+                let buttons = this.createButtonArrayForQuestionFrom(question, buttonNodes);
+
+                return new Question(question, legend, +question.getAttribute('value'), buttons);
+            });
+    }
+
+    createSenseArrayForCategoryFrom(catIndex, categorySenses){
+        return [ ...categorySenses ]
+            .map((senseNode, index) => {
+                let subheading = senseNode.querySelector('p');
+                let questionNodes = senseNode.querySelectorAll('fieldset');
+                let questions = this.createQuestionArrayForSenseFrom(questionNodes);
+
+                return new Sense(catIndex, index, subheading, senseNode, questions);
+            });
+    }
+
     createCategoryArray(){
         let catArray = createArray(this.headers.length);
         for (let catIndex=0 ; catIndex<this.headers.length ; catIndex++) {
-            let questionsContainer = this.categoryQuestionsets[catIndex].querySelectorAll('.category-sense-questions');
-            //questions = [...questions].map((question, index) => new Question(fieldset, text, value, buttons));
-            let senses = [ ...questionsContainer ]
-                .map((senseDiv, index) => {
-                    let subheading = senseDiv.querySelector('p');
-                    let questions = senseDiv.querySelectorAll('fieldset');
-                    //new Question(question, legend, question.value, buttons)
-                    questions = [ ...questions ]
-                        .map(question => {
-                            let legend = question.querySelectorAll('legend');
-                            let buttons = question.querySelectorAll('input');
-                            buttons = [ ...buttons ].map(button => new CheckBox(question, button, button.value));
-
-                            return new Question(question, legend, +question.getAttribute('value'), buttons);
-                        });
-
-                    return new Sense(catIndex, index, subheading, senseDiv, questions);
-                });
+            let categorySenses = this.categoryQuestionsets[catIndex].querySelectorAll('.category-sense-questions');
+            let senses = this.createSenseArrayForCategoryFrom(catIndex, categorySenses);
             catArray[catIndex] = new Category(this.headers[catIndex], catIndex, this.descriptions[catIndex], senses);
         }
         this.categoryArray = catArray;
     }
-    // setAccordionBodiesData
+    // old name was setAccordionBodiesData
     setSensesDataToDisplay(newIndex){
         for (let sense = 0; sense < this.sensesDataContainers.length; sense++){
             let currentSenseContainer = this.sensesDataContainers[sense];
@@ -296,7 +308,7 @@ class Display{
             currentSenseContainer.replaceChild(categorySenseQuestions, currentSenseContainer.children[0]); // newnode THEN oldnode
         }
     }
-    // setCategoryData
+    // old name was setCategoryData
     setCategoryDataToDisplay(newIndex){
         this.setCategoryHeaderAndDescription(+newIndex);
         this.setProgressGridHighlightAt(+newIndex);
