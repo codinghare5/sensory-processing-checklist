@@ -1,46 +1,14 @@
+/////////////////////////////////////// CheckBox Button /////////////////////////////////////////
 class CheckBox{
     constructor(parentNode, thisNode, value){
         this.parentNode = parentNode;
         this.node = thisNode;
         this.value = value;
         this.siblings = this.parentNode.querySelectorAll('input');
-
-        //this.node.addEventListener('change', event => {this.onChangeEvent(event, this)});
-    }
-
-    setAnswerBoxesByValue(buttons, option){
-        const OPTIONS = {
-            '0' : [0, 0, 0, 1],
-            '1' : [0, 0, 1, 0],
-            '2' : [1, 0, 0, 0],
-            '3' : [0, 1, 0, 0],
-            '5' : [1, 1, 0, 0]
-        }
-        for(let i=0; i < buttons.length; i++) buttons[i].checked = OPTIONS[option][i];
-    }
-
-    onChangeEvent(event, self){
-        console.log(this);
-        console.log(self);
-        let currentvalue = this.parentNode.getAttribute('value');
-        
-        let option = 0;
-        this.node.checked 
-            ? +this.value <= 1
-                ? option = +this.value 
-                : +this.value == 2 && +currentvalue == 3 || +this.value == 3 && +currentvalue == 2 
-                    ? option = 5 
-                    : option = +this.value
-            : +this.value == 2 && +currentvalue == 5 || +this.value == 3 && +currentvalue == 5
-                ? option = 5 - +this.value 
-                : option = 0;
-
-        this.setAnswerBoxesByValue(this.siblings, option);
-        this.parentNode.setAttribute("value", option);
     }
 }
 
-
+/////////////////////////////////////// QUESTION /////////////////////////////////////////
 class Question{
     constructor(parentNode, text, value, buttons){
         this.parentNode = parentNode;
@@ -48,7 +16,7 @@ class Question{
         this.value = value;
         this.buttons = buttons;
 
-        [...this.buttons].map(button => button.node.addEventListener('change', event =>{this.onChangeEvent(event)}));
+        [...this.buttons].map(button => button.node.addEventListener('change', event =>this.onChangeEvent(event)));
     }
     
     setValue(senseindex, values){
@@ -103,7 +71,7 @@ class Question{
     }
 }
 
-
+/////////////////////////////////////// SENSE /////////////////////////////////////////
 class Sense{
     constructor(categoryIndex, senseIndex, subheading, questionsContainer, aQuestionList){
         this.categoryIndex = categoryIndex;
@@ -142,7 +110,7 @@ class Sense{
             values[k] = +val;
             sum += +val;
             if (+max < +val)
-                max = val;
+                max = +val;
         }
     
         return sum == 0 ? 0 : returnType == "max" ? max : values;
@@ -150,7 +118,7 @@ class Sense{
 
 }
 
-
+/////////////////////////////////////// CATEGORY /////////////////////////////////////////
 class Category{
     constructor(header, index, description, senses){
         this.name = header.innerText;
@@ -159,40 +127,31 @@ class Category{
         this.senses = senses;
     }
     
+    getQuestionsFor = (senseIndex) => this.senses[+senseIndex].questionsNode;
 }
 
 
-// column is a DOM object with class progress-column
+/////////////////////////////////////// PROGRESS GRID /////////////////////////////////////////
 class ProgressGrid{
     constructor(display, node, catIndex){
         this.display = display;
         this.node = node;
         this.categoryIndex = catIndex;
-    
-        let senses = node.querySelectorAll(".progress-item");
-        let gridSensesArray = createArray(senses, length);
-        for (let sense=0 ; sense<senses.length ; sense++) {
-            let item = senses[sense];
-            gridSensesArray[+item.getAttribute("senseindex")] = item;
-            let temp = this;
-            item.addEventListener("click", function(){
-                temp.display.displayCategory(temp.node.getAttribute('catindex'));
-            });
-        }
-    
-        this.senseboxes = gridSensesArray;
+        this.senseboxes = this.node.querySelectorAll(".progress-item");
+
+        [ ...this.senseboxes ].addEventListener("click", (event) =>
+            this.display.displayCategory(this.node.getAttribute('catindex'))
+        );
     }
 
     clear(){
-        for (let i=0; i<this.senseboxes.length; i++){
-            let item = this.senseboxes[i];
-            item.style.background = "White";
-        }   
+        [ ...this.senseboxes ].map(
+            item => item.style.background = "White"
+        )   
     };
     
     highlight(colour){
-        let item = this.node;
-        item.style.borderColor = colour;
+        this.node.style.borderColor = colour;
     }
     
     getSenseColour(senseIndex){
@@ -202,12 +161,16 @@ class ProgressGrid{
     
     colourCell(senseindex, value) {
         let cell = this.senseboxes[+senseindex];
-        cell.style.background = 
-            +value == 0 ? "WhiteSmoke" : +value == 1 ? "AntiqueWhite" : this.getSenseColour(+senseindex);
+        cell.style.background =
+            +value == 0
+                ? "WhiteSmoke" 
+                : +value == 1 
+                    ? "AntiqueWhite" 
+                    : this.getSenseColour(+senseindex);
     }
 }
 
-
+/////////////////////////////////////// DISPLAY /////////////////////////////////////////
 class Display{
     constructor(){
         // Context menu buttons
@@ -256,24 +219,20 @@ class Display{
         return progressArray;
     }
 
-    initializeNavButtons(){
-        let temp = this;
-        this.prevButton.addEventListener('click', function() {
-            if (+temp.currentIndex != 0)
-            temp.displayCategory(+temp.currentIndex - 1);
+    initializeCategoryNavigationButtons(){
+        this.prevButton.addEventListener('click', (event) => {
+            if (+this.currentIndex != 0)
+                this.displayCategory(+this.currentIndex - 1);
         });
     
-        this.nextButton.addEventListener('click', function(){
-            if (this.getAttribute('nextevent') != 'show')
-            temp.displayCategory(+temp.currentIndex + 1);
+        this.nextButton.addEventListener('click', (event) => {
+            if (this.nextButton.getAttribute('nextevent') != 'show')
+                this.displayCategory(+this.currentIndex + 1);
         });
     }
 
-    initializeReadWrite(){
-        // Saving the answers
+    initializeReadWriteButtons(){
         this.saveButton.addEventListener('click', saveToFile);
-
-        // Loading the answers
         this.loadButton.addEventListener('click', loadFromFile);
     }
 
@@ -289,8 +248,8 @@ class Display{
 
     initialize(){
         this.getCurrentProgressGridColumn().highlight("Black");
-        this.initializeReadWrite();
-        this.initializeNavButtons();
+        this.initializeReadWriteButtons();
+        this.initializeCategoryNavigationButtons();
         this.initializeAccordionCollapses();
         this.setSensesDataToDisplay(this.currentIndex);
         this.setPrevButtonStyleColor("LightGray");
@@ -302,14 +261,6 @@ class Display{
 
     getCurrentProgressGridColumn() {
         return this.progressGrid[+this.currentIndex];
-    }
-
-    // TODO: how can I do this?
-    switchHighlight(catIndexes, colours){
-        catIndexes.map(index => {
-            let item = this[+index].column;
-            item.style.borderColor = colours[catIndexes.indexOf(index)];
-        });
     }
 
     createCategoryArray(){
@@ -339,9 +290,9 @@ class Display{
     }
     // setAccordionBodiesData
     setSensesDataToDisplay(newIndex){
-        for (let sense=0; sense<this.sensesDataContainers.length; sense++){
+        for (let sense = 0; sense < this.sensesDataContainers.length; sense++){
             let currentSenseContainer = this.sensesDataContainers[sense];
-            let categorySenseQuestions = this.getCategoryDataAt(+newIndex).senses[sense].questionsNode;
+            let categorySenseQuestions = this.getCategoryDataAt(+newIndex).getQuestionsFor(sense);
             currentSenseContainer.replaceChild(categorySenseQuestions, currentSenseContainer.children[0]); // newnode THEN oldnode
         }
     }
