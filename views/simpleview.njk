@@ -21,9 +21,7 @@ eleventyNavigation:
     <p>Please try to answer all the questions.</p>
 
     <h3>Navigation</h3>
-    <p>The simplest way to work your way through the questions is simply to answer them in order presented, 
-        clicking the next button when you are ready to move forward. 
-        The progress grid highlights the column for the questions that are currently being answered.</p>
+    <p>The simplest way to work your way through the questions is simply to answer them in order presented, clicking the next button when you are ready to move forward. The progress grid highlights the column for the questions that are currently being answered.</p>
 
     <p>The progress grid will be coloured in as you answer the questions. This will provide you with an interim indication of the results.</p>
 
@@ -105,7 +103,7 @@ eleventyNavigation:
 <!-- END Information about the category ---------------------------------------------------------------------------- -->
 
 {# body #}
-<!-- Container with the set of questions #questionset --------------------------------------------------------------- -->
+<!-- Container with the set of questions #questionset ---------------------------------------------------------------------------- -->
 <section class="container-xl" id="questionset">
     {# body accordion of sets of questions labelled by sense #}
     <div class="accordion" id="bodyaccordion">
@@ -144,15 +142,15 @@ eleventyNavigation:
 </div>
 
 
-{#=============================== END BASIC PAGE LAYOUT =====================#}
+{#=============================== END BASIC PAGE LAYOUT =================================================#}
 
 
 
-{#=====================================================================#}
+{#=======================================================================================================#}
 
 
 
-{#===================== START COMPONENTS TO BE USED WITH JAVASCRIPT ==============#}
+{#===================== START COMPONENTS TO BE USED WITH JAVASCRIPT =====================================#}
 
 {# Create header for category names and paragraphs for category descriptions #}
 {# Creating them together inside a <div> with and id makes them easy to extract in javascript #}
@@ -234,26 +232,548 @@ eleventyNavigation:
 </div> {# end container #}
 
 
-{#===================== END COMPONENTS TO BE USED WITH JAVASCRIPT =====================#}
+{#===================== END COMPONENTS TO BE USED WITH JAVASCRIPT =====================================#}
 
 
 
-{#===========================================================================#}
+{#=======================================================================================================#}
 
 
 
-{#====================================== JAVASCRIPT ============================#}
+{#====================================== JAVASCRIPT =======================================================#}
 
-<script type="text/javascript" src="../../js/main.js"></script>
-<script type="text/javascript" src="../../js/class.js"></script>
 <script>
+    // Functions 
+    ///////////////////////////////////////////////////////////////////////////////////////
+
+    // Generic Functions
+    ////////////////////////////////////////////////////////////////////////////////////////
+
+    // create array script copied from internet
+    // usage:
+    //      createArray() creates empty 1D array
+    //      createArray(2) creates 1D array of length 2
+    //      createArray(3, 2) creates 2D array, first dimension length 3, second dimension length 2
+    //      createArray(3,3,3,3) creates a 4D array where all dimensions have length 3
+    function createArray(length) {
+        var arr = new Array(length || 0),
+            i = length;
+
+        if (arguments.length > 1) {
+            var args = Array.prototype.slice.call(arguments, 1);
+            while(i--) arr[length-1 - i] = createArray.apply(this, args);
+        }
+
+        return arr;
+    }
+
+    // function to add the same event listener to every element in an array. 
+    Array.prototype.addEventListener = function(eventname, eventfunction) {
+        for (i=0 ; i<this.length ; i++)
+            this[i].addEventListener(eventname, eventfunction);
+    };
+
+    // create a function to console log every element in an array
+    Array.prototype.consolelog = function() {
+        for (i=0 ; i<this.length ; i++)
+            console.log(this[i]);
+    };
+
+    // convert Nodelists and HTLMCollections (and any other array like objects to an array.
+    function convertToArray(arrayLikeObject) {
+        var newArray = createArray(arrayLikeObject.length)
+        for (var i=0 ; i<newArray.length; i++)
+            newArray[i] = arrayLikeObject[i];
+
+        return newArray;
+    }
+
+   
+  
+    // Functions that manipulate html elements in some way
+    /////////////////////////////////////////////////////////////////////
+
+    //function to set or remove the progress grid highlight:
+    //  just set the color
+    //      - LightGray for no highlight
+    //      - Black for highlight
+    // or change colours to suit
+    function setProgressGridHighlight(catindex, colour){
+        var item = progressGrid[+catindex].column;
+        item.style.borderColor = colour;
+    }
+
+    // Function to colour in a cell of the progress grid
+    //  colours a cell according to senseindex
+    //  if value==0, the colour is whitesmoke irrespective of the sense
+    //  if value==1, the colour is HoneyDew
+    //  Otherwise colours are according to sense:
+    //      0   vision          Red
+    //      1   hearing         orange
+    //      2   touch           Yellow
+    //      3   smell           Green
+    //      4   taste           blue
+    //      5   proprioception  Indigo
+    //      6   balance         violet
+    // Change all these colours here so they are all in one place.
+    function colourProgressGridCell(catindex, senseindex, value) {
+        progressItem = progressGrid[catindex].senseboxes[senseindex];
+        if (+value == 0)
+            progressItem.style.background = "WhiteSmoke";
+        else if (+value == 1)
+            progressItem.style.background = "AntiqueWhite"; 
+        else {
+            switch(+senseindex) {
+                case 0: progressItem.style.background = "Red";
+                        break;
+                case 1: progressItem.style.background = "Orange";
+                        break;
+                case 2: progressItem.style.background = "Yellow";
+                        break;
+                case 3: progressItem.style.background = "Green";
+                        break;
+                case 4: progressItem.style.background = "Blue";
+                        break;
+                case 5: progressItem.style.background = "Indigo";
+                        break;
+                case 6: progressItem.style.background = "Violet";
+                        break;                
+            }
+        }
+    }
+
+    // getQuestionValues(node, "max"|"array")
+    //  Gets the fieldsets from node (accordion body or collapse)
+    //  Then iterates through the fieldsets to create an array of values
+    //      if "max" set then returns the max value of the array of values
+    //      if "array" set (or neither set) then return the array of values
+    // returns 0 in both cases if all questions values are 0
+    function getQuestionValues(node,returnType){
+        var questions = node.getElementsByTagName("fieldset");
+
+        //create array of question values
+        var values = [];
+        var sum = 0;
+        var max = 0;
+        for (var k=0 ; k<questions.length ; k++){
+            var val = questions[k].getAttribute("value");
+            values[k] = +val;
+            sum += +val;
+            if (+max < +val)
+                max = val;
+        }
+
+        if (sum == 0) {
+            values = 0;
+            return 0;
+        }
+        else {
+            if (returnType == "max")
+                return max;
+            else
+                return values;
+        }
+    }
+    
+    // setQuestionValues(answers) answers is a JSON structure.
+    // fills in appropriate values in categoryArray
+    // colours in the progress grid appropriately
+    function setQuestionValues(answers){
+        // first clear the progress grid by colouring all cells white
+        for (let i=0; i<progressGrid.length; i++)
+            progressGrid[i].clear();
+
+        questionStatus = answers.questionStatus;
+        // run through items in answers setting values appropriately
+        for (var i=0; i<questionStatus.length; i++){
+            item = questionStatus[i];
+            catindex = item.categoryindex;
+            categoryArray[+catindex].setValues(item.senseindex, item.values);
+        }
+
+        // change the display if necessary
+        if (currentIndex != +answers.currentIndex) {
+            newIndex = answers.currentIndex;
+
+            // set category header and description
+            const newItem = categoryArray[+newIndex];
+            categoryTitle.innerHTML = newItem.name;
+            categoryButton.innerHTML =  'About ' + newItem.name;
+            categoryBody.innerHTML = newItem.description;
+
+            // sort out the highlighting of the progress grid columns
+            setProgressGridHighlight(+currentIndex,"LightGrey");
+            setProgressGridHighlight(+newIndex, "Black");
+
+            // set body accordion bodies
+            for (var i=0; i<accordionBodies.length; i++){
+                thebody = accordionBodies[i];
+                thebody.replaceChild(newItem.questions[i],thebody.children[0]); // newnode THEN oldnode
+            }
+
+            currentIndex = +newIndex;
+
+            // make sure next and previous buttons are set correctly.
+            if(+currentIndex == (categoryArray.length -1)){
+                nextButton.innerHTML = 'Show results';
+                nextButton.setAttribute('nextevent', 'show');
+            }
+            else {
+                if(nextButton.innerHTML === 'Show results') {
+                    nextButton.innerHTML = 'Next';
+                    nextButton.setAttribute('nextevent', 'next');
+                }
+            }
+            if (+currentIndex == 0)
+                prevButton.style.color = "LightGray";
+            else
+                prevButton.style.color = "Black";
+        }
+    }
+
+    // Event function to control behaviour of checkbox buttons for the questions
+    function addEventListenerToQuestionButtons() {
+        const questionButtons = document.querySelectorAll(".form-check-input");
+        for (i=0 ; i<questionButtons.length ; i++) {
+            questionButtons[i].addEventListener('change', function() {
+                //console.log(this.id + ' ' + this.getAttribute("question_id"));
+                //console.log("in checkbutton event listener")
+                
+                const formwrapper = document.getElementById(this.getAttribute("question_id"));
+                var currentvalue = formwrapper.getAttribute("value");
+                const thisvalue = this.getAttribute("value");
+                const buttons = formwrapper.getElementsByTagName("input");
+                const falsebutton = buttons[3];
+                const notsurebutton = buttons[2]
+                const truebutton = buttons[1];
+                const wastruebutton = buttons[0];
+                //console.log(buttons);
+      
+                var newvalue;
+                if (!this.checked) { // button was checked before the change
+                    if (this == falsebutton) { // if false button do nothing else
+                        falsebutton.checked=true;
+                    }
+                    else {
+                        newvalue = +currentvalue - +thisvalue; //+thisvalue converts thisvalue to an int
+                        if (newvalue == 0){ // no buttons are active
+                            falsebutton.checked=true;
+                            formwrapper.setAttribute("value",0);
+                        }
+                        else { // one other button is active (can't be more than one)
+                            formwrapper.setAttribute("value",newvalue);
+                        }
+                    } 
+                }
+                else { // the button was not active
+                    //console.log(this.checked);
+                    if (this === falsebutton) {
+                        //console.log("It is false button.");
+                        formwrapper.setAttribute("value",0);
+                        for (j=0; j<buttons.length - 1 ; j++)
+                            buttons[j].checked=false;
+                    }
+                    else {
+                        //console.log("It is NOT false button.");
+                        falsebutton.checked=false;
+                        if (this === notsurebutton) {
+                            //console.log("It is not-sure button.");
+                            truebutton.checked=false;
+                            wastruebutton.checked=false;
+                            formwrapper.setAttribute("value",1);
+                        }
+                        else { // button is either wastruebutton or nowtruebutton
+                            //console.log("First two buttons.");
+                            if (notsurebutton.checked){
+                                //console.log("It is not-sure button.");
+                                notsurebutton.checked=false;
+                                falsebutton.checked=false;
+                                currentvalue = 0;
+                            }
+                            newvalue = +currentvalue + +thisvalue;
+                            //console.log('currentvalue: ' + currentvalue + ' thisvalue: ' + thisvalue + ' newvalue: ' + newvalue);
+                            formwrapper.setAttribute("value",newvalue)
+                        }
+                    }
+                } 
+                //console.log('form value:' + formwrapper.getAttribute("value"));
+            }); // end event function definition
+        } // end loop through buttons
+    } // end function
+
+
+    // displayCategory
+    // changes html inner of
+    //      category-name
+    //      category-description-header
+    //      category-description-body
+    // also highlights the correct column in the progress grid
+    //
+    // Assumes currentindex is declared somewhere and has an appropriate value
+    function displayCategory(newIndex) {
+        //console.log("in displayCategory: " + newIndex + ' ' + currentIndex);
+        if (+newIndex == +currentIndex)
+            return; // nothing to do
+
+        // colour in appropriate parts of progressGrid (will catch unclosed accordions)
+        questionsArray = categoryArray[+currentIndex].questions;
+        for (var i=0; i<questionsArray.length ; i++) {
+            var val = getQuestionValues(questionsArray[i], "max");
+            colourProgressGridCell(+currentIndex, i ,val);
+        }
+
+        // set category header and description
+        //console.log("setting category info for category " + newIndex);
+        const newItem = categoryArray[+newIndex];
+        categoryTitle.innerHTML = newItem.name;
+        categoryButton.innerHTML =  'About ' + newItem.name;
+        categoryBody.innerHTML = newItem.description;
+
+        // sort out the highlighting of the progress grid columns
+        setProgressGridHighlight(+currentIndex,"LightGrey");
+        setProgressGridHighlight(+newIndex, "Black");
+
+        // set body accordion bodies
+        for (var i=0; i<accordionBodies.length; i++){
+            thebody = accordionBodies[i];
+            thebody.replaceChild(newItem.questions[i],thebody.children[0]); // newnode THEN oldnode
+        }
+
+        currentIndex = +newIndex;
+
+        // make sure next and previous buttons are set correctly.
+        if(+currentIndex == (categoryArray.length -1)){
+            nextButton.innerHTML = 'Show results';
+            nextButton.setAttribute('nextevent', 'show');
+        }
+        else {
+            if(nextButton.innerHTML === 'Show results') {
+                nextButton.innerHTML = 'Next';
+                nextButton.setAttribute('nextevent', 'next');
+            }
+        }
+        if (+currentIndex == 0)
+            prevButton.style.color = "LightGray";
+        else
+            prevButton.style.color = "Black";
+    }
+
+    // like displayCategory but sets currentIndex=0
+    //  and does not do the stuff to ensure the colours for the previous category
+    //  are displayed correctly.
+    function initialDisplayCategory() {
+       currentIndex = 0;
+
+        // sort out the highlighting of the progress grid columns
+        setProgressGridHighlight(currentIndex, "Black");
+
+        // set body accordion bodies (there is a dummy child to replace)
+        const item = categoryArray[currentIndex];
+        for (var i=0; i<accordionBodies.length; i++){
+            thebody = accordionBodies[i];
+            thebody.replaceChild(item.questions[i],thebody.children[0]); // newnode THEN oldnode
+        }
+
+        // gray out preButton there is no need to do anything for nextButton
+        prevButton.style.color = "LightGray";
+
+    }
+
+    // create an array of information to do with each category:
+    //      - name (for the header)
+    //      - description (for the category description)
+    // This will be used to set html inners for the elements with ids
+    //      - category-name and 
+    //      - category-description-body
+    function createCategoryArray() {
+
+        function Category(header, index, description, questionSets){
+            this.name = header.innerHTML;
+            this.description = description.innerHTML;
+            this.index = index;
+
+            // create an array of questions grouped by sense
+            var senseArray = createArray(questionSets.length);
+            for (var j=0; j<questionSets.length; j++){
+                qset = questionSets[j];
+                senseindex = qset.getAttribute('senseindex');
+                senseArray[+senseindex] = qset;
+            }
+            this.questions = senseArray;
+        }
+
+        // function to set all questions to false (default)
+        // used when reading in answers
+        Category.prototype.setFalse = function(senseindex){
+            // set false and clear all the values
+            //console.log('in setFalse ' + this.index + ' ' + senseindex);
+            var item = this.questions[+senseindex];
+            var fieldsets = item.getElementsByTagName("fieldset");
+            for(let i=0; i < fieldsets.length; i++){
+                var buttons = fieldsets[i].getElementsByTagName("input");
+                for (j=0 ; j<buttons.length - 1 ; j++)
+                    buttons[j].checked = false;
+                buttons[3].checked = true;
+                fieldsets[i].setAttribute("value",0);
+            }    
+        };
+
+
+        // function to set all questions depending on an array of values.
+        // if values is 0 then set all answers to false
+        // Otherwise go through the array setting answers and then setting the 
+        //  appropriate colour in the progress grid.
+        //  This function uses click() because it taps into the event listener for 
+        // the checklist buttons
+        Category.prototype.setValues = function(senseindex, values){
+
+            if (+values == 0){
+                this.setFalse(senseindex);
+                return;
+            }
+
+            var item = this.questions[+senseindex];
+            var fieldsets = item.getElementsByTagName("fieldset");
+            var maxval = 0; // need to calculate the max of the list of values to set the colour in progressGrid correctly
+            for(let i=0; i < fieldsets.length; i++){
+                var buttons = fieldsets[i].getElementsByTagName("input");
+                val = +values[i];  
+                // need to click false to stop buttons being unset
+                for (j=0 ; j<buttons.length - 1 ; j++)
+                    buttons[j].checked = false;
+                buttons[3].checked = true;
+
+                if (val > 0 ) {  // 0 case (False) already sorted.
+                    buttons[3].checked = false;
+                    switch (val)
+                    {
+                        case 1: //console.log('val 1, clicking Not Sure')
+                                buttons[2].checked = true; // 'Not Sure'
+                                break;
+                        case 2: //console.log('val 2, clicking Was True')
+                                buttons[0].checked = true; // 'Was True'
+                                break;
+                        case 3: //console.log('val 3, clicking True Now')
+                                buttons[1].checked = true; // 'True Now'
+                                break;
+                        case 5: //console.log('val 5, clicking Was True and True Now')
+                                buttons[0].checked = true; // 'Was True' AND
+                                buttons[1].checked = true; // 'True Now'
+                                break;
+                        default: val = 0; // in case val was not recognised so set to 0
+                                 console.log('default val now 0: False');                                 
+                    }
+                }
+                fieldsets[i].setAttribute("value", val);
+                if (+maxval < +val)
+                    maxval = val;
+            }
+            colourProgressGridCell(this.index, senseindex, maxval);
+        };
+
+        // Grab the categoryContainer and create (DOM) arrays of headers and descriptions
+        const categoryContainer = document.getElementById("category-container")
+        const headers = categoryContainer.getElementsByTagName("h2");
+        const descriptions = categoryContainer.getElementsByTagName("p");
+
+        // Grab the questionset container and create a DOM array of category questionsets
+        const categoryQuestionsets = document.querySelectorAll('#questionset-container .category-questionset');
+
+        // create and fill an array of Category
+        catArray = createArray(headers.length);
+        for (i=0 ; i<headers.length ; i++) {
+            senseQSets = categoryQuestionsets[i].querySelectorAll('.category-sense-questions');
+            catArray[i] = new Category(headers[i], i, descriptions[i], senseQSets);
+            //console.log(catArray[i]);
+        }
+        return catArray;
+    }
+
+    // create a structure for question answers
+    function createJsonAnswers(categoryArray) {
+        jsonstruct = {"type": "SPCR", 
+                        "version": 1, 
+                        "currentIndex": currentIndex,
+                        "questionStatus": []};
+
+        function Status(senseindex,catindex,values){
+            this.senseindex = senseindex;
+            this.categoryindex = catindex;
+            this.values = values;
+        }
+
+        for (i=0 ; i<categoryArray.length ; i++){
+            var category = categoryArray[i];
+            var questionsArray = category.questions;
+            for (j=0 ; j<questionsArray.length ; j++){
+                var qset = questionsArray[j];
+                var values = getQuestionValues(qset,"array");
+                //console.log("values: " + values);
+
+                var qstatus = new Status(j,i,values);
+                //console.log(qstatus.senseindex + ' ' + qstatus.categoryindex + ' ' +   qstatus.answers);
+                //console.log(JSON.stringify(qstatus));
+                jsonstruct.questionStatus.push(qstatus);
+            }
+        }
+
+        return jsonstruct;
+    }
+
+    // Create progress grid column array
+    //  This is a list of the columns of the grid where each item contains
+    //      a progress-column
+    //      an array of progress-item
+    // An array of ProgressGrid is returned
+    function createProgressGrid() {
+
+        // (local) constructor for ProgressGrid
+        // column is a DOM object with class progress-column
+        function ProgressGrid(column, catindex){
+            this.column = column;
+
+            items = column.querySelectorAll(".progress-item");
+            itemsArray = createArray(items, length);
+            for (i=0 ; i<items.length ; i++) {
+                item = items[i];
+                itemsArray[+item.getAttribute("senseindex")] = item;
+                item.addEventListener("click", function(){ 
+                    displayCategory(catindex);
+                });
+            }
+
+            this.senseboxes = itemsArray;
+        }
+
+        ProgressGrid.prototype.clear = function(){
+            for (var i=0; i<this.senseboxes.length; i++){
+                var item = this.senseboxes[i];
+                item.style.background = "White";
+            }   
+        };
+
+
+        const pGrid = document.getElementById("progress-grid");
+        const progressColumnList = pGrid.querySelectorAll(".progress-column");
+        const progressArray = createArray(progressColumnList.length);
+        for (j=0 ; j<progressArray.length ; j++){
+            item = progressColumnList[j];
+            catindex = item.getAttribute("catindex");
+            progressArray[+catindex] = new ProgressGrid(item, catindex);
+        }
+
+        return progressArray;
+    }
+
+    /////////////////////////////////   End Functions  /////////////////////////////////////////////
+
     // Variables
     ////////////////////////////////////////////////
 
     // constants for particular html elements
-    const resultsButton = document.getElementById('resultsbutton');
-    const saveButton = document.getElementById("savebutton");
-    const loadButton = document.getElementById("readbutton");
+    resultsButton = document.getElementById('resultsbutton');
+    saveButton = document.getElementById("savebutton");
+    loadButton = document.getElementById("readbutton");
 
     // Category information elements
     const categoryTitle = document.getElementById('category-name');
@@ -266,8 +786,8 @@ eleventyNavigation:
     //console.log(accordionBodies);
 
     // previous and next buttons
-    const prevButton = document.getElementById('previousbutton');
-    const nextButton = document.getElementById('nextbutton');
+    prevButton = document.getElementById('previousbutton');
+    nextButton = document.getElementById('nextbutton');
 
     // constants for structures of html elements
     const categoryArray = createCategoryArray();
@@ -275,11 +795,9 @@ eleventyNavigation:
     //categoryArray.consolelog();
     //progressGrid.consolelog();
 
-    // other variables
+    // other constants
     var currentIndex;
-    const displayObj = { resultsButton, saveButton, loadButton, categoryTitle, categoryButton, categoryBody, accordionBodies, accordionCollapses,
-                                prevButton, nextButton, categoryArray, progressGrid, currentIndex};
-    initialDisplayCategory(categoryArray); // sets currentIndex to 0
+    initialDisplayCategory(); // sets currentIndex to 0
 
     //////////////////////////// END GLOBAL VARIABLES ///////////////////////////////////
     
@@ -299,14 +817,42 @@ eleventyNavigation:
     // add eventlisteners to body accordion collapse elements
     accordionCollapses.addEventListener('hide.bs.collapse', function() {
         var value = getQuestionValues(this, "max");
-        progressGrid[+currentIndex].colourCell(this.getAttribute('senseindex'),value);
+        colourProgressGridCell(+currentIndex, this.getAttribute('senseindex'),value);
     });
   
     // Saving the answers
-    saveButton.addEventListener('click', saveToFile);
+    saveButton.addEventListener('click', function(){
+        answers = JSON.stringify(createJsonAnswers(categoryArray, "save"));
+        console.log(answers);
+
+        // download answers as a json file. The below is convoluted but 
+        // there does not seem to be a simpler way.
+        const a = document.createElement("a"); // create an empty link
+        file = new Blob([answers],{type: "application/json"});
+        //console.log(file);
+        a.href = URL.createObjectURL(file);
+        a.download = "answers-spcr.json"; //download to answers.json
+        a.click();
+    });
 
     // Loading the answers
     // loadButton is an input, so we need 'change' event to fire
     let fileHandle;
-    loadButton.addEventListener('click', loadFromFile);
+    loadButton.addEventListener('click', async () => {
+        [fileHandle] = await window.showOpenFilePicker();
+        const file = await fileHandle.getFile();
+        var answers = await file.text();
+
+        if (answers) {
+            answers = JSON.parse(answers);
+            //console.log(answers);
+            console.log("==================================================================")
+            console.log("type: " + answers.type + " version: "+ answers.version)
+            if (answers && answers.type && answers.type == "SPCR" && answers.version == "1") {
+                console.log(answers);
+                setQuestionValues(answers); 
+            }
+            else alert("File is not the right kind of file.");
+        }
+    });
 </script>
