@@ -19,21 +19,10 @@ class Question{
         [...this.buttons].map(button => button.node.addEventListener('change', event =>this.onChangeEvent(event)));
     }
     
-    setValue(senseindex, values){
-        let item = this.questions[+senseindex];
-        let fieldsets = item.getElementsByTagName("fieldset");
-        let maxval = 0; // need to calculate the max of the list of values to set the colour in progressGrid correctly
-        for(let i=0; i < fieldsets.length; i++){
-            let buttons = fieldsets[i].getElementsByTagName("input");
-            let val = +values == 0 ? 0 : +values[i];
-            if(val > 5) val = 0;
-            this.setAnswerBoxesByValue(buttons, val);
-            
-            fieldsets[i].setAttribute("value", val);
-            if (+maxval < +val)
-                maxval = val;
-        }
-        if(+values !== 0) progressGrid[this.index].colourCell(+senseindex, +maxval);
+    setValue(value){
+        this.parentNode.setAttribute('value', value);
+        this.value = value;
+        this.setAnswerBoxesByValue(this.buttons, value);
     }
 
     getValue(){
@@ -88,20 +77,13 @@ class Sense{
         this.setValue(senseindex, 0);
     }
 
-    setQuestionValues(){
-        //for (let i=0; i<progressGrid.length; i++) progressGrid[i].clear();
-
-        questionStatus = answers.questionStatus;
-        for (let i=0; i<questionStatus.length; i++){
-            item = questionStatus[i];
-            catindex = item.categoryindex;
-            categoryArray[+catindex].setValues(item.senseindex, item.values);
-        }
-    
-        // change the display if necessary
-        newIndex = +answers.currentIndex;
-        if (currentIndex != newIndex) 
-            changeDisplayedDataTo(newIndex);
+    setValues(values){
+        [ ...this.questions ]
+            .map((question, index) => {
+                let val = +values == 0 ? 0 : +values[index];
+                if(val > 5) val = 0;
+                question.setValue(val);
+            })
     }
 
     getQuestionValues(returnType){
@@ -131,6 +113,7 @@ class Category{
     }
     
     getQuestionsFor = (senseIndex) => this.senses[+senseIndex].node;
+    setAnswersFor = (senseIndex) => this.senses[+senseIndex];
 }
 
 
@@ -142,8 +125,8 @@ class ProgressGrid{
         this.categoryIndex = catIndex;
         this.senseboxes = this.node.querySelectorAll(".progress-item");
 
-        [ ...this.senseboxes ].addEventListener("click", (event) =>
-            this.display.displayCategory(this.node.getAttribute('catindex'))
+        [ ...this.senseboxes ].addEventListener("click", event =>
+            this.display.displayCategory(this.categoryIndex)
         );
     }
 
@@ -235,8 +218,8 @@ class Display{
     }
 
     initializeReadWriteButtons(){
-        this.saveButton.addEventListener('click', saveToFile);
-        this.loadButton.addEventListener('click', loadFromFile);
+        this.saveButton.addEventListener('click', event => this.saveToFile());
+        this.loadButton.addEventListener('click', event => this.loadFromFile());
     }
 
     initializeAccordionCollapses(){
@@ -262,7 +245,7 @@ class Display{
     }
 
     getCurrentProgressGridColumn() {
-        return this.progressGrid[+this.currentIndex];
+        return this.progressGrid[+arguments[0] || +this.currentIndex];
     }
 
     createButtonArrayForQuestionFrom(question, buttonNodes){
@@ -356,9 +339,55 @@ class Display{
         this.currentIndex = +newIndex;
     }
 
-    getSenseData(){}
+    clearProgressGrid(){
+        this.progressGrid.forEach(column => column.clear());
+    }
 
-    createJsonAnswers(categoryArray){}
+    display(loadedAnswers){
+        this.clearProgressGrid();
+        
+        const questionStatus = loadedAnswers.questionStatus;
+        for (let i=0; i<questionStatus.length; i++){
+            const item = questionStatus[i];
+            const cetegoryIndex = item.categoryindex;
+            const senseIndex = item.senseindex;
+            
+            this.categoryArray[+cetegoryIndex].setAnswersFor(senseIndex).setValues(item.values);
+            
+            let maxValue = item.values.length ? Math.max(...item.values) : 0;
+            maxValue !== 0 ? this.getCurrentProgressGridColumn(+cetegoryIndex).colourCell(+senseIndex, +maxValue) : false;
+        }
+
+        this.changeDisplayedDataTo(+loadedAnswers.currentIndex);
+
+    }
+
+    createJsonAnswers(){
+        let jsonstruct = {"type": "SPCR", 
+                                "version": 1, 
+                                "currentIndex": this.currentIndex,
+                                "questionStatus": []};
+
+        function Status(senseindex,catindex,values){
+            this.senseindex = senseindex;
+            this.categoryindex = catindex;
+            this.values = values;
+        }
+
+        for (let i=0 ; i<this.categoryArray.length ; i++){
+            let category = this.categoryArray[i];
+            let questionsArray = category.senses;
+            
+            for (let j=0 ; j<questionsArray.length ; j++){
+                let qset = questionsArray[j];
+                let values = qset.getQuestionValues();
+                let qstatus = new Status(j,i,values);
+                jsonstruct.questionStatus.push(qstatus);
+            }
+        }
+
+        return jsonstruct;
+    }
 
     displayCategory(newIndex){
         this.goThroughCurrentSensesAndColourProgressGrid();
@@ -376,4 +405,38 @@ class Display{
             this.getCurrentProgressGridColumn().colourCell(+sense, +maxValue);
         }
     }
+
+    saveToFile(){
+        const answers = JSON.stringify(this.createJsonAnswers());
+        console.log(answers);
+        
+        // download answers as a json file. The below is convoluted but 
+        // there does not seem to be a simpler way.
+        const a = document.createElement("a"); // create an empty link
+        let file = new Blob([answers],{type: "application/json"});
+        //console.log(file);
+        a.href = URL.createObjectURL(file);
+        a.download = "answers-spcr.json"; //download to answers-spcr.json
+        a.click();
+    }
+
+    async loadFromFile(){
+        let fileHandle;
+        [fileHandle] = await window.showOpenFilePicker();
+        const file = await fileHandle.getFile();
+        var answers = await file.text();
+
+        if (answers) {
+            answers = JSON.parse(answers);
+            //console.log("==================================================================")
+            //console.log("type: " + answers.type + " version: "+ answers.version)
+            if (answers && answers.type && answers.type == "SPCR" && answers.version == "1") {
+                //console.log(answers);
+                this.display(answers);
+            }
+            else alert("File is not the right kind of file.");
+        }
+
+    }
+
 }
