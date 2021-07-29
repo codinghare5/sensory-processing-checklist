@@ -347,19 +347,22 @@ class Display{
         this.clearProgressGrid();
         
         const questionStatus = loadedAnswers.questionStatus;
-        for (let i=0; i<questionStatus.length; i++){
+        this.matchAnswersAndColours(questionStatus);
+
+        this.changeDisplayedDataTo(+loadedAnswers.currentIndex);
+    }
+
+    matchAnswersAndColours(questionStatus) {
+        for (let i = 0; i < questionStatus.length; i++) {
             const item = questionStatus[i];
             const cetegoryIndex = item.categoryindex;
             const senseIndex = item.senseindex;
-            
+
             this.categoryArray[+cetegoryIndex].setAnswersFor(senseIndex).setValues(item.values);
-            
+
             let maxValue = item.values.length ? Math.max(...item.values) : 0;
             maxValue !== 0 ? this.getCurrentProgressGridColumn(+cetegoryIndex).colourCell(+senseIndex, +maxValue) : false;
         }
-
-        this.changeDisplayedDataTo(+loadedAnswers.currentIndex);
-
     }
 
     createJsonAnswers(){
