@@ -63,6 +63,7 @@ eleventyNavigation:
         //await writable.close();
     }
 
+    // works if not in debugger
     saveButton.addEventListener('click', async () =>{
         try {
             let savehandle = await getNewFileHandle();
@@ -73,7 +74,7 @@ eleventyNavigation:
             await writable.close();
         }
         catch(e) {
-            console.log(e);
+            console.log(e); 
         };
     });
 
