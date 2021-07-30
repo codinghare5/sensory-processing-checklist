@@ -79,8 +79,12 @@ eleventyNavigation:
 <section class="container-xl py-3 px-4" id="input-section">
     <!-- Text area to input the questions -->
     <label for="question-textarea">
-        Add or edit questions for category here
+        <h3>Add or edit questions for category here</h3>
     </label>
+    <div class="d-flex justify-content-end">
+        <button class="p-2 me-5 bg-info rounded" id="save-changes-button" type="button">Save Changes</button>
+        <button class="p-2 bg-info rounded" id="undo-changes-button" type="button" >Undo Changes</button>
+    </div>
     <textarea id="questions-textarea" rows=12 class="w-100"></textarea>
 
     {# next and previous buttons #}
@@ -248,7 +252,17 @@ eleventyNavigation:
         return catArray;
     }
 
-// Create progress grid column array
+    //function to set or remove the progress grid highlight:
+    //  just set the color
+    //      - LightGray for no highlight
+    //      - Black for highlight
+    // or change colours to suit
+    function setProgressGridHighlight(catindex, colour){
+        var item = progressGrid[+catindex].column;
+        item.style.borderColor = colour;
+    }
+
+    // Create progress grid column array
     //  This is a list of the columns of the grid where each item contains
     //      a progress-column
     //      an array of progress-item
@@ -286,6 +300,14 @@ eleventyNavigation:
         return progressArray;
     }
 
+    function saveChanges() {
+        categoryArray[currentCategoryIndex].senses[currentSenseIndex].questions = questionArea.value.split("\n");
+    }
+
+    function undoChanges() {
+        questionArea.innerHTML = categoryArray[currentSenseIndex].senses[currentSenseIndex].questions.join("\n");
+    }
+
        /////////////////////////////////   End Functions  /////////////////////////////////////////////
 
     // Variables
@@ -294,8 +316,9 @@ eleventyNavigation:
     // constants for particular html elements
     const jsonView = document.getElementById('view-area');
 
-    // Category information element
+    // Category information elements
     const categoryTitle = document.getElementById('category-name');
+    const questionArea = document.getElementById('questions-textarea')
 
     // constants for structures of html elements
     const senseNameArray = createSenseArray();
@@ -305,7 +328,25 @@ eleventyNavigation:
     //categoryArray.consolelog();
     //progressGrid.consolelog();
 
+    // Other variables
+    let currentCategoryIndex = 0;
+    let currentSenseIndex = 0;
 
     // set things up
     jsonView.innerHTML = '<pre>' + JSON.stringify(categoryArray, null, 3) + '</pre>';
+    questionArea.innerHTML = categoryArray[currentCategoryIndex].senses[currentSenseIndex].questions.join('\n');
+    setProgressGridHighlight(currentCategoryIndex,'Black');
+
+    // add eventlisteners to buttons
+    saveChangesButton = document.getElementById('save-changes-button');
+    saveChangesButton.addEventListener('click',saveChanges);
+    
+    undoChangesButton = document.getElementById('undo-changes-button');
+    undoChangesButton.addEventListener('click',undoChanges);
+
+    viewJsonButton = document.getElementById('resultsbutton');
+    viewJsonButton.addEventListener('click', function() {
+        jsonView.innerHTML = '<pre>' + JSON.stringify(categoryArray, null, 3) + '</pre>';
+    });
+    
 </script>
