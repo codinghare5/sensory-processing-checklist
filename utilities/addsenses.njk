@@ -18,7 +18,7 @@ eleventyNavigation:
         </label>
         <select id="choosesense" class="fs-3 p-1 ps-2 ms-1">
             {% for sense in categoryquestions[0].senses %}
-                <option value="{{ loop.index}}">
+                <option value="{{ loop.index - 1 }}">
                     {{ sense.sense }}
                 </option>
             {% endfor %}
@@ -29,7 +29,7 @@ eleventyNavigation:
             Name of Sense to Add: 
         </label>
         <input type="text" id="addsenseinput" rows=12 class="w-auto fs-3 ms-2">
-        <button class="p-2 ms-5 bg-info rounded" id="savebutton" type="button">Add Sense</button>
+        <button class="p-2 ms-5 bg-info rounded" id="add-sense-button" type="button">Add Sense</button>
     </div>
 </section>
 
@@ -81,7 +81,7 @@ eleventyNavigation:
     <label for="question-textarea">
         <h3>Add or edit questions for category here</h3>
     </label>
-    <div class="d-flex justify-content-end">
+    <div class="d-flex justify-content-end mb-1">
         <button class="p-2 me-5 bg-info rounded" id="save-changes-button" type="button">Save Changes</button>
         <button class="p-2 bg-info rounded" id="undo-changes-button" type="button" >Undo Changes</button>
     </div>
@@ -90,12 +90,12 @@ eleventyNavigation:
     {# next and previous buttons #}
     <div>
         <nav class="d-flex justify-content-between py-2"> {#  category nav buttons #}
-            <button class="p-2 bg-info rounded" id="previous-category-button" type="button" nextevent="previous">Previous Category</button>
-            <button class="p-2 bg-info rounded" id="next-category-button" type="button" nextevent="next">Next Category</button>
+            <button class="p-2 bg-info rounded" id="previous-category-button" type="button">Previous Category</button>
+            <button class="p-2 bg-info rounded" id="next-category-button" type="button">Next Category</button>
         </nav>
         <nav class="d-flex justify-content-between py-3 pt-0"> {# sense nav buttons#}
-            <button class="p-2 bg-info rounded" id="previous-sense-button" type="button" nextevent="previous">Previous Sense</button>
-            <button class="p-2 bg-info rounded" id="next-sense-button" type="button" nextevent="next">Next Sense</button>
+            <button class="p-2 bg-info rounded" id="previous-sense-button" type="button">Previous Sense</button>
+            <button class="p-2 bg-info rounded" id="next-sense-button" type="button">Next Sense</button>
             </div>
         </nav>
     </div>
@@ -211,12 +211,15 @@ eleventyNavigation:
     function createCategoryArray(nameArray) {
 
         // (local) constructor for Sense
-        function Sense(senseindex,questionset){
-            this.sense = nameArray[+senseindex];
-            var qset = questionset.getElementsByTagName('p');
-            this.questions = createArray(qset.length);
-            for (var k=0; k<qset.length; k++)
-                this.questions[k] = qset[k].innerHTML.trim();
+        function Sense(name,questionset){
+            this.sense = name;
+            if (questionset){
+                var qset = questionset.getElementsByTagName('p');
+                this.questions = createArray(qset.length);
+                for (var k=0; k<qset.length; k++)
+                    this.questions[k] = qset[k].innerHTML.trim();
+            }
+            else this.questions = [];
         }
 
         // (local) constructor for Category
@@ -229,10 +232,15 @@ eleventyNavigation:
             for (var j=0; j<questionSets.length; j++){
                 qset = questionSets[j];
                 senseindex = qset.getAttribute('senseindex');
-                senseArray[+senseindex] = new Sense(senseindex,qset);
+                senseArray[+senseindex] = new Sense(nameArray[+senseindex],qset);
             }
             this.senses = senseArray;
         }
+
+        // function to add a new sense to a category
+        Category.prototype.addNewSense = function(newSense,questionSet){
+           this.senses.push(new Sense(newSense,questionSet));
+        };
 
         // Grab the categoryContainer and create (DOM) arrays of headers and descriptions
         const categoryContainer = document.getElementById("category-container")
@@ -279,9 +287,10 @@ eleventyNavigation:
             for (i=0 ; i<items.length ; i++) {
                 item = items[i];
                 itemsArray[+item.getAttribute("senseindex")] = item;
-                item.addEventListener("click", function(){ 
-                    displayCategory(catindex);
-                    checkEdgeCases(catindex);
+                item.addEventListener("click", function(){
+                    if (catindex != +currentCategoryIndex) {
+                        display(catindex,currentSenseIndex);
+                    }
                 });
             }
 
@@ -305,7 +314,77 @@ eleventyNavigation:
     }
 
     function undoChanges() {
-        questionArea.innerHTML = categoryArray[currentSenseIndex].senses[currentSenseIndex].questions.join("\n");
+        console.log('undoing changes');
+        questionArea.value = categoryArray[currentSenseIndex].senses[currentSenseIndex].questions.join("\n");
+    }
+
+    function checkSave() {
+        if (questionsChanged) {
+            //console.log('THE QUESTIONS HAVE CHANGED NEED TO DO SOMETHING!!!');
+            if (confirm("You made changes. Do you want to save?\nClick Ok to sove, otherwise click Cancel."))
+                saveChanges();
+            }
+    }
+
+    function setNextPreviousButtonTextColour(){
+        previousCategoryButton.style.color = 'Black';
+        nextCategoryButton.style.color = 'Black';
+        previousSenseButton.style.color = 'Black';
+        nextSenseButton.style.color = 'Black';
+
+        if (+currentCategoryIndex == 0) 
+            previousCategoryButton.style.color = 'LightGray';
+        else if (+currentCategoryIndex == maxCategoryIndex)
+            nextCategoryButton.style.color = 'LightGray';
+
+        if (+currentSenseIndex == 0)
+            previousSenseButton.style.color = 'LightGray';
+        else if (+currentSenseIndex == maxSenseIndex)
+            nextSenseButton.style.color = 'LightGray';
+    }
+
+    // handles the display for changes.
+    function display(catIndex,senseIndex) {
+        checkSave();
+
+        category = categoryArray[catIndex];
+        sense = category.senses[senseIndex];
+
+        categoryTitle.innerText = category.category + ' for ' + sense.sense;
+        questionArea.value = sense.questions.join('\n');
+
+        setProgressGridHighlight(currentCategoryIndex,'LightGray');
+
+        currentCategoryIndex = catIndex;
+        currentSenseIndex = senseIndex;
+        questionsChanged = false;
+
+        setProgressGridHighlight(currentCategoryIndex,'Black');
+
+        setNextPreviousButtonTextColour();
+    }
+
+    function addNewSense(newSense){
+
+        // first check that the user really wants to do this
+        if (!confirm(`Are you sure you want to add the new sense called ${newSense}?\nThis action can be undone only by refreshing the page and you will lose all your work.`))
+            return;
+        
+        for (let i=0 ; i<categoryArray.length ; i++)
+            categoryArray[i].addNewSense(newSense);
+
+        maxSenseIndex++;
+
+         // add to end of chooseSense
+        const option = document.createElement("option");
+        option.text = newSense;
+        option.value = maxSenseIndex;
+        chooseSense.add(option);
+        chooseSense.selectedIndex = maxSenseIndex;
+
+        alert(`New Sense: ${newSense} has been added.`);
+
+        display(0,maxSenseIndex);
     }
 
        /////////////////////////////////   End Functions  /////////////////////////////////////////////
@@ -315,6 +394,11 @@ eleventyNavigation:
 
     // constants for particular html elements
     const jsonView = document.getElementById('view-area');
+    previousCategoryButton = document.getElementById('previous-category-button');
+    nextCategoryButton = document.getElementById('next-category-button');
+    previousSenseButton = document.getElementById('previous-sense-button');
+    nextSenseButton = document.getElementById('next-sense-button');
+
 
     // Category information elements
     const categoryTitle = document.getElementById('category-name');
@@ -329,15 +413,39 @@ eleventyNavigation:
     //progressGrid.consolelog();
 
     // Other variables
+    const maxCategoryIndex = categoryArray.length - 1;
+    let maxSenseIndex = categoryArray[0].senses.length - 1;
     let currentCategoryIndex = 0;
     let currentSenseIndex = 0;
+    let questionsChanged = false;
 
     // set things up
     jsonView.innerHTML = '<pre>' + JSON.stringify(categoryArray, null, 3) + '</pre>';
-    questionArea.innerHTML = categoryArray[currentCategoryIndex].senses[currentSenseIndex].questions.join('\n');
+    questionArea.value = categoryArray[currentCategoryIndex].senses[currentSenseIndex].questions.join('\n');
     setProgressGridHighlight(currentCategoryIndex,'Black');
+    previousCategoryButton.style.color = 'LightGray';
+    previousSenseButton.style.color = 'LightGray';
+
 
     // add eventlisteners to buttons
+    previousCategoryButton.addEventListener('click', () => {
+        if (+currentCategoryIndex > 0)
+            display(+currentCategoryIndex - 1, currentSenseIndex);
+    });
+    nextCategoryButton.addEventListener('click', () => {
+        if (+currentCategoryIndex < maxCategoryIndex)
+            display(+currentCategoryIndex + 1, currentSenseIndex);
+    });
+
+    previousSenseButton.addEventListener('click', () => {
+        if (+currentSenseIndex > 0)
+            display(currentCategoryIndex, currentSenseIndex - 1);
+    });
+    nextSenseButton.addEventListener('click', () => {
+        if (+currentSenseIndex < maxSenseIndex)
+            display(+currentCategoryIndex, currentSenseIndex + 1);
+    });
+
     saveChangesButton = document.getElementById('save-changes-button');
     saveChangesButton.addEventListener('click',saveChanges);
     
@@ -348,5 +456,65 @@ eleventyNavigation:
     viewJsonButton.addEventListener('click', function() {
         jsonView.innerHTML = '<pre>' + JSON.stringify(categoryArray, null, 3) + '</pre>';
     });
+
+    questionArea.addEventListener('change', function() {
+        questionsChanged = true;
+    });
+
+    chooseSense = document.getElementById('choosesense');
+    chooseSense.addEventListener('change', (event) => {
+        value = event.target.value;
+        if (+value != +currentSenseIndex)
+            display(currentCategoryIndex,value);
+    });
+
+    addSenseTextBox = document.getElementById('addsenseinput');
+    addSenseTextBox.addEventListener('keyup', (event) => {
+        if (event.keyCode == 13)
+            addNewSense(addSenseTextBox.value);
+    });
+    addSenseButton = document.getElementById('add-sense-button');
+    addSenseButton.addEventListener('click', () => {
+        addNewSense(addSenseTextBox.value);
+    });
+
+
+    // Finally read and write json files
+    saveButton = document.getElementById("savebutton");
+    readButton = document.getElementById("readbutton");
+
+    const options = {
+        types: [
+            {
+                description: 'JSON Files',
+                accept: {
+                'application/json': ['.json'],
+                },
+            },
+        ],
+    };
+
+    let fileHandle;
+    readButton.addEventListener('click', async () => {
+        [fileHandle] = await window.showOpenFilePicker(options);
+        const file = await fileHandle.getFile();
+        const contents = await file.text();
+        jsonView.innerHTML = contents;
+    });
+
+    // works but not in debugger
+    saveButton.addEventListener('click', async () =>{
+        try {
+            let savehandle = await window.showSaveFilePicker(options);;
+            const writable = await savehandle.createWritable();
+            console.log(writable);
+            await writable.write(JSON.stringify(categoryArray, null, 3));
+            await writable.close();
+        }
+        catch(e) {
+            console.log(e); 
+        };
+    });
+
     
 </script>
