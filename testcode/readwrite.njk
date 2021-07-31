@@ -48,21 +48,34 @@ eleventyNavigation:
             ],
         };
         const handle = await window.showSaveFilePicker(options);
+        console.log(handle);
+    
         return handle;
     }
 
     async function writeFile(fileHandle, contents) {
         // Create a FileSystemWritableFileStream to write to.
         const writable = await fileHandle.createWritable();
+        console.log(writable);
         // Write the contents of the file to the stream.
-        await writable.write(contents);
+        //await writable.write(contents);
         // Close the file and write the contents to disk.
-        await writable.close();
+        //await writable.close();
     }
 
-    saveButton.addEventListener('click', function(){
-        let savehandle = getNewFileHandle();
-        writeFile(savehandle, textArea.value);
+    // works if not in debugger
+    saveButton.addEventListener('click', async () =>{
+        try {
+            let savehandle = await getNewFileHandle();
+            const writable = await savehandle.createWritable();
+            console.log(writable);
+            await writable.write(textArea.value);
+            console.log('now closing file');
+            await writable.close();
+        }
+        catch(e) {
+            console.log(e); 
+        };
     });
 
 </script>
