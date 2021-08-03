@@ -49,27 +49,7 @@ eleventyNavigation:
 <div class='container-xl card py-2 mb-4'>
     
 <!-- Progress bar ---------------------------------------------------------------------------- -->
-{# create progress bar #}
-<section class="container-xl py-3 px-4" id="progress-grid">
-    <div class="row bg-white">
-        {% for metacat in meta %}
-            {% for category in metacat.categories %}
-                {% set catindex = category.index %}
-        
-                <div class="col p-0 progress-column" style="border: 2px solid LightGray" 
-                            catindex="{{ catindex - 1 }}">
-                    {% for sense in category.senses %}
-                    <div class="progress-item" 
-                        style="width: auto; height:20px; border: 1px solid; border-color: LightGray;"
-                        senseindex="{{ loop.index - 1 }}">
-                    </div>
-                    {% endfor %}
-                </div>
-
-            {% endfor %}
-        {% endfor %}
-    </div>
-</section>
+{% include progressbar.nkj %}
 
 {# Create Category name placeholder #}
 <h2 class="p-3" id="category-name"> 
@@ -108,38 +88,6 @@ eleventyNavigation:
 
 {#===============================   END LAYOUT   ==================================#}
 {#================================================================================#}
-
-
-{#============================== START DATA CONTAINERS ==============================#}
-{#================================================================================#}
-
-{# Create header for category names  #}
-{# Creating them together inside a <div> with an id makes them easy to extract in javascript #}
-<div id="category-container" style="display:none"> 
-    {% for cat in categoryquestions %}
-        <h2 catindex="{{ cat.index }}"> {{ cat.category }}</h2>
-    {% endfor %}
-</div>
-
-<div class="container-xl pt-5" id="questionset-container" style="display:none">
-    {% for category in categoryquestions %}
-        {% set catindex = category.index %}
-        <div class="category-questionset" catindex="{{catindex - 1 }}">
-            {% for sense in category.senses %} 
-                {% set senseindex = loop.index %} 
-                <section class="category-sense-questions" senseindex="{{ senseindex - 1}} ">                    
-                    {% for question in sense.questions %}
-                        <p> {{ question }} </p>
-                    {% endfor %} {# end question loop #}
-                </section>
-            {% endfor %} {# end category loop #}
-        </div>
-    {% endfor %} {# end sense loop #}
-</div> {# end container #}
-
-
-{#============================== END DATA CONTAINERS ==================================#}
-{#=====================================================================================#}
 
 {#=================================  START JAVASCRIPT ===================================#}
 {#======================================================================================#}
@@ -201,112 +149,14 @@ eleventyNavigation:
 
         return senseArray;
     }
-
-    // create an array of Category. This should match categoryquestions.json:
-    //      - category (category name)
-    //      - index
-    //      - senses (Array)
-    //              sense  (sense name)
-    //              questions (array of question)
-    function createCategoryArray(nameArray) {
-
-        // (local) constructor for Sense
-        function Sense(name,questionset){
-            this.sense = name;
-            if (questionset){
-                var qset = questionset.getElementsByTagName('p');
-                this.questions = createArray(qset.length);
-                for (var k=0; k<qset.length; k++)
-                    this.questions[k] = qset[k].innerHTML.trim();
-            }
-            else this.questions = [];
+  
+    // (local) constructor for Sense
+    function Sense(name,questionset){
+        this.sense = name;
+        if (questionset){
+            this.questions = questionset;
         }
-
-        // (local) constructor for Category
-        function Category(name,catindex,questionSets){
-            this.category = name.innerHTML;
-            this.index = catindex;
-
-            // create an array of questions grouped by sense
-            var senseArray = createArray(questionSets.length);
-            for (var j=0; j<questionSets.length; j++){
-                qset = questionSets[j];
-                senseindex = qset.getAttribute('senseindex');
-                senseArray[+senseindex] = new Sense(nameArray[+senseindex],qset);
-            }
-            this.senses = senseArray;
-        }
-
-        // function to add a new sense to a category
-        Category.prototype.addNewSense = function(newSense,questionSet){
-           this.senses.push(new Sense(newSense,questionSet));
-        };
-
-        // Grab the categoryContainer and create (DOM) arrays of headers and descriptions
-        const categoryContainer = document.getElementById("category-container")
-        const headers = categoryContainer.getElementsByTagName("h2");
-
-        // Grab the questionset container and create a DOM array of category questionsets
-        const categoryQuestionsets = document.querySelectorAll('#questionset-container .category-questionset');
-
-        // create and fill an array of Category
-        catArray = createArray(headers.length);
-        for (i=0 ; i<headers.length ; i++) {
-            senseQSets = categoryQuestionsets[i].querySelectorAll('.category-sense-questions');
-            catindex = headers[i].getAttribute('catindex');
-            catArray[i] = new Category(headers[i], catindex, senseQSets);
-            //console.log(catArray[i]);
-        }
-        return catArray;
-    }
-
-    //function to set or remove the progress grid highlight:
-    //  just set the color
-    //      - LightGray for no highlight
-    //      - Black for highlight
-    // or change colours to suit
-    function setProgressGridHighlight(catindex, colour){
-        var item = progressGrid[+catindex].column;
-        item.style.borderColor = colour;
-    }
-
-    // Create progress grid column array
-    //  This is a list of the columns of the grid where each item contains
-    //      a progress-column
-    //      an array of progress-item
-    // An array of ProgressGrid is returned
-    function createProgressGrid() {
-
-        // (local) constructor for ProgressGrid
-        // column is a DOM object with class progress-column
-        function ProgressGrid(column, catindex){
-            this.column = column;
-
-            items = column.querySelectorAll(".progress-item");
-            itemsArray = createArray(items, length);
-            for (i=0 ; i<items.length ; i++) {
-                item = items[i];
-                itemsArray[+item.getAttribute("senseindex")] = item;
-                item.addEventListener("click", function(){
-                    if (catindex != +currentCategoryIndex) {
-                        display(catindex,currentSenseIndex);
-                    }
-                });
-            }
-
-            this.senseboxes = itemsArray
-        }
-
-        const pGrid = document.getElementById("progress-grid");
-        const progressColumnList = pGrid.querySelectorAll(".progress-column");
-        const progressArray = createArray(progressColumnList.length);
-        for (j=0 ; j<progressArray.length ; j++){
-            item = progressColumnList[j];
-            catindex = item.getAttribute("catindex");
-            progressArray[+catindex] = new ProgressGrid(item, catindex);
-        }
-
-        return progressArray;
+        else this.questions = [];
     }
 
     function saveChanges() {
