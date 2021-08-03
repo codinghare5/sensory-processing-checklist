@@ -49,7 +49,7 @@ eleventyNavigation:
 <div class='container-xl card py-2 mb-4'>
     
 <!-- Progress bar ---------------------------------------------------------------------------- -->
-{% include progressbar.nkj %}
+{% include "progressbar.njk" %}
 
 {# Create Category name placeholder #}
 <h2 class="p-3" id="category-name"> 
@@ -98,17 +98,6 @@ eleventyNavigation:
 
     // Functions that manipulate html elements in some way
     /////////////////////////////////////////////////////////////////////
-
-    // create an array of Sense names
-    function createSenseArray() {
-        // grab all the options from choosesense
-        var options = document.querySelectorAll("#choosesense option");
-        var senseArray = createArray(options.length);
-        for (var i=0; i<options.length; i++)
-            senseArray[i] = options[i].innerHTML.trim();
-
-        return senseArray;
-    }
 
     // create categoryArry
     // This 'just' needs to read in categoryquestions.json
@@ -188,7 +177,7 @@ eleventyNavigation:
             return;
         
         for (let i=0 ; i<categoryArray.length ; i++)
-            categoryArray[i].addNewSense(newSense);
+            categoryArray[i].senses.push(new Sense(newSense);
 
         maxSenseIndex++;
 
@@ -222,8 +211,6 @@ eleventyNavigation:
     const questionArea = document.getElementById('questions-textarea')
 
     // constants for structures of html elements
-    const senseNameArray = createSenseArray();
-    //senseNameArray.consolelog();
     const categoryArray = createCategoryArray();
     const progressGrid = createProgressGrid();
     categoryArray.consolelog();
@@ -333,7 +320,6 @@ eleventyNavigation:
             console.log(e); 
         };
     });
-
-    
+   
 </script>
 <script type="text/javascript" src="../../js2/progressgrid.js"></script>
