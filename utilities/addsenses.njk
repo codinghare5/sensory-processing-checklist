@@ -499,7 +499,8 @@ eleventyNavigation:
         [fileHandle] = await window.showOpenFilePicker(options);
         const file = await fileHandle.getFile();
         const contents = await file.text();
-        jsonView.innerHTML = contents;
+        categoryArray = JSON.parse(contents);
+        jsonView.innerHTML = stringify(categoryArray,null,3);
     });
 
     // works but not in debugger
