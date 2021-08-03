@@ -1,20 +1,3 @@
-// Functions 
-///////////////////////////////////////////////////////////////////////////////////////
-
-// Generic Functions
-////////////////////////////////////////////////////////////////////////////////////////
-function createArray(length) {
-    let arr = new Array(length || 0),
-        i = length;
-
-    if (arguments.length > 1) {
-        let args = Array.prototype.slice.call(arguments, 1);
-        while(i--) arr[length-1 - i] = createArray.apply(this, args);
-    }
-
-    return arr;
-}
-
 
 function hexToRgbA(hex){
     var c;
@@ -67,7 +50,6 @@ function setDatasetsForPolarChart(labels, answers){
     const colours = getSenseColour(-1);
     const borderColours = getSenseColour(-2);
     var dataset = [];
-    console.log(answers);
     [ ...answers.answers ].map((sense, index) => {
         dataset.push({
             order: index,
@@ -79,7 +61,8 @@ function setDatasetsForPolarChart(labels, answers){
             tension: 0.1
         });
     });
-
+    
+    console.log(dataset);
     return dataset;
 }
 
@@ -98,31 +81,32 @@ function setAnswers(answers){
                 let ans = 4;
                 while(ans == 4) ans = rnd(6);
                 this.answers[i][ans] >= 0 ? ++this.answers[i][ans] : this.answers[i][ans] = 0;
-                console.log(ans);
+            }
+        }
+    }
+
+    function CategoryAnswers(){
+        this.answers = [];
+        rnd = num => Math.floor(Math.random() * num);
+        for(let s=0; s < 7 ; s++){
+            this.answers[s] = [];
+            for(let i = 0; i < 21; i++){
+                this.answers[s][i] = 0;
+                for(let j = 0; j < 3; j++){
+                    let ans = 4;
+                    while(ans == 4) ans = rnd(6);
+                    this.answers[s][i] += ans;
+                }
+                this.answers[s][i] = (this.answers[s][i]/15).toFixed(3);
             }
         }
     }
     
-    // questionStatus = answers.questionStatus;
-    // var sensesPoints = [0,0,0,0,0,0,0];
-    // for (var i=0; i<questionStatus.length; i++){
-    //     item = questionStatus[i];
-    //     //catindex = item.categoryindex;
-    //     sense = +item.senseindex;
-    //     values = item.values;
-    //     for (var k=0 ; k<values.length ; k++){
-    //         val = +values[k];
-    //         sensesPoints[+sense]+= +val;
-    //     }
-    // }
-    
-    // You.data = sensesPoints;
-    // data.datasets.push(You);
-    // console.log(You);
-    // console.log(data);
+    // initialize document model
     const aChartRadar = document.getElementById('myChart');
     const aChartLine = document.getElementById('lineChart');
     const aChartPolarArea = document.getElementById('polarAreaChart');
+    const allChartsForCategories = document.getElementById('categorycharts');
     var myChart = new Chart(
         aChartRadar,
         config
@@ -139,45 +123,18 @@ function setAnswers(answers){
     );
     
     const newAnswers = new Answers();
+    const newCategoryAnswers = new CategoryAnswers();
+    console.log(newCategoryAnswers);
+    const labelsForCategories = [ ...Array(21).keys()].map( n => n.toString() );
+    console.log(labelsForCategories);
     if (data2.labels.length) {
 
     }
-    var polarCharts = setDatasetsForPolarChart(data.labels, newAnswers);
-    var configs = [];
-    var names = [];
-    let labels = getAnswerName(-1);
-    [ ...polarCharts ].map((pChart, index) => {
-        let data = {
-            labels: labels.filter(label => label.length),
-            datasets: [pChart]
-        };
-        console.log(pChart);
-        configs.push({
-            type: 'polarArea',
-            data: data,
-            options: {
-                plugins: {
-                    title: {
-                        display: true,
-                        text: pChart.label
-                    }
-                }
-            }
-        });
-
-        var currentName = `polarArea${pChart.label}`;
-        let newDiv = document.createElement('canvas');
-        newDiv.id = currentName;
-        aChartPolarArea.parentNode.appendChild(newDiv);
-        let newDivNode = document.getElementById(`${newDiv.id}`);
-        console.log(newDivNode);
-        names[currentName] = new Chart(
-            newDivNode,
-            configs[index]
-            );
-            
-        console.log(names);
-    });
+    var polarChartsDatasets = setDatasetsForPolarChart(data.labels, newAnswers);
+    let polarChartsContainer = aChartPolarArea.parentNode;
+    var linearChartsDatasets = setDatasetsForPolarChart(data.labels, newCategoryAnswers);
+    prepareAndDisplayCharts('polarArea', getAnswerName(-1), polarChartsDatasets, polarChartsContainer);
+    prepareAndDisplayCharts('line', labelsForCategories, linearChartsDatasets, allChartsForCategories);
         
     return newAnswers;
 }
@@ -212,7 +169,7 @@ var data = {
     datasets: [{
         order: 2,
         label: 'Average',
-        data: [100, 100, 100, 100, 100, 100, 100],
+        data: [50, 50, 50, 50, 50, 50, 50],
         fill: true,
         backgroundColor: 'rgba(0, 0, 0, 0)',
         borderColor: 'rgba(54, 162, 235, 0)',
@@ -223,7 +180,7 @@ var data = {
     },{
         order: 1,
         label: 'My First Dataset',
-        data: [65, 59, 80, 81, 56, 55, 40],
+        data: [65, 59, 80, 81, 56, 55, 60],
         fill: true,
         backgroundColor: 'rgba(251, 190, 251, 0.3)',
         borderColor: 'rgb(221,160,221)',
@@ -306,3 +263,39 @@ loadButton.addEventListener('change',async function(event) {
         alert('Cannot read file');
     }
 });
+
+function prepareAndDisplayCharts(chartType, labels, datesets, container) {
+    let configs = [];
+    let names = [];
+    [...datesets].map((pChart, index) => {
+        let data = {
+            labels: labels.filter(label => label.length),
+            datasets: [pChart]
+        };
+        //console.log(pChart);
+        configs.push({
+            type: chartType,
+            data: data,
+            options: {
+                plugins: {
+                    title: {
+                        display: true,
+                        text: pChart.label
+                    }
+                }
+            }
+        });
+
+        var currentName = `${chartType}${pChart.label}`;
+        let newDiv = document.createElement('canvas');
+        newDiv.id = currentName;
+        container.appendChild(newDiv);
+        let newDivNode = document.getElementById(`${newDiv.id}`);
+        //console.log(newDivNode);
+        names[currentName] = new Chart(
+            newDivNode,
+            configs[index]
+        );
+
+    });
+}
