@@ -91,6 +91,8 @@ eleventyNavigation:
 
 {#=================================  START JAVASCRIPT ===================================#}
 {#======================================================================================#}
+<script type="text/javascript" src="../../js2/generic.js"></script>
+<script type="text/javascript" src="../../js2/progressgrid.js"></script>
 <script>
      // Functions 
     ///////////////////////////////////////////////////////////////////////////////////////
@@ -101,9 +103,24 @@ eleventyNavigation:
 
     // create categoryArry
     // This 'just' needs to read in categoryquestions.json
-    async function createCategoryArray(){
-        const response = await fetch(./json/categoryquestions.json);
-        return response.json;
+    async function getCategoryVariables(){
+
+            async function getCategoryArray(){
+            const response = await fetch("../../json/categoryquestions.json");
+            console.log('got categoryquestions');
+            const result = await response.json();
+            console.log('got json');
+            console.log(result);
+            return result;
+        }
+
+        categoryArray = await getCategoryArray();
+
+        maxCategoryIndex = categoryArray.length - 1;
+        maxSenseIndex = categoryArray[0].senses.length - 1;
+
+        questionArea.value = categoryArray[currentCategoryIndex].senses[currentSenseIndex].questions.join('\n');
+        jsonView.innerHTML = '<pre>' + JSON.stringify(categoryArray, null, 3) + '</pre>';
     }
   
     // (local) constructor for Sense
@@ -177,7 +194,7 @@ eleventyNavigation:
             return;
         
         for (let i=0 ; i<categoryArray.length ; i++)
-            categoryArray[i].senses.push(new Sense(newSense);
+            categoryArray[i].senses.push(new Sense(newSense));
 
         maxSenseIndex++;
 
@@ -210,22 +227,21 @@ eleventyNavigation:
     const categoryTitle = document.getElementById('category-name');
     const questionArea = document.getElementById('questions-textarea')
 
-    // constants for structures of html elements
-    const categoryArray = createCategoryArray();
-    const progressGrid = createProgressGrid();
-    categoryArray.consolelog();
-    //progressGrid.consolelog();
-
-    // Other variables
-    const maxCategoryIndex = categoryArray.length - 1;
-    let maxSenseIndex = categoryArray[0].senses.length - 1;
+    // Category Variables 
+    let categoryArray;
+    let maxCategoryIndex;
+    let maxSenseIndex
+    getCategoryVariables();
+    
     let currentCategoryIndex = 0;
     let currentSenseIndex = 0;
     let questionsChanged = false;
 
+    // constants for structures of html elements
+    const progressGrid = createProgressGrid();
+    //progressGrid.consolelog();
+
     // set things up
-    jsonView.innerHTML = '<pre>' + JSON.stringify(categoryArray, null, 3) + '</pre>';
-    questionArea.value = categoryArray[currentCategoryIndex].senses[currentSenseIndex].questions.join('\n');
     setProgressGridHighlight(currentCategoryIndex,'Black');
     previousCategoryButton.style.color = 'LightGray';
     previousSenseButton.style.color = 'LightGray';
@@ -322,4 +338,4 @@ eleventyNavigation:
     });
    
 </script>
-<script type="text/javascript" src="../../js2/progressgrid.js"></script>
+

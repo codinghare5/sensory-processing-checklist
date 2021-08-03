@@ -17,22 +17,24 @@
 
         // (local) constructor for ProgressGrid
         // column is a DOM object with class progress-column
-        function ProgressGrid(column, catindex){
-            this.column = column;
+        class ProgressGrid {
+            constructor(column, catindex) {
+                this.column = column;
 
-            items = column.querySelectorAll(".progress-item");
-            itemsArray = createArray(items, length);
-            for (i=0 ; i<items.length ; i++) {
-                item = items[i];
-                itemsArray[+item.getAttribute("senseindex")] = item;
-                item.addEventListener("click", function(){
-                    if (catindex != +currentCategoryIndex) {
-                        display(catindex,currentSenseIndex);
-                    }
-                });
+                const items = column.querySelectorAll(".progress-item");
+                const itemsArray = createArray(items, length);
+                for (let i = 0; i < items.length; i++) {
+                    let item = items[i];
+                    itemsArray[+item.getAttribute("senseindex")] = item;
+                    item.addEventListener("click", function () {
+                        if (catindex != +currentCategoryIndex) {
+                            display(catindex, currentSenseIndex);
+                        }
+                    });
+                }
+
+                this.senseboxes = itemsArray;
             }
-
-            this.senseboxes = itemsArray
         }
 
         const pGrid = document.getElementById("progress-grid");
