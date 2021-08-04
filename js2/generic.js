@@ -18,6 +18,16 @@
         return arr;
     }
 
+    // function to fetch a resourse on the internet.
+    //  filename should be the complete path. 
+    //      Can be a URL for a file or can be relative to the webpage.
+    async function fetchJson(filename){
+        const response = await fetch(filename);
+        const result = await response.json();
+        
+        return result;
+    }
+
     // function to add the same event listener to every element in an array. 
     Array.prototype.addEventListener = function(eventname, eventfunction) {
         for (i=0 ; i<this.length ; i++)

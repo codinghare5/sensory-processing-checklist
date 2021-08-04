@@ -101,35 +101,19 @@ eleventyNavigation:
     // Functions that manipulate html elements in some way
     /////////////////////////////////////////////////////////////////////
 
-    // create categoryArry
-    // This 'just' needs to read in categoryquestions.json
+    // getCategoryVariables
+    // This is an sync function that fetches the json file and sets
+    // various global variables.
+    // Note async means that it returns immediately and before tasks are completed.
     async function getCategoryVariables(){
 
-            async function getCategoryArray(){
-            const response = await fetch("../../json/categoryquestions.json");
-            console.log('got categoryquestions');
-            const result = await response.json();
-            console.log('got json');
-            console.log(result);
-            return result;
-        }
-
-        categoryArray = await getCategoryArray();
+        categoryArray = await fetchJson("../../json/categoryquestions.json");
 
         maxCategoryIndex = categoryArray.length - 1;
         maxSenseIndex = categoryArray[0].senses.length - 1;
 
         questionArea.value = categoryArray[currentCategoryIndex].senses[currentSenseIndex].questions.join('\n');
         jsonView.innerHTML = '<pre>' + JSON.stringify(categoryArray, null, 3) + '</pre>';
-    }
-  
-    // (local) constructor for Sense
-    function Sense(name,questionset){
-        this.sense = name;
-        if (questionset){
-            this.questions = questionset;
-        }
-        else this.questions = [];
     }
 
     function saveChanges() {
@@ -194,7 +178,7 @@ eleventyNavigation:
             return;
         
         for (let i=0 ; i<categoryArray.length ; i++)
-            categoryArray[i].senses.push(new Sense(newSense));
+            categoryArray[i].senses.push({sense: newSense, questions: []});
 
         maxSenseIndex++;
 
@@ -228,6 +212,10 @@ eleventyNavigation:
     const questionArea = document.getElementById('questions-textarea')
 
     // Category Variables 
+    // note getCategoryVariables is async and will thus return before tasks are completed.
+    // DO NOT put console.log after this function.
+    // All console.log should be inside the function.
+
     let categoryArray;
     let maxCategoryIndex;
     let maxSenseIndex
