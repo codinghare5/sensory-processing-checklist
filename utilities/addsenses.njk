@@ -17,7 +17,7 @@ eleventyNavigation:
             Name of Sense to Edit:
         </label>
         <select id="choosesense" class="fs-3 p-1 ps-2 ms-1">
-            {% for sense in categoryquestions[0].senses %}
+            {% for sense in allQuestions[0].senses %}
                 <option value="{{ loop.index - 1 }}">
                     {{ sense.sense }}
                 </option>
@@ -49,11 +49,11 @@ eleventyNavigation:
 <div class='container-xl card py-2 mb-4'>
     
 <!-- Progress bar ---------------------------------------------------------------------------- -->
-{% include "progressbar.njk" %}
+{% include "progressgrid.njk" %}
 
 {# Create Category name placeholder #}
 <h2 class="p-3" id="category-name"> 
-    {{ categoryquestions[0].category }} for {{ questions[0].sense}}
+    {{ allQuestions[0].category }} for {{ questions[0].sense}}
 </h2>
 
 <section class="container-xl py-3 px-4" id="input-section">
@@ -118,6 +118,7 @@ eleventyNavigation:
 
     function saveChanges() {
         categoryArray[currentCategoryIndex].senses[currentSenseIndex].questions = questionArea.value.split("\n");
+        questionsChanged = false;
     }
 
     function undoChanges() {
