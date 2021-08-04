@@ -7,9 +7,19 @@ function hexToRgbA(hex){
             c= [c[0], c[0], c[1], c[1], c[2], c[2]];
         }
         c= '0x'+c.join('');
-        return 'rgba('+[(c>>16)&255, (c>>8)&255, c&255].join(',')+',1)';
+        return 'rgba('+[(c>>16)&255, (c>>8)&255, c&255].join(',')+',0.7)';
     }
     throw new Error('Bad Hex');
+}
+
+const scales = {
+    x: {
+        ticks: {
+            autoSkip: false,
+            maxRotation: 90,
+            minRotation: 90
+        }
+    }
 }
 
 // Functions that manipulate html elements in some way
@@ -125,16 +135,43 @@ function setAnswers(answers){
     const newAnswers = new Answers();
     const newCategoryAnswers = new CategoryAnswers();
     console.log(newCategoryAnswers);
-    const labelsForCategories = [ ...Array(21).keys()].map( n => n.toString() );
+    const labelsForCategories = [
+        " Gestalt Percepion",
+        " Inability to stop feeling a change",
+        " Fragmented",
+        " Distorted",
+        " Delayed",
+        " Intensity: hyper",
+        " Intensity: hypo",
+        " Sensory Intolerance",
+        " Fascination",
+        " Fluctuation",
+        " Vulnerability to Overload",
+        " Systems Shutdown",
+        " Sensory Agnosia",
+        " Mono-processing",
+        " Peripheral Perception",
+        " Compensating",
+        " Merging with Stimuli",
+        " Daydreaming",
+        " Synaethesia",
+        " Perceptual Memory",
+        " Perceptual Thinking"
+    ];
     console.log(labelsForCategories);
     if (data2.labels.length) {
 
     }
     var polarChartsDatasets = setDatasetsForPolarChart(data.labels, newAnswers);
-    let polarChartsContainer = aChartPolarArea.parentNode;
+    let polarChartsContainer = document.getElementById('polar-area-charts');
     var linearChartsDatasets = setDatasetsForPolarChart(data.labels, newCategoryAnswers);
-    prepareAndDisplayCharts('polarArea', getAnswerName(-1), polarChartsDatasets, polarChartsContainer);
-    prepareAndDisplayCharts('line', labelsForCategories, linearChartsDatasets, allChartsForCategories);
+    let linearChartsContainer = document.getElementById('categorycharts');
+    const sensesChartsList = prepareAndDisplayCharts('polarArea', getAnswerName(-1), polarChartsDatasets, polarChartsContainer);
+    const categoriesChartsList = prepareAndDisplayCharts('line', labelsForCategories, linearChartsDatasets, allChartsForCategories);
+    [ ...linearChartsContainer.querySelectorAll('canvas') ].map(chart => chart.style.height = '375px');
+    [ ...polarChartsContainer.querySelectorAll('canvas') ].map(chart => chart.style.height = '375px');
+    console.log(sensesChartsList);
+    console.log(categoriesChartsList);
         
     return newAnswers;
 }
@@ -203,8 +240,8 @@ var data2 = {
         label: 'My First Dataset',
         data: [65, 59, 80, 81, 56, 55, 60],
         fill: true,
-        backgroundColor: 'rgba(251, 190, 251, 0.3)',
-        borderColor: 'rgb(221,160,221)',
+        backgroundColor: getSenseColour(-1),
+        borderColor: getSenseColour(-2),
         tension: 0.1
     }]
 };
@@ -267,35 +304,43 @@ loadButton.addEventListener('change',async function(event) {
 function prepareAndDisplayCharts(chartType, labels, datesets, container) {
     let configs = [];
     let names = [];
-    [...datesets].map((pChart, index) => {
+    [...datesets].map((dataset, index) => {
         let data = {
             labels: labels.filter(label => label.length),
-            datasets: [pChart]
+            datasets: [dataset]
         };
-        //console.log(pChart);
+        //console.log(dataset);
         configs.push({
             type: chartType,
             data: data,
             options: {
+                maintainAspectRatio: false,
                 plugins: {
                     title: {
                         display: true,
-                        text: pChart.label
+                        text: dataset.label
                     }
-                }
+                },
+                scales: chartType === 'line' ? scales : {}
             }
         });
+        chartType === 'line' ? console.log(configs[index].options) : false;
 
-        var currentName = `${chartType}${pChart.label}`;
-        let newDiv = document.createElement('canvas');
-        newDiv.id = currentName;
+        var currentName = `${chartType}${dataset.label}`;
+        let newDiv = document.createElement('div');
+        let newCanvas = document.createElement('canvas');
+        newCanvas.id = currentName;
+        newDiv.classList.add('col-xl-4', 'col-lg-6', 'col-md-6', 'col-sm-12');
+        newDiv.appendChild(newCanvas);
         container.appendChild(newDiv);
-        let newDivNode = document.getElementById(`${newDiv.id}`);
+        let newCanvasNode = document.getElementById(`${newCanvas.id}`);
         //console.log(newDivNode);
         names[currentName] = new Chart(
-            newDivNode,
+            newCanvasNode,
             configs[index]
         );
 
     });
+
+    return names;
 }
