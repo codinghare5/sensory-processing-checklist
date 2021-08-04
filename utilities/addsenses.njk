@@ -107,7 +107,7 @@ eleventyNavigation:
     // Note async means that it returns immediately and before tasks are completed.
     async function getCategoryVariables(){
 
-        categoryArray = await fetchJson("../../json/categoryquestions.json");
+        categoryArray = await fetchJson("../../json/allQuestions.json");
 
         maxCategoryIndex = categoryArray.length - 1;
         maxSenseIndex = categoryArray[0].senses.length - 1;
