@@ -411,6 +411,11 @@ h1, .h1, h2, .h2, h3, .h3, h4, .h4, h5, .h5, h6, .h6 {
   margin: 1.25rem 0;
 }
 
+.selected {
+  width: 99vw !important;
+  height: 99vh !important;
+}
+
 .card-header {
   position: relative;
   padding: 2rem 2rem;

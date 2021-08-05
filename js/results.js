@@ -76,7 +76,7 @@ function setDatasetsForPolarChart(labels, answers){
     return dataset;
 }
 
-
+var lastClickedChartNode;
 // setQuestionValues(answers) answers is a JSON structure.
 // fills in appropriate values in categoryArray
 // colours in the progress grid appropriately
@@ -170,6 +170,17 @@ function setAnswers(answers){
     const categoriesChartsList = prepareAndDisplayCharts('line', labelsForCategories, linearChartsDatasets, allChartsForCategories);
     [ ...linearChartsContainer.querySelectorAll('canvas') ].map(chart => chart.style.height = '375px');
     [ ...polarChartsContainer.querySelectorAll('canvas') ].map(chart => chart.style.height = '375px');
+
+    var lastClickedChartNode;
+    [ ...polarChartsContainer.querySelectorAll('canvas') ].map(chart => chart.addEventListener('click', (event) => {
+        if(event.target.parentNode.classList.contains('selected')) return;
+        console.log('fire');
+        if(lastClickedChartNode) {
+            lastClickedChartNode.classList.toggle('selected');
+        }
+        lastClickedChartNode = event.target.parentNode;
+        lastClickedChartNode.classList.toggle('selected');
+    }));
     console.log(sensesChartsList);
     console.log(categoriesChartsList);
         
@@ -330,6 +341,7 @@ function prepareAndDisplayCharts(chartType, labels, datesets, container) {
         let newDiv = document.createElement('div');
         let newCanvas = document.createElement('canvas');
         newCanvas.id = currentName;
+        newCanvas.classList.add('generated');
         newDiv.classList.add('col-xl-4', 'col-lg-6', 'col-md-6', 'col-sm-12');
         newDiv.appendChild(newCanvas);
         container.appendChild(newDiv);
