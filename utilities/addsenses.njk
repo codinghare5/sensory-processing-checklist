@@ -101,6 +101,15 @@ eleventyNavigation:
     // Functions that manipulate html elements in some way
     /////////////////////////////////////////////////////////////////////
 
+    // Eventlistener function for progress grid
+    function columnListener(column) {
+        if (column.catindex != +currentCategoryIndex) {
+            progressGrid[currentCategoryIndex].setProgressGridHighlight('LightGray');
+            display(column.catindex, currentSenseIndex);
+            column.setProgressGridHighlight('Black');
+        }
+    };
+
     // getCategoryVariables
     // This is an sync function that fetches the json file and sets
     // various global variables.
@@ -155,19 +164,15 @@ eleventyNavigation:
     function display(catIndex,senseIndex) {
         checkSave();
 
-        category = categoryArray[catIndex];
-        sense = category.senses[senseIndex];
+        category = categoryArray[+catIndex];
+        sense = category.senses[+senseIndex];
 
         categoryTitle.innerText = category.category + ' for ' + sense.sense;
         questionArea.value = sense.questions.join('\n');
 
-        setProgressGridHighlight(currentCategoryIndex,'LightGray');
-
-        currentCategoryIndex = catIndex;
-        currentSenseIndex = senseIndex;
+        currentCategoryIndex = +catIndex;
+        currentSenseIndex = +senseIndex;
         questionsChanged = false;
-
-        setProgressGridHighlight(currentCategoryIndex,'Black');
 
         setNextPreviousButtonTextColour();
     }
@@ -227,11 +232,11 @@ eleventyNavigation:
     let questionsChanged = false;
 
     // constants for structures of html elements
-    const progressGrid = createProgressGrid();
-    //progressGrid.consolelog();
+    const progressGrid = createProgressGrid(columnListener);
+    progressGrid.consolelog();
 
     // set things up
-    setProgressGridHighlight(currentCategoryIndex,'Black');
+    progressGrid[0].setProgressGridHighlight('Black');
     previousCategoryButton.style.color = 'LightGray';
     previousSenseButton.style.color = 'LightGray';
 
