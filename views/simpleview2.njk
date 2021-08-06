@@ -221,14 +221,20 @@ eleventyNavigation:
 <script>
     // Functions 
     ///////////////////////////////////////////////////////////////////////////////////////
-    async function getCategoryVariables() {
+    async function setCategoryVariables() {
         console.log('reading categoryinfo.json');
-        const infoArray = await fetchJson("../../json/categoryinfo.json");
-        console.log(JSON.stringify(infoArray,null,3));
+        categoryInfoArray = await fetchJson("../../json/categoryinfo.json");
+        //console.log(JSON.stringify(categoryInfoArray,null,3));
+        maxCategoryIndex = categoryInfoArray.length - 1;
+        console.log('getCategoryVariables returning');
+    }
 
-        const maxIndex = infoArray.length - 1;
-
-        return {infoArray, maxIndex};
+    function columnListener(column){
+        if (column.catindex != currentCategory) {
+            progressGrid[currentCategory].setProgressGridHighlight('LightGray');
+            displayElements.displayCategory(column.catindex);
+            column.setProgressGridHighlight('Black');
+        }
     }
 
     function buttonEventListener(parent,thisButton){      
@@ -360,22 +366,27 @@ eleventyNavigation:
 
         setAccordionBodies(catindex) {
             this.accordionBodies.forEach((item, index) => 
-                            item.replaceChild(questionSetArray[catindex][index].html, 
+                            item.replaceChild(questionSetArray[+catindex][index].html, 
                                                 item.children[0]));
         }
 
         displayCategory(catindex){
-            let categoryName = categoryInfoArray[catindex].name
+            let categoryName = categoryInfoArray[+catindex].name
             this.categoryTitle.innerText = categoryName;
             this.categoryButton.innerText = 'About ' + categoryName;  
 
-            setAccordionBodies(catindex);  
+            this.setAccordionBodies(catindex);  
+
+            currentCategory = +catindex;
         }
     }
   
     // Variables
     /////////////////////////////////////////////////////////////////////////////////////
-    const {maxCategoryIndex, categoryInfoArray} = getCategoryVariables(); // async function: returns immediately with a promise
+   let categoryInfoArray;
+   let maxCategoryIndex;
+    // async function: returns immediately with a promise
+   setCategoryVariables();
    
     const questionSetArray = setQuestionSetArray();
     questionSetArray.consolelog();
@@ -386,5 +397,8 @@ eleventyNavigation:
 
     // Navigation
     let currentCategory = 0;
+    progressGrid = createProgressGrid(columnListener);
+    progressGrid.consolelog();
+    progressGrid[0].setProgressGridHighlight('Black');
 
 </script>
