@@ -287,7 +287,7 @@ eleventyNavigation:
 
     class Question {
         constructor(fieldset){
-            const buttons = fieldset.getElementsByTagName('input');
+            const buttons = [...fieldset.getElementsByTagName('input')];
 
             this.value = 0;  
             this.buttons = buttons;          
@@ -296,9 +296,8 @@ eleventyNavigation:
             this.notsurebutton = buttons[2]
             this.falsebutton = buttons[3]
 
-            for (let i=0; i<4; i++)
-                buttons[i].addEventListener('change', () => {
-                                buttonEventListener(this, buttons[i])});           
+            buttons.forEach(item => item.addEventListener('change', () => {
+                                buttonEventListener(this,item)}));           
         }
     }
 
@@ -308,12 +307,8 @@ eleventyNavigation:
             this.senseindex = senseindex;
             this.html = qset;
 
-            let questions = qset.querySelectorAll('fieldset');
-            let questionArray = createArray(questions.length);
-            for (let i=0 ; i<questions.length ; i++)
-                questionArray[i] = new Question(questions[i]);
-
-            this.questions = questionArray;
+            let questions = [...qset.querySelectorAll('fieldset')];
+            this.questions = questions.map(item => new Question(item));
         }
 
         getValues(){
@@ -359,14 +354,14 @@ eleventyNavigation:
             this.categoryDescription = document.getElementById('category-description-body');
 
             // Body
-            this.accordionBodies = document.querySelectorAll('#bodyaccordion .accordion-body');
+            this.accordionBodies = [...document.querySelectorAll('#bodyaccordion .accordion-body')];
             this.accordionCollapses = document.querySelectorAll('#bodyaccordion .accordion-collapse');
         }
 
         setAccordionBodies(catindex) {
-            for (i=0; i<this.accordionBodies.length ; i++)
-                this.accordionBodies[i].replaceChild(questionSetArray[catindex][i].html, 
-                                                        this.accordionBodies[i].children[0]);
+            this.accordionBodies.forEach((item, index) => 
+                            item.replaceChild(questionSetArray[catindex][index].html, 
+                                                item.children[0]));
         }
 
         displayCategory(catindex){
