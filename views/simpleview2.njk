@@ -89,7 +89,7 @@ eleventyNavigation:
     {# body accordion of sets of questions labelled by sense #}
     <div class="accordion" id="bodyaccordion">
         {# create a set of sense accordions #}
-        {% for sense in questions %}
+        {% for sense in allQuestions[0].senses %}
             <div class="accordion-item">
                 {% set sensestr = sense.sense | lower %}
                 <h2 class="accordion-header" id="{{ sensestr }}-accordion-header">
@@ -227,6 +227,76 @@ eleventyNavigation:
         maxCategoryIndex = categoryInfoArray.length - 1;
     }
 
+    function buttonEventListener(parent,thisButton){      
+        let newvalue;
+        let currentvalue = parent.value;
+        let thisvalue = thisButton.value;
+
+        if (!thisButton.checked) { // button was checked before the change
+            if (thisButton == falsebutton) { // if false button do nothing else
+                parent.falsebutton.checked=true;
+            }
+            else {
+                newvalue = +currentvalue - +thisvalue; //+thisvalue converts thisvalue to an int
+                if (newvalue == 0){ // no buttons are active
+                    parent.falsebutton.checked=true;
+                    parent.value = 0;
+                }
+                else { // one other button is active (can't be more than one)
+                    parent.value = newvalue;
+                }
+            } 
+        }
+        else { // the button was not active
+            //console.log(this.checked);
+            if (thisbutton === parent.falsebutton) {
+                //console.log("It is false button.");
+                parent.value = 0;
+                for (j=0; j<parent.buttons.length - 1 ; j++)
+                    parent.buttons[j].checked=false;
+            }
+            else {
+                //console.log("It is NOT false button.");
+                parent.falsebutton.checked=false;
+                if (thisButton === parent.notsurebutton) {
+                    //console.log("It is not-sure button.");
+                    parent.truebutton.checked=false;
+                    parent.wastruebutton.checked=false;
+                    parent.value = 1;
+                }
+                else { // button is either wastruebutton or nowtruebutton
+                    //console.log("First two buttons.");
+                    if (parent.notsurebutton.checked){
+                        //console.log("It is not-sure button.");
+                        parent.notsurebutton.checked=false;
+                        parent.falsebutton.checked=false;
+                        currentvalue = 0;
+                    }
+                    newvalue = +currentvalue + +thisvalue;
+                    //console.log('currentvalue: ' + currentvalue + ' thisvalue: ' + thisvalue + ' newvalue: ' + newvalue);
+                    parent.value = newvalue;
+                }
+            }
+        } 
+        console.log('form value:' + parent.value);
+    }
+
+    class Question {
+        constructor(fieldset){
+            const buttons = fieldset.getElementsByTagName('input');
+
+            value: 0;  
+            buttons: buttons;          
+            wastruebutton: buttons[0];
+            truebutton: buttons[1];
+            notsurebutton: button[2]
+            falsebutton: button[3]
+
+            for (let i=0; i<4; i++)
+                buttons[i].addeventlistener('change', buttonEventListener(parent, buttons[i]));           
+        }
+    }
+
     class QuestionSet {
         constructor(catindex,senseindex,qset){
             catindex: catindex;
@@ -253,7 +323,7 @@ eleventyNavigation:
         }
     }
 
-    function getQuestionSetArray() {
+    function setQuestionSetArray() {
         const questionSetContainer = document.querySelector('#questionset-container');
         const ncategories = questionSetContainer.getAttribute('ncategories');
         const nsenses = questionSetContainer.getAttribute('nsenses');
@@ -266,14 +336,17 @@ eleventyNavigation:
             let senseindex = qSet.getAttribute('senseindex');
             questionSetArray[catindex][senseindex] = new QuestionSet(catindex,senseindex,qSet);
         }
-        maxCategoryIndex = ncategories - 1;
+        return questionSetArray;
     }
   
     // Variables
     /////////////////////////////////////////////////////////////////////////////////////
     let categoryInfoArray;
     let maxCategoryIndex;
-    getCategoryVariables(); // async function to returns with promise
+    getCategoryVariables(); // async function: returns immediately with a promise
 
-    const questionSetArray = getQuestionSetArray();
+    
+    const questionSetArray = setQuestionSetArray();
+    questionSetArray.consolelog();
+
 </script>
