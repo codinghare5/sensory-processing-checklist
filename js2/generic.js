@@ -41,12 +41,3 @@
         for (i=0 ; i<this.length ; i++)
             console.log(this[i]);
     };
-
-    // convert Nodelists and HTLMCollections (and any other array like objects to an array.
-    function convertToArray(arrayLikeObject) {
-        var newArray = createArray(arrayLikeObject.length)
-        for (var i=0 ; i<newArray.length; i++)
-            newArray[i] = arrayLikeObject[i];
-
-        return newArray;
-    }
