@@ -61,7 +61,7 @@
             let savehandle = await window.showSaveFilePicker(options);;
             const writable = await savehandle.createWritable();
             console.log(writable);
-            await Promise.allSettled[writable.write(JSON.stringify(jsonStruct, null, 3))];
+            await writable.write(JSON.stringify(jsonStruct, null, 3));
             await writable.close();
         }
         catch(e) {

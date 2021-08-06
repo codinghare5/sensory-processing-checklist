@@ -328,18 +328,16 @@ eleventyNavigation:
         }
 
         getValues(){
-            let sum=0;
             let max=0;
             const values = []
-            for (let i=0; i<this.questionArray.length; i++){
-                val = this.questionArray[0].value;
+            for (let i=0; i<this.questions.length; i++){
+                const val = this.questions[i].value;
                 values[i] = +val;
-                sum += +val;
                 if (+max < +val)
                     max = val;
             }
 
-            if (sum == 0)
+            if (max == 0)
                 return {max: 0, values:[]};
             else
                 return {max: max, values: values};
@@ -360,6 +358,32 @@ eleventyNavigation:
             questionSetArray[catindex][senseindex] = new QuestionSet(catindex,senseindex,qSet);
         }
         return questionSetArray;
+    }
+
+    function createJsonAnswers(){
+        let jsonstruct = {"type": "SPCR", 
+                                "version": 1, 
+                                "currentIndex": this.currentIndex,
+                                "questionStatus": []};
+
+        function Status(senseindex,catindex,values){
+            this.senseindex = senseindex;
+            this.categoryindex = catindex;
+            this.values = values;
+        }
+
+        for (let i=0 ; i<maxCategoryIndex ; i++){
+            for (let j=0 ; j<maxSenseIndex ; j++){
+                let qset = questionSetArray[i][j];
+                let {max, values} = qset.getValues();
+                if (max == 0)
+                    jsonstruct.questionStatus.push(new Status(j,i,0));
+                else
+                    jsonstruct.questionStatus.push(new Status(j,i,values));
+            }
+        }
+
+        return jsonstruct;
     }
 
     class DisplayClass {
@@ -410,6 +434,7 @@ eleventyNavigation:
                 columnListener(progressGrid[currentCategory + 1]); 
         });
     }
+
   
     // Variables
     /////////////////////////////////////////////////////////////////////////////////////
@@ -425,8 +450,9 @@ eleventyNavigation:
 
     //////////////////////////////////////////////////////////////////////////////
 
-    // Main thread  
+    // Main thread 
     const questionSetArray = setQuestionSetArray();
+    const maxSenseIndex = questionSetArray[0].length;
     //questionSetArray.consolelog();
 
     // HTML display elements
@@ -437,7 +463,13 @@ eleventyNavigation:
     saveButton = document.getElementById("savebutton");
     loadButton = document.getElementById("readbutton");
 
+    saveButton.addEventListener('click', async () => {
+        await saveJson(createJsonAnswers());
+    });
 
-    
+    loadButton.addEventListener("click", async () => {
+        let answers = await readJson();
+        setAnswers(answers);
+    })   
 
 </script>
