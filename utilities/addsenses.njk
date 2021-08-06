@@ -299,38 +299,14 @@ eleventyNavigation:
     saveButton = document.getElementById("savebutton");
     readButton = document.getElementById("readbutton");
 
-    const options = {
-        types: [
-            {
-                description: 'JSON Files',
-                accept: {
-                'application/json': ['.json'],
-                },
-            },
-        ],
-    };
-
-    let fileHandle;
     readButton.addEventListener('click', async () => {
-        [fileHandle] = await window.showOpenFilePicker(options);
-        const file = await fileHandle.getFile();
-        const contents = await file.text();
-        categoryArray = JSON.parse(contents);
-        jsonView.innerHTML = stringify(categoryArray,null,3);
+        categoryArray = await readJson();
+        jsonView.innerHTML = JSON.stringify(categoryArray,null,3);
     });
 
     // works but not in debugger
     saveButton.addEventListener('click', async () =>{
-        try {
-            let savehandle = await window.showSaveFilePicker(options);;
-            const writable = await savehandle.createWritable();
-            console.log(writable);
-            await writable.write(JSON.stringify(categoryArray, null, 3));
-            await writable.close();
-        }
-        catch(e) {
-            console.log(e); 
-        };
+        await saveJson(categoryArray);
     });
    
 </script>

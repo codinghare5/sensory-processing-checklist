@@ -30,14 +30,41 @@
         return result;
     }
 
-    // function to add the same event listener to every element in an array. 
-    Array.prototype.addEventListener = function(eventname, eventfunction) {
-        for (i=0 ; i<this.length ; i++)
-            this[i].addEventListener(eventname, eventfunction);
-    };
-
     // create a function to console log every element in an array
     Array.prototype.consolelog = function() {
-        for (i=0 ; i<this.length ; i++)
-            console.log(this[i]);
+        this.forEach(item => console.log(item));
+    }
+
+    // Generic Read and Write JSON functionality
+    const options = {
+        types: [
+            {
+                description: 'JSON Files',
+                accept: {
+                'application/json': ['.json'],
+                },
+            },
+        ],
     };
+
+    let fileHandle;
+    async function readJson() { 
+        [fileHandle] = await window.showOpenFilePicker(options);
+        const file = await fileHandle.getFile();
+        const contents = await file.text(); 
+        
+        return JSON.parse(contents);
+    }
+
+    async function saveJson(jsonStruct) {
+        try {
+            let savehandle = await window.showSaveFilePicker(options);;
+            const writable = await savehandle.createWritable();
+            console.log(writable);
+            await Promise.allSettled[writable.write(JSON.stringify(jsonStruct, null, 3))];
+            await writable.close();
+        }
+        catch(e) {
+            console.log(e); 
+        };
+    }

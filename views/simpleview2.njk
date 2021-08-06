@@ -116,7 +116,7 @@ eleventyNavigation:
     <div>
         <nav class="d-flex justify-content-between py-3">
             <button class="p-2 bg-info rounded" id="previousbutton" type="button">Previous</button>
-            <button class="p-2 bg-info rounded" id="nextbutton" type="button" nextevent="next">Next</button>
+            <button class="p-2 bg-info rounded" id="nextbutton" type="button">Next</button>
         </nav>
     </div>
 </section> {# end container#}
@@ -232,8 +232,18 @@ eleventyNavigation:
     function columnListener(column){
         if (column.catindex != currentCategory) {
             progressGrid[currentCategory].setProgressGridHighlight('LightGray');
-            displayElements.displayCategory(column.catindex);
+            if (currentCategory == maxCategoryIndex)
+                nextButton.innerText = "Next";
+            else if (currentCategory == 0)
+                prevButton.style.color = 'Black';
+
+            displayElements.displayCategory(column.catindex); // updates currentCategory
+
             column.setProgressGridHighlight('Black');
+            if (currentCategory == 0)
+                prevButton.style.color = 'LightGray';
+            else if (currentCategory == maxCategoryIndex)
+                nextButton.innerText = "Show Results";
         }
     }
 
@@ -380,25 +390,54 @@ eleventyNavigation:
             currentCategory = +catindex;
         }
     }
+
+    function setUpNavigation(){
+        // Progress grid
+        progressGrid = createProgressGrid(columnListener);
+        //progressGrid.consolelog();
+        progressGrid[0].setProgressGridHighlight('Black');
+
+        // previous button
+        prevButton.style.color = 'LightGray';
+        prevButton.addEventListener("click", ()=> {
+            if (currentCategory != 0)
+                columnListener(progressGrid[currentCategory - 1]);            
+        });
+
+        // next button
+        nextButton.addEventListener('click', () => {
+            if (currentCategory != maxCategoryIndex)
+                columnListener(progressGrid[currentCategory + 1]); 
+        });
+    }
   
     // Variables
     /////////////////////////////////////////////////////////////////////////////////////
-   let categoryInfoArray;
-   let maxCategoryIndex;
+    
+    // Category and Navigation Thread
+    let categoryInfoArray = [];
+    let maxCategoryIndex = 0;
+    let currentCategory = 0;
+    const prevButton = document.getElementById('previousbutton')
+    const nextButton = document.getElementById('nextbutton');
     // async function: returns immediately with a promise
-   setCategoryVariables();
-   
+    setCategoryVariables().then(setUpNavigation());
+
+    //////////////////////////////////////////////////////////////////////////////
+
+    // Main thread  
     const questionSetArray = setQuestionSetArray();
-    questionSetArray.consolelog();
+    //questionSetArray.consolelog();
 
     // HTML display elements
     displayElements = new DisplayClass();
     displayElements.setAccordionBodies(0);
 
-    // Navigation
-    let currentCategory = 0;
-    progressGrid = createProgressGrid(columnListener);
-    progressGrid.consolelog();
-    progressGrid[0].setProgressGridHighlight('Black');
+    // save and read buttons and functionality
+    saveButton = document.getElementById("savebutton");
+    loadButton = document.getElementById("readbutton");
+
+
+    
 
 </script>
