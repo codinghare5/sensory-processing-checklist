@@ -28,10 +28,9 @@ class ProgressGrid {
 //      a progress-column
 //      an array of progress-item
 // An array of ProgressGrid is returned
-function createProgressGrid() {
+function createProgressGrid(eventListener) {
     const pGrid = document.getElementById("progress-grid");
-    const progressColumnList = pGrid.querySelectorAll(".progress-column");
-    const progressArray = createArray(progressColumnList.length);
+    const progressColumnList = [...pGrid.querySelectorAll(".progress-column")];
 
-    return progressArray.map((item, index) => new ProgressGrid(item,index,eventListender));
+    return progressColumnList.map((item, index) => new ProgressGrid(item,index,eventListener));
 }
