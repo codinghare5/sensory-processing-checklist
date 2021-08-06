@@ -103,6 +103,8 @@ eleventyNavigation:
 
     // Eventlistener function for progress grid
     function columnListener(column) {
+        console.log('in columnListener');
+        console.log(column);
         if (column.catindex != +currentCategoryIndex) {
             progressGrid[currentCategoryIndex].setProgressGridHighlight('LightGray');
             display(column.catindex, currentSenseIndex);
@@ -233,7 +235,7 @@ eleventyNavigation:
 
     // constants for structures of html elements
     const progressGrid = createProgressGrid(columnListener);
-    progressGrid.consolelog();
+    //progressGrid.consolelog();
 
     // set things up
     progressGrid[0].setProgressGridHighlight('Black');

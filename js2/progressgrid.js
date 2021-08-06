@@ -9,8 +9,7 @@ class ProgressGrid {
         this.column = column;
         this.catindex = index;
         this.senseboxes = [...column.querySelectorAll(".progress-item")];
-        this.senseboxes.forEach(item => item.addEventListener('click', () => {
-                                        eventListener(item)}));
+        column.addEventListener('click', () => {eventListener(this)});
     }
 
     //function to set or remove the progress grid highlight:
@@ -18,7 +17,7 @@ class ProgressGrid {
     //      - LightGray for no highlight
     //      - Black for highlight
     // or change colours to suit
-    setProgressGridHighlight(catindex, colour){
+    setProgressGridHighlight(colour){
         this.column.style.borderColor = colour;
     }
 }
