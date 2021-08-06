@@ -1,0 +1,19 @@
+{# create progress bar #}
+<section class="container-xl py-3 px-4" id="progress-grid">
+    <div class="row bg-white">
+        {% for category in allQuestions %}
+            {% set catindex = category.index %}
+    
+            <div class="col p-0 progress-column" style="border: 2px solid LightGray" 
+                        catindex="{{ catindex - 1 }}">
+                {% for sense in category.senses %}
+                <div class="progress-item" 
+                    style="width: auto; height:20px; border: 1px solid; border-color: LightGray;"
+                    senseindex="{{ loop.index - 1 }}">
+                </div>
+                {% endfor %}
+            </div>
+
+        {% endfor %}
+    </div>
+</section>

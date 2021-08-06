@@ -108,6 +108,8 @@ module.exports = function(eleventyConfig) {
   eleventyConfig.addPassthroughCopy("img");
   eleventyConfig.addPassthroughCopy("css");
   eleventyConfig.addPassthroughCopy("js");
+  eleventyConfig.addPassthroughCopy("js2");
+  eleventyConfig.addPassthroughCopy("json");
 
   // Customize Markdown library and settings:
   let markdownLibrary = markdownIt({

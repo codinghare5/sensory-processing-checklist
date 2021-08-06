@@ -1,0 +1,129 @@
+[
+{
+    "name": "Gestalt Percepion",
+    "index": 1,
+    "subtitle": "Inability to distinguish between foreground and background stimuli",
+    "description": "Autistic people are often unable to discriminate between relevant and irrelevant stimuli. What is background to others may equally forground to them: they perceive everything without filtration or selection. It is often hard for autistic people to integrate what they are experiencing into separate and unique entities, to 'break' the whole picture into meaningful parts, to 'group together' and to 'draw the boundaries' around plenty of tiny sensory pieces to make them into meaningful units."
+},
+{
+    "name": "Inability to stop feeling a change",
+    "index": 2,
+    "subtitle": "Inability/difficulty to stop feeling the change",
+    "description": "While non autistic people 'forget' a sensation after a short period of time, some autistic people feel this sensation for much longer. For exaple, when you get dressed in the morning, you can feel your clothes on you skin for a few seconds and then the feeling fades. This is hte same with smell, taste, or any other sense. If the senses are exposed to a continuing stimulus, habituation soon occurs. This is why you do not feel the clothes you are wearing until you change or adjust them. For many autistic individuals, however, the habituation process doesn't work properly and the sensation may last for hours or even days."
+},
+{
+    "name": "Fragmented",
+    "index": 3,
+    "subtitle": "Perception 'in bits'",
+    "description": "Because of gestalt perception, when too much information needs to be processed sumultaneously, autistic people are often not able to 'break' the whole picture into meaningful units and to interpret objects, people and surroundings as constituents of a whole situation. Instead they process 'bits' that happen to get their attention. For example, where a non autistic person may see a room, an autistic person sees a door handle, the leg of the table, a coin on the floor, etc."
+
+},
+{
+    "name": "Distorted",
+    "index": 4,
+    "subtitle" :"Change in the perception of form, space, sound etc",
+    "description": "Although fragmented perception can also be termed 'distorted', in this schema distorted perception doesn't mean fragmentation but rather change (distortion) in the perception of the form, space, sound, etc. Distortions are reported to become worse in the sate of nervous overarousal and information overload. In the field of vision the most common distortions reported by individuals with autism are poor/distorted depth and space perception, seeing a 2D world, 'double vision', distortions of shape, size and movement."
+},
+{
+    "name": "Delayed",
+    "index": 5,
+    "subtitle": "Delayed responses to stimuli",
+    "description": "As a consequence of fragmented perception, autisitc individuals may experience delayed processing, and hence delayed responses to stimuli: 'As a child...it appeared as though I didn't feel pain or discomfort, didn't want help, didn't know what I was saying, didn't listen or didn't watch. By the time some of these sensations, responses or comprehensions were decoded and processed for meaning and personal significance, and I'd accessed the means of responding, I was fifteen minutes, one day, a week, a month, even a year away from the context in which the experiences happened.'"
+},
+{
+    "name": "Intensity: hyper",
+    "index": 6,
+    "subtitle": "Senses seem too acute",
+    "description": "In this schema, 'hypersensitivity' means acute or heightened, or excessive sensitivity to one or more senses. The channel is too open, and as a result, too much stimulation gets in for the brain to handle."
+},
+{
+    "name": "Intensity: hypo",
+    "index": 7,
+    "subtitle": "Below normal sensitivity",
+    "description": "There might be times when autistic people are not getting enough information, when their brain can feel empty and stop processing, and they don't really see anything or hear anything - they are just there. To stimulate their senses they might wave their hands around or rock back and forth, or make strange noises, or hit their head wiht their hands. The channel is not open enough, and as a result, too little of the stimulation gets through and the brain is deprived."
+},
+{
+    "name": "Sensory Intolerance",
+    "index": 8,
+    "subtitle": "Finding some sensory stimuli intolerable/painful",
+    "description": "All senses can be affected. Some may find many noises and bright lights nearly impossible to bear; for others, certain noises (children's voices, car horns, a kettle whistling) and the pitch of some sounds might cause a lot of discomfort."
+},
+{
+    "name": "Fascination",
+    "index": 9,
+    "subtitle": "Finding certain stimuli calming, peaceful and hypnotic",
+    "description": "Fascination with certain stimuli is the opposite of disturbance by certain stimuli, also caused by hypersensitivity. These two features are like two sides of one and the same coin. The only difference is, while disturbance causes pain, fascination gives pleasant experiences and brings calm and peace to autistic people (although at the cost of their withdrawal. Sometimes autistic people, when they have given up fighting an incomprehensible world, rescue themselves from overload to an entertaining, secure and hypnotic level of hyper. Eg watching the reflection of every element of light and colour; tracing every patterned shape and vibration of noise as it bounces off the walls."
+},
+{
+    "name": "Fluctuation",
+    "index": 10,
+    "subtitle": "Inconsistent perception of sensory stimuli",
+    "description": "One of the baffling features of autisitc individuals is their inconsistent perception of sensory stimuli. Two types of this inconsistency can be distinguished: fluctuation between hyper- and hypo-, and fluctuation between hyper-/hypo- and normal ('in' and 'out')."
+},
+{
+    "name": "Vulnerability to Overload",
+    "index": 11,
+    "subtitle": "Trying to deal with too much sensory information at once creates overload",
+    "description": "Many autistic individuals are very vulnerable to sensory overload, becoming overloaded in situations that would not bother other people. The causes of such overload can be: inability to filter out irrelevant or excessive information; delayed processing, if the person works in mono but is forced to attend to the information from several channels; distorted to fragmented perception, resulting in anxiety, confusion, frustration and stress that, in turn, may lead to hypersensitivity. Hypersensitivity can happen both independently of information overload and as a direct result of it."
+},
+{
+    "name": "Systems Shutdown",
+    "index": 12,
+    "subtitle": "Losing some or all of normal functioning",
+    "description": "Too much sensory overload may result in systems shutdowns, in which the person loses some or all of his or her normal functioning. Shutdown may fee different to different people, but is extremely unpleasant. When someone cannot cope with sensory information, they may shut down some or all sensory channels. Many autistic children are suspect to be deaf, as they sometimes do not react to sounds. Their hearing, however, is often even more acute than average, but they learn to 'switch it off' when they experience information overload. Children with sensory overload learn to shut off their sensory channels when sensory input becomes too intense and withdarw into their own world." 
+},
+{
+    "name": "Sensory Agnosia",
+    "index": 13,
+    "subtitle": "Difficulty or inability to interpret information from a sense",
+    "description": "The consequence of being unable to filter sensory information and being flooded with sensory stimuli at the rate the person cannot cope with is being able to sense (see, hear, etc.) but unable to attach the meaning to (i.e. to interpret) the sensations. The person is 'blind while seeing', 'deaf while hearing', etc. The term 'sensory agnosia' refers to a temporary state of literal perception casued by sensory agnosia. In the state of sensory agnosia, interpretations of any sense can be lost; autistic individuals often act as if they were really blind, deaf, numb, and sometimes 'dead'. It is a very frightening experience."
+},
+{
+    "name": "Mono-processing",
+    "index": 14,
+    "subtitle": "Processing one sense at a time",
+    "description": "To avoid overload of sensory information, the brain consciously processes only one modality (although subconsiously a great amount of information may get it (accumulation of unknown knowing). The person might focus on one sense, for example, sight, and might see every minute detail of hte object. However, while his/her vision is on, the person might lose awareness of any information coming through the other senses. Thus while the person sees something he/she does not hear anything and does not feel touch, etc. When the visual stimulus fades out, the sound could be processed, but then the sound is the only information the person is dealing with. As the person focuses on only one modality at a time, the sound may be experienced louder because it is all the person focusses on (hypersensitivity)."
+},
+{
+    "name": "Peripheral Perception",
+    "index": 15,
+    "subtitle": "Avoidance of direct perception",
+    "description": "One of the characteristics of autism is the avoidance of eye contact. This is an example of peripheral perception, as it turns out that avoidance of direct perception is not only restricted to vision, but also includes other sensory systems. Analysis of the personal accounts of autistic individuals shows that they often do not use their direct/central perception because 'it hurts' (hypersensitive)."
+},
+{
+    "name": "Compensating",
+    "index": 16,
+    "subtitle": "Using other senses to compensate for an unreliable or (temporarily) not working sense",
+    "description": "Because of hypersensitivity, fragmented, distorted perception, delayed processing or sensory agnosia, one sense is never enough for autistic individuals to make sense of their environment. Thus in the case of visual distortions and meaning-blindness, they use their ears, nose, tongue or hand to 'see', that is they compensate for their temporary 'blindness' through other senses. For example, a child can tap objects to produce the sound in order to recognise what it is, because visual recognition can be fragmented and meaningless."
+},
+{
+    "name": "Merging with Stimuli",
+    "index": 17,
+    "subtitle": "Becoming one with a sensory stimulus",
+    "description": "Fascination with certain stimuli may culminate with 'losing oneself in these stimuli to the extent that people can become 'resonant' with them'. The person can merge with (lose oneself in) different sensory stimuli as if the person becomes part of the stimulus itself. These are very real experiences."
+},
+{
+    "name": "Daydreaming",
+    "index": 18,
+    "subtitle": "Extra-sensory perception?",
+    "description": "It is not uncommon amoung autistic people to experience so-called 'daydreams'. Whether this phenomenon is a sixth sense, clairvoyance, precognition or another form of extra-sensory perception, and whether we can explain it or not, it does exist. Personal accounts of autistic individuals contain quite a number of these experiences."
+},
+{
+    "name": "Synaethesia",
+    "index": 19,
+    "subtitle": "Sensing other senses given one stimulus in a particular sense",
+    "description": "Synaesthesia or 'cross-sensory perception' is an involuntary physical experience of cross-modal association, that is, the stimulation of one sensory modality triggers a perception in one or more different senses. For example, hearing certain sounds brings the perception of colours. Many synaesthetes hae more than one form of synaethesia."
+},
+{
+    "name": "Perceptual Memory",
+    "index": 20,
+    "subtitle": "Storing real sensory experiences in memory",
+    "description": "Many people with autism don't remember verbally but while remembering they actually see, hear, feel, smell or taste the items (in their mind). The thought about something produces real experiences they had when encountering this thing or event for the first time. They store their visual, auditory, olfactory, gustatory and tactile memories, which are very real. For instance, the thought of textures they hate might cause goose bumps and chills, and a general sense of unease would follow."
+},
+{
+    "name": "Perceptual Thinking",
+    "index": 21,
+    "subtitle": "Using sensory perceptions to think and reason (eg in pictures or sound)",
+    "description": "One of the characteristics of autism is the remarkable ability of most autistic individuals to excel at visual-spatial skills while performing very poorly at verbal skills. For those who have visual thinking ('thinking in pictures'), words are like a second language; their thought processes are different from language-based thinkers. 'Perceptual thinkers' can experience thought as reality. This means that when we think about something, they relive it visually, auditorily and emotionally."
+}
+]

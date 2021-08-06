@@ -1,0 +1,1190 @@
+[
+   {
+      "category": "Gestalt Perception",
+      "index": 1,
+      "senses": [
+         {
+            "sense": "Vision",
+            "questions": [
+               "Notices every tiny change in the environment",
+               "Resists any change (all senses)",
+               "Doesn’t recognise a familiar environment if approached from a different direction",
+               "Is easily distracted by other visual stimuli in the environment (movement, objects, a piece of fluff, etc.",
+               "Ritualistic behaviour"
+            ]
+         },
+         {
+            "sense": "Hearing",
+            "questions": [
+               "Gets easily frustrated when trying to do something in a noisy, crowded room",
+               "Doesn’t seem to understand instructions if more than one person is talking"
+            ]
+         },
+         {
+            "sense": "Touch",
+            "questions": [
+               "Unable to distinguish between tactile stimuli of different intensity (e.g., light and rough touch)"
+            ]
+         },
+         {
+            "sense": "Smell",
+            "questions": [
+               "Unable to distinguish between strong and weak odours "
+            ]
+         },
+         {
+            "sense": "Taste",
+            "questions": [
+               "Is unable to distinguish between bland and spicy food"
+            ]
+         },
+         {
+            "sense": "Proprioception",
+            "questions": [
+               "Clumsy; moves stiffly"
+            ]
+         },
+         {
+            "sense": "Balance",
+            "questions": [
+               "Resists change to head position/body movement",
+               "Resists new motor activities"
+            ]
+         }
+      ]
+   },
+   {
+      "category": "Inability to stop feeling a change",
+      "index": 2,
+      "senses": [
+         {
+            "sense": "Vision",
+            "questions": [
+               "Keeps ‘seeing’ a visual stimulus after it’s gone"
+            ]
+         },
+         {
+            "sense": "Hearing",
+            "questions": [
+               "Keeps ‘hearing’ the sound (e.g., an alarm clock after it’s been switched of)"
+            ]
+         },
+         {
+            "sense": "Touch",
+            "questions": [
+               "Keeps feeling tactile sensation longer",
+               "Insists on wearing the same clothes",
+               "ants to wear shorts and t-shirts all year round",
+               "Wants to wear long-sleeve shirts and trousers all year round to avoid having skin exposed",
+               "Distressed when nails are cut"
+            ]
+         },
+         {
+            "sense": "Smell",
+            "questions": [
+               "Prolonged perception of olfactory stimulus"
+            ]
+         },
+         {
+            "sense": "Taste",
+            "questions": [
+               "Prolonged perception of tastes"
+            ]
+         },
+         {
+            "sense": "Proprioception",
+            "questions": [
+               "Prolonged perception of proprioceptive sensations"
+            ]
+         },
+         {
+            "sense": "Balance",
+            "questions": [
+               "Prolonged perception of vestibular stimulation"
+            ]
+         }
+      ]
+   },
+   {
+      "category": "Fragmented",
+      "index": 3,
+      "senses": [
+         {
+            "sense": "Vision",
+            "questions": [
+               "Resists any change",
+               "Selects for attention minor aspects of objects in the environment instead of the whole thing (e.g., a wheel rather than a whole toy car)",
+               "Gets lost easily",
+               "Doesn’t recognise people in unfamiliar clothes"
+            ]
+         },
+         {
+            "sense": "Hearing",
+            "questions": [
+               "Hears (with meaning) a few words instead of the whole sentence"
+            ]
+         },
+         {
+            "sense": "Touch",
+            "questions": [
+               "Complains about parts of the clothes",
+               "Some parts of the body may be hypersensitive while others are hyposensitive – e.g., hypersensitive to wearing anything on the wrists (e.g., watch, bracelet) but hyposensitive to wearing, e.g., shoes (doesn’t realise any problems from tight shoes until notices blisters or blood)"
+            ]
+         },
+         {
+            "sense": "Smell",
+            "questions": [
+               "Complains about smells of some pieces of food while ignoring the rest"
+            ]
+         },
+         {
+            "sense": "Taste",
+            "questions": [
+               "Confused with the food they used to like"
+            ]
+         },
+         {
+            "sense": "Proprioception",
+            "questions": [
+               "Complains about limbs, parts of the body"
+            ]
+         },
+         {
+            "sense": "Balance",
+            "questions": [
+               "Compulsive repetitive hand, head or body movement that fluctuates between near and far "
+            ]
+         }
+      ]
+   },
+   {
+      "category": "Distorted",
+      "index": 4,
+      "senses": [
+         {
+            "sense": "Vision",
+            "questions": [
+               "Fears heights, stairs, escalators",
+               "Hesitates going up or down steps",
+               "Difficulty judging spatial relationships in the environment; bumps into people, objects",
+               "Appears startled when approached suddenly",
+               "Compulsive repetitive hand, head or body movement that fluctuates between near and far",
+               "Hits/rubs eyes when distressed (+hyper-, fragmentation, etc.)"
+            ]
+         },
+         {
+            "sense": "Hearing",
+            "questions": [
+               "Pronunciation problems",
+               "Unable to distinguish between some sounds",
+               "Hits ears when distressed"
+            ]
+         },
+         {
+            "sense": "Touch",
+            "questions": [
+               "Hits/bites self when distressed)"
+            ]
+         },
+         {
+            "sense": "Smell",
+            "questions": [
+               "Hits nose when distressed"
+            ]
+         },
+         {
+            "sense": "Taste",
+            "questions": [
+               "Distressed when eating food"
+            ]
+         },
+         {
+            "sense": "Proprioception",
+            "questions": [
+               "Difficulty getting dressed, doing buttons, zippers, tying laces",
+               "Has poor body awareness; bumps into things, knocks things over",
+               "Poor gross motor skills: catching a ball; difficulty with hopping, jumping, skipping, riding a tricycle/bicycle",
+               "Poor fine motor skills: difficulty using pencils, scissors, combs, etc.",
+               "Difficulty learning dance movements, physical exercise",
+               "Seems unsure about how to move body during physical activities",
+               "Seems to do everything with too much force (walking, slamming doors, slamming objects down)",
+               "Has difficulties chewing, swallowing, sucking"
+            ]
+         },
+         {
+            "sense": "Balance",
+            "questions": [
+               "Fears heights, stairs, escalators",
+               "Seems oblivious to risks of heights, etc. Climbs high into a tree, jumps of tall fences"
+            ]
+         }
+      ]
+   },
+   {
+      "category": "Delayed",
+      "index": 5,
+      "senses": [
+         {
+            "sense": "Vision",
+            "questions": [
+               "Response to visual stimuli is delayed (e.g., fails to close eyes when the light is switched on)",
+               "Any experiences are perceived as new and unfamiliar, regardless of the number of times they have experienced the same thing (across all sensory modalities)"
+            ]
+         },
+         {
+            "sense": "Hearing",
+            "questions": [
+               "Response to sounds, questions, instructions is delayed",
+               "Echolalia in monotonous, high-pitched, parrot-like voice"
+            ]
+         },
+         {
+            "sense": "Touch",
+            "questions": [
+               "Response to tactile stimuli is delayed"
+            ]
+         },
+         {
+            "sense": "Smell",
+            "questions": [
+               "Response to smells is delayed"
+            ]
+         },
+         {
+            "sense": "Taste",
+            "questions": [
+               "Response to gustatory stimuli is delayed"
+            ]
+         },
+         {
+            "sense": "Proprioception",
+            "questions": [
+               "Very poor at sports"
+            ]
+         },
+         {
+            "sense": "Balance",
+            "questions": [
+               "Holds head upright, even when leaning or bending over"
+            ]
+         }
+      ]
+   },
+   {
+      "category": "Intensity: hyper",
+      "index": 6,
+      "senses": [
+         {
+            "sense": "Vision",
+            "questions": [
+               "Constantly looks at minute particles, picks up smallest pieces of fluff",
+               "Dislikes bright lights",
+               "Is frightened by sharp lashes of light, lightning, etc.",
+               "Looks down most of the time",
+               "Covers, closes or squints eyes at bright light"
+            ]
+         },
+         {
+            "sense": "Hearing",
+            "questions": [
+               "Covers ears at some sounds",
+               "Is a very light sleeper",
+               "Is frightened by animals",
+               "Dislikes thunderstorms, the sea, crowds",
+               "Dislikes having hair cut",
+               "Avoids sounds and noises",
+               "Distracted/disturbed by sounds that others are unaware of (e.g., humming of electric appliances)",
+               "Makes repetitive noises to block out other sounds"
+            ]
+         },
+         {
+            "sense": "Touch",
+            "questions": [
+               "As a baby, didn’t like to be held or cuddled; arched back, cried or pulled away",
+               "Resists being touched",
+               "Refuses to wear new or stiff clothes, turtleneck jumpers, hats, belts, bracelets, etc.",
+               "Distressed by clothes rubbing on skin, tags, seams in socks",
+               "Strips",
+               "Dislikes brushing teeth",
+               "Dislikes bathing/showering",
+               "Dislikes having hair washed/brushed",
+               "Refuses to walk barefoot on grass or sand",
+               "Over-reacts to heat/cold/pain",
+               "Avoids using hands",
+               "Avoids getting ‘messy’",
+               "Dislikes food of certain texture",
+               "Over-reacts to minor cuts, scrapes, insect bites",
+               "Avoids standing in close proximity (especially in lines) to other people"
+            ]
+         },
+         {
+            "sense": "Smell",
+            "questions": [
+               "Reacts (often negatively) to smell that others are unaware of",
+               "Refuses to eat some foods because of their smell",
+               "Is bothered by cooking",
+               "Toileting problems",
+               "Runs from smells",
+               "Wears the same clothes",
+               "Moves away from people"
+            ]
+         },
+         {
+            "sense": "Taste",
+            "questions": [
+               "Picky eater (with very limited diet), resistive to trying new foods",
+               "Eats only bland food",
+               "Uses tip of tongue for tasting",
+               "Gags/vomits easily"
+            ]
+         },
+         {
+            "sense": "Proprioception",
+            "questions": [
+               "Places body in strange positions",
+               "Difficulty manipulating small objects (e.g., buttons)",
+               "Turns the whole body to look at something",
+               "Walks on toes"
+            ]
+         },
+         {
+            "sense": "Balance",
+            "questions": [
+               "Fearful reactions to ordinary movement activities (e.g., swings, slides, merry-go-round, etc.)",
+               "Difficulty with walking or crawling on uneven or unstable surfaces",
+               "Dislikes head being upside down",
+               "Moves swiftly",
+               "Avoids/dislikes escalators, lift",
+               "Terrified of falling",
+               "Becomes anxious or stressed when feet leave the ground"
+            ]
+         }
+      ]
+   },
+   {
+      "category": "Intensity: hypo",
+      "index": 7,
+      "senses": [
+         {
+            "sense": "Vision",
+            "questions": [
+               "Is attracted to lights",
+               "Looks intensely at objects and people",
+               "Moves/flicks/waves fingers or objects in front of eyes",
+               "Is fascinated with reflections, bright coloured objects",
+               "Runs a hand around the edge of an object",
+               "Perimeter hugging"
+            ]
+         },
+         {
+            "sense": "Hearing",
+            "questions": [
+               "Bangs objects, doors",
+               "Likes vibration",
+               "Likes excessively loud music, TV, etc.",
+               "Likes kitchen and bathroom",
+               "Likes traffic, crowds",
+               "Is attracted by sounds, noises",
+               "Tears paper, crumples paper in the hand",
+               "Makes loud rhythmic noises"
+            ]
+         },
+         {
+            "sense": "Touch",
+            "questions": [
+               "Likes pressure, tight clothes",
+               "Seeks pressure by crawling under heavy objects",
+               "Hugs tightly",
+               "Enjoys rough and tumble play",
+               "Is not bothered by cuts or bruises",
+               "Low reaction to pain and temperature",
+               "Prone to self-injury: pinching, biting, banging head against the wall, etc.",
+               "Enjoys messy play",
+               "Unable to identify which part of body was touched if not looking",
+               "(In extreme cases) doesn’t feel the body",
+               "A messy dresser"
+            ]
+         },
+         {
+            "sense": "Smell",
+            "questions": [
+               "Smells self, people and objects",
+               "Smears (plays with) faeces",
+               "Seeks strong odours",
+               "Doesn’t seem to smell odours",
+               ""
+            ]
+         },
+         {
+            "sense": "Taste",
+            "questions": [
+               "Eats anything (pica)",
+               "Mouths and licks objects",
+               "Craves excessively salty, spicy, sour foods",
+               "Eats mixed food (e.g., sweet and sour)",
+               "Regurgitates"
+            ]
+         },
+         {
+            "sense": "Proprioception",
+            "questions": [
+               "Has low muscle tone",
+               "Has a weak grasp; drops things",
+               "Lack of awareness of body position in space",
+               "Unaware of body sensations (e.g., doesn’t feel hunger, etc.)",
+               "Appears floppy, often leans against people, furniture, walls",
+               "Stumbles frequently; has tendency to fall",
+               "Forcefully stamps feet while walking",
+               "Bites, sucks on fingers, hands",
+               "Chews on pens, straws, shirt sleeves",
+               "Grinds teeth",
+               "Hits, bumps, pushes other children",
+               "Rocks back and forth"
+            ]
+         },
+         {
+            "sense": "Balance",
+            "questions": [
+               "Continually seeks out all kinds of movement activities",
+               "Enjoys swings, merry-go-round",
+               "Craves intense and/or scary rides at amusement parks",
+               "Jumps on furniture, trampolines; spins in a swivel chair",
+               "Always on the move",
+               "Frequently twirls, spins self, runs round and round",
+               "Rocks back and forth (without realising – e.g., while watching TV)",
+               "Frequently puts head upside down",
+               "No safety awareness "
+            ]
+         }
+      ]
+   },
+   {
+      "category": "Sensory Intolerance",
+      "index": 8,
+      "senses": [
+         {
+            "sense": "Vision",
+            "questions": [
+               "Squints or closes eyes in bright lights",
+               "Gets easily frustrated/tired under fluorescent lights",
+               "Gets frustrated with certain colours"
+            ]
+         },
+         {
+            "sense": "Hearing",
+            "questions": [
+               "Gets frustrated with certain sounds",
+               "Tries to destroy/break objects producing sounds (clock, telephone, musical toy, etc.)"
+            ]
+         },
+         {
+            "sense": "Touch",
+            "questions": [
+               "Cannot tolerate certain fabrics (clothes, bedding) and textures, including food",
+               "Eats only hot or only cold foods",
+               "Gags with textured foods"
+            ]
+         },
+         {
+            "sense": "Smell",
+            "questions": [
+               "Cannot tolerate some smells  ",
+               "Nauseated by certain odours",
+               "Disturbed by perfume"
+            ]
+         },
+         {
+            "sense": "Taste",
+            "questions": [
+               "Cannot tolerate certain tastes",
+               "Refuses to lick stamps or envelopes because of their taste"
+            ]
+         },
+         {
+            "sense": "Proprioception",
+            "questions": [
+               "Cannot tolerate certain body postures "
+            ]
+         },
+         {
+            "sense": "Balance",
+            "questions": [
+               "Fears falling or heights"
+            ]
+         }
+      ]
+   },
+   {
+      "category": "Fascination",
+      "index": 9,
+      "senses": [
+         {
+            "sense": "Vision",
+            "questions": [
+               "Is fascinated with coloured and shining objects"
+            ]
+         },
+         {
+            "sense": "Hearing",
+            "questions": [
+               "Is fascinated with certain sounds"
+            ]
+         },
+         {
+            "sense": "Touch",
+            "questions": [
+               "Is fascinated with certain textures"
+            ]
+         },
+         {
+            "sense": "Smell",
+            "questions": [
+               "Is fascinated with certain smells  ",
+               "Seeks out certain odours"
+            ]
+         },
+         {
+            "sense": "Taste",
+            "questions": [
+               "Is fascinated with certain tastes"
+            ]
+         },
+         {
+            "sense": "Proprioception",
+            "questions": [
+               "Is often engaged in complex ritualistic body movements, especially when frustrated or bored",
+               "Enjoys crashing activities",
+               "Loves pushing/pulling objects",
+               "Intentionally falls on the floor"
+            ]
+         },
+         {
+            "sense": "Balance",
+            "questions": [
+               "Spins, jumps, rocks, especially when frustrated or bored",
+               "Jumps on a trampoline for hours on end",
+               "Jumps off furniture or other high places"
+            ]
+         }
+      ]
+   },
+   {
+      "category": "Fluctuation",
+      "index": 10,
+      "senses": [
+         {
+            "sense": "Vision",
+            "questions": [
+               "May respond differently (pleasure – indifference – stress) to the same visual stimuli (lights, colours, visual patterns, etc.)"
+            ]
+         },
+         {
+            "sense": "Hearing",
+            "questions": [
+               "May respond differently (pleasure – indifference – distress) to the same auditory stimuli (sounds, noises)"
+            ]
+         },
+         {
+            "sense": "Touch",
+            "questions": [
+               "May respond differently (pleasure – indifference – distress) to the same tactile stimuli (clothes, touch, heat, pain, etc.)"
+            ]
+         },
+         {
+            "sense": "Smell",
+            "questions": [
+               "May respond differently (pleasure – indifference – distress) to the same smells"
+            ]
+         },
+         {
+            "sense": "Taste",
+            "questions": [
+               "May respond differently (pleasure – indifference – distress) to the same taste"
+            ]
+         },
+         {
+            "sense": "Proprioception",
+            "questions": [
+               "May have diferent muscle tone (low–high) ",
+               "Pencil lines, letters, words, etc. are uneven (e.g., sometimes too tight, sometimes too faint)"
+            ]
+         },
+         {
+            "sense": "Balance",
+            "questions": [
+               "May respond differently (pleasure – indifference – distress) to the same movement activities (swings, slides, spinning, etc.)"
+            ]
+         }
+      ]
+   },
+   {
+      "category": "Vulnerability to Overload",
+      "index": 11,
+      "senses": [
+         {
+            "sense": "Vision",
+            "questions": [
+               "Sudden outbursts of self-abuse/meltdowns or withdrawal in response to visual stimuli",
+               "Tires very easily, especially when in bright places"
+            ]
+         },
+         {
+            "sense": "Hearing",
+            "questions": [
+               "Sudden outbursts of self-abuse/tantrums or withdrawal in response to auditory stimuli",
+               "Tires very easily, especially when in noisy places"
+            ]
+         },
+         {
+            "sense": "Touch",
+            "questions": [
+               "Sudden outbursts of self-abuse/tantrums or withdrawal in response to tactile stimuli"
+            ]
+         },
+         {
+            "sense": "Smell",
+            "questions": [
+               "Sudden outbursts of self-abuse/meltdowns or withdrawal in response to smells"
+            ]
+         },
+         {
+            "sense": "Taste",
+            "questions": [
+               "Sudden outbursts of self-abuse/meltdowns/difficult behaviours caused by taste"
+            ]
+         },
+         {
+            "sense": "Proprioception",
+            "questions": [
+               "Tires very easily, especially when standing "
+            ]
+         },
+         {
+            "sense": "Balance",
+            "questions": [
+               "Sudden outbursts of self-abuse/meltdowns/difficult behaviours caused by excessive movement activities",
+               "Gets nauseated or vomits from excessive movements (swings, merry-go-rounds, cars, etc.)"
+            ]
+         }
+      ]
+   },
+   {
+      "category": "Systems Shutdown",
+      "index": 12,
+      "senses": [
+         {
+            "sense": "Vision",
+            "questions": [
+               "Appears to be a mindless follower",
+               "Surprises with knowing ‘unknown’ information (+auditory)",
+               "Becomes disoriented in bright places",
+               "Doesn’t notice when people come into the room",
+               "Sometimes doesn’t react to visual stimuli"
+            ]
+         },
+         {
+            "sense": "Hearing",
+            "questions": [
+               "Appears to be a mindless follower",
+               "Surprises with knowing ‘unknown’ information",
+               "Becomes disoriented in noisy places",
+               "Sometimes doesn’t react to any sound",
+               "Doesn’t respond when name is called"
+            ]
+         },
+         {
+            "sense": "Touch",
+            "questions": [
+               "Sometimes doesn’t react to any tactile stimuli",
+               "Fails to define either texture or location of touch"
+            ]
+         },
+         {
+            "sense": "Smell",
+            "questions": [
+               "Sometimes doesn’t react to any smell"
+            ]
+         },
+         {
+            "sense": "Taste",
+            "questions": [
+               "Sometimes doesn’t react to any taste"
+            ]
+         },
+         {
+            "sense": "Proprioception",
+            "questions": [
+               "Seems not to know how to move their body (unable to change body position to accommodate task)"
+            ]
+         },
+         {
+            "sense": "Balance",
+            "questions": [
+               "Unable to change body position to accommodate the task",
+               "Rocks unconsciously during other activities (e.g., watching a video)"
+            ]
+         }
+      ]
+   },
+   {
+      "category": "Sensory Agnosia",
+      "index": 13,
+      "senses": [
+         {
+            "sense": "Vision",
+            "questions": [
+               "Feels/acts blind"
+            ]
+         },
+         {
+            "sense": "Hearing",
+            "questions": [
+               "Feels/acts deaf",
+               "Ritualistic behaviour + vision"
+            ]
+         },
+         {
+            "sense": "Touch",
+            "questions": [
+               "Feels/acts numb",
+               "Can’t interpret tactile sensations"
+            ]
+         },
+         {
+            "sense": "Smell",
+            "questions": [
+               "Has difficulty interpreting smells"
+            ]
+         },
+         {
+            "sense": "Taste",
+            "questions": [
+               "Has difficulty interpreting tastes"
+            ]
+         },
+         {
+            "sense": "Proprioception",
+            "questions": [
+               "Seems not to know what their body is doing"
+            ]
+         },
+         {
+            "sense": "Balance",
+            "questions": [
+               "Becomes disoriented after a change in head position"
+            ]
+         }
+      ]
+   },
+   {
+      "category": "Mono-processing",
+      "index": 14,
+      "senses": [
+         {
+            "sense": "Vision",
+            "questions": [
+               "When looking at something, doesn’t seem to hear/feel being touched/smell, or to know the position of the body in space/what body is doing"
+            ]
+         },
+         {
+            "sense": "Hearing",
+            "questions": [
+               "When istening, doesn’t seem to see/feel touch (or can’t define texture or location of touch)/smell, or know position of the body in space, or body movements"
+            ]
+         },
+         {
+            "sense": "Touch",
+            "questions": [
+               "When absorbed with texture, or manipulating objects, doesn’t seem to see/hear/feel/taste, etc."
+            ]
+         },
+         {
+            "sense": "Smell",
+            "questions": [
+               "When absorbed with smell doesn’t seem to see/hear/feel/touch, etc."
+            ]
+         },
+         {
+            "sense": "Taste",
+            "questions": [
+               "When absorbed with taste, doesn’t seem to see/hear/feel touch, etc."
+            ]
+         },
+         {
+            "sense": "Proprioception",
+            "questions": [
+               "When absorbed with body posture/movement doesn’t seem to see/hear/smell, etc."
+            ]
+         },
+         {
+            "sense": "Balance",
+            "questions": [
+               "When absorbed with body movements, doesn’t seem to see/hear/smell, etc."
+            ]
+         }
+      ]
+   },
+   {
+      "category": "Peripheral Perception",
+      "index": 15,
+      "senses": [
+         {
+            "sense": "Vision",
+            "questions": [
+               "Avoids direct eye contact"
+            ]
+         },
+         {
+            "sense": "Hearing",
+            "questions": [
+               "Reacts to instructions better when they are ‘addressed to the wall’"
+            ]
+         },
+         {
+            "sense": "Touch",
+            "questions": [
+               "Can tolerate only ‘instrumental’ (not ‘social’)"
+            ]
+         },
+         {
+            "sense": "Smell",
+            "questions": [
+               "Avoids direct smell"
+            ]
+         },
+         {
+            "sense": "Taste",
+            "questions": [
+               "A very careful eater "
+            ]
+         },
+         {
+            "sense": "Proprioception",
+            "questions": [
+               "Has difficulty in imitating/copying movements"
+            ]
+         },
+         {
+            "sense": "Balance",
+            "questions": [
+               "Avoids balancing activities"
+            ]
+         }
+      ]
+   },
+   {
+      "category": "Compensating",
+      "index": 16,
+      "senses": [
+         {
+            "sense": "Vision",
+            "questions": [
+               "Smells, licks, touches or taps objects to recognise them"
+            ]
+         },
+         {
+            "sense": "Hearing",
+            "questions": [
+               "Looks for the source of the sound"
+            ]
+         },
+         {
+            "sense": "Touch",
+            "questions": [
+               "Taps/smells/licks/uses vision to identify objects (e.g., when retrieving from a bag)"
+            ]
+         },
+         {
+            "sense": "Smell",
+            "questions": [
+               "Inspects food before eating (compensating for smell)"
+            ]
+         },
+         {
+            "sense": "Taste",
+            "questions": [
+               "Inspects food before eating"
+            ]
+         },
+         {
+            "sense": "Proprioception",
+            "questions": [
+               "Watches feet while walking",
+               "Watches hands while doing something"
+            ]
+         },
+         {
+            "sense": "Balance",
+            "questions": [
+               "Avoids climbing, walking on uneven ground"
+            ]
+         }
+      ]
+   },
+   {
+      "category": "Merging with Stimuli",
+      "index": 17,
+      "senses": [
+         {
+            "sense": "Vision",
+            "questions": [
+               "Seems to be absorbed (merged) with lights, colours, patterns"
+            ]
+         },
+         {
+            "sense": "Hearing",
+            "questions": [
+               "Seems to be absorbed (merged) with sounds"
+            ]
+         },
+         {
+            "sense": "Touch",
+            "questions": [
+               "Seems to be absorbed (merged) with certain textures",
+               "Seems to feel pain of others",
+               "Echoemotica"
+            ]
+         },
+         {
+            "sense": "Smell",
+            "questions": [
+               "Seems to be absorbed with smells"
+            ]
+         },
+         {
+            "sense": "Taste",
+            "questions": [
+               "Seems to be absorbed (merged) with certain food"
+            ]
+         },
+         {
+            "sense": "Proprioception",
+            "questions": [
+               "Seems to be absorbed with body sensations",
+               "Echoemotica (echos emotions)"
+            ]
+         },
+         {
+            "sense": "Balance",
+            "questions": [
+               "Seems absorbed with movement"
+            ]
+         }
+      ]
+   },
+   {
+      "category": "Daydreaming",
+      "index": 18,
+      "senses": [
+         {
+            "sense": "Vision",
+            "questions": [
+               "Seems to know what other people (who are not present) are doing"
+            ]
+         },
+         {
+            "sense": "Hearing",
+            "questions": [
+               "Seems to be able to ‘read’ thoughts, feelings, etc. of others"
+            ]
+         },
+         {
+            "sense": "Touch",
+            "questions": [
+               "Complains about being touched/hot/cold, etc. in the absence of the stimuli"
+            ]
+         },
+         {
+            "sense": "Smell",
+            "questions": [
+               "Talks about ‘non-existent’ smells"
+            ]
+         },
+         {
+            "sense": "Taste",
+            "questions": [
+               "Talks about ‘non-existent’ taste in mouth"
+            ]
+         },
+         {
+            "sense": "Proprioception",
+            "questions": [
+               "Talks about ‘non-existent’ physical experiences (e.g., ‘I am lying’, etc.)"
+            ]
+         },
+         {
+            "sense": "Balance",
+            "questions": [
+               "Experiences movement while still (e.g., ‘I’m lying’, etc.)"
+            ]
+         }
+      ]
+   },
+   {
+      "category": "Synaethesia",
+      "index": 19,
+      "senses": [
+         {
+            "sense": "Vision",
+            "questions": [
+               "Covers/rubs/blinks, etc. eyes in response to a sound/touch/smell/taste/movement",
+               "Complains about (is frustrated with) the ‘wrong’ colours of letters/numbers, etc. on coloured blocks, etc."
+            ]
+         },
+         {
+            "sense": "Hearing",
+            "questions": [
+               "Covers/hits ears in response to lights, colours/touch, texture/smell/taste/movement",
+               "Complains about (is frustrated with) a sound in response to colours/textures/touch/scent/flavour/movement"
+            ]
+         },
+         {
+            "sense": "Touch",
+            "questions": [
+               "Reports seeing colours, hearing sound, etc. when being touched",
+               "Complains about (is frustrated with) feeling being touched when being looked at",
+               "Complains about (is frustrated with) backache, etc./heat/cold in colourful/noisy/crowded places"
+            ]
+         },
+         {
+            "sense": "Smell",
+            "questions": [
+               "Covers/rubs/hits nose in response to a visual/auditory stimulus/touch/taste/movement",
+               "Complains about (is frustrated with) the smell in response to a visual/auditory stimulus/touch/taste/movement"
+            ]
+         },
+         {
+            "sense": "Taste",
+            "questions": [
+               "Makes swallowing movements in response to a visual/auditory stimulus/touch/smell/movement",
+               "Complains about (is frustrated with) some tastes in response to a visual/auditory stimulus/touch/smell/movement"
+            ]
+         },
+         {
+            "sense": "Proprioception",
+            "questions": [
+               "Involuntary postures of the body in response to a visual/auditory stimulus/smell/taste/touch"
+            ]
+         },
+         {
+            "sense": "Balance",
+            "questions": [
+               "Involuntary movements of the body in response to a visual/auditory stimulus/smell/taste/touch"
+            ]
+         }
+      ]
+   },
+   {
+      "category": "Perceptual Memory",
+      "index": 20,
+      "senses": [
+         {
+            "sense": "Vision",
+            "questions": [
+               "Displays a good visual memory; remembers routes and places",
+               "Memorises enormous amounts of information at a glance",
+               "Reactions are triggered by lights, colours, patterns"
+            ]
+         },
+         {
+            "sense": "Hearing",
+            "questions": [
+               "Displays a good auditory memory (for nursery rhymes, songs, etc.)",
+               "Reactions are triggered by sounds/words",
+               "Uses idiosyncratic routinised responses",
+               "Uses songs, commercials, etc. to respond",
+               "Cannot keep track of conversation"
+            ]
+         },
+         {
+            "sense": "Touch",
+            "questions": [
+               "Displays a good tactile memory",
+               "Reactions are triggered by textures/touch/temperature"
+            ]
+         },
+         {
+            "sense": "Smell",
+            "questions": [
+               "Displays a good memory for smells ",
+               "Reactions are triggered by smells"
+            ]
+         },
+         {
+            "sense": "Taste",
+            "questions": [
+               "Displays a good memory for tastes",
+               "Reactions are triggered by certain food"
+            ]
+         },
+         {
+            "sense": "Proprioception",
+            "questions": [
+               "Displays a good kinaesthetic memory",
+               "Reactions are triggered by body sensations and movements"
+            ]
+         },
+         {
+            "sense": "Balance",
+            "questions": [
+               "Displays a good kinaesthetic memory",
+               "Reactions are triggered by movements"
+            ]
+         }
+      ]
+   },
+   {
+      "category": "Perceptual Thinking",
+      "index": 21,
+      "senses": [
+         {
+            "sense": "Vision",
+            "questions": [
+               "Easily solves jigsaw puzzles",
+               "Learns nouns first",
+               "Has difficulties with adverbs and prepositions",
+               "Often poor at mathematics",
+               "Is a good synthesiser",
+               "Provides solutions but is unable to explain how they have been reached",
+               "Develops own methods of problem-solving"
+            ]
+         },
+         {
+            "sense": "Hearing",
+            "questions": [
+               "Interprets, manipulates and organises ‘sound pictures’"
+            ]
+         },
+         {
+            "sense": "Touch",
+            "questions": [
+               "Learning through touching objects, developing ‘tactile concepts’"
+            ]
+         },
+         {
+            "sense": "Smell",
+            "questions": [
+               "Defines places and people by smell (sniffs)"
+            ]
+         },
+         {
+            "sense": "Taste",
+            "questions": [
+               "Defines places, objects and people by taste (licks)"
+            ]
+         },
+         {
+            "sense": "Proprioception",
+            "questions": [
+               "Mimics actions when instructions are being given"
+            ]
+         },
+         {
+            "sense": "Balance",
+            "questions": [
+               "Thinking in movements"
+            ]
+         }
+      ]
+   }
+]

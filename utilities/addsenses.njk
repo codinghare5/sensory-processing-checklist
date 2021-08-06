@@ -17,7 +17,7 @@ eleventyNavigation:
             Name of Sense to Edit:
         </label>
         <select id="choosesense" class="fs-3 p-1 ps-2 ms-1">
-            {% for sense in categoryquestions[0].senses %}
+            {% for sense in allQuestions[0].senses %}
                 <option value="{{ loop.index - 1 }}">
                     {{ sense.sense }}
                 </option>
@@ -49,31 +49,11 @@ eleventyNavigation:
 <div class='container-xl card py-2 mb-4'>
     
 <!-- Progress bar ---------------------------------------------------------------------------- -->
-{# create progress bar #}
-<section class="container-xl py-3 px-4" id="progress-grid">
-    <div class="row bg-white">
-        {% for metacat in meta %}
-            {% for category in metacat.categories %}
-                {% set catindex = category.index %}
-        
-                <div class="col p-0 progress-column" style="border: 2px solid LightGray" 
-                            catindex="{{ catindex - 1 }}">
-                    {% for sense in category.senses %}
-                    <div class="progress-item" 
-                        style="width: auto; height:20px; border: 1px solid; border-color: LightGray;"
-                        senseindex="{{ loop.index - 1 }}">
-                    </div>
-                    {% endfor %}
-                </div>
-
-            {% endfor %}
-        {% endfor %}
-    </div>
-</section>
+{% include "progressgrid.njk" %}
 
 {# Create Category name placeholder #}
 <h2 class="p-3" id="category-name"> 
-    {{ categoryquestions[0].category }} for {{ questions[0].sense}}
+    {{ allQuestions[0].category }} for {{ questions[0].sense}}
 </h2>
 
 <section class="container-xl py-3 px-4" id="input-section">
@@ -109,208 +89,36 @@ eleventyNavigation:
 {#===============================   END LAYOUT   ==================================#}
 {#================================================================================#}
 
-
-{#============================== START DATA CONTAINERS ==============================#}
-{#================================================================================#}
-
-{# Create header for category names  #}
-{# Creating them together inside a <div> with an id makes them easy to extract in javascript #}
-<div id="category-container" style="display:none"> 
-    {% for cat in categoryquestions %}
-        <h2 catindex="{{ cat.index }}"> {{ cat.category }}</h2>
-    {% endfor %}
-</div>
-
-<div class="container-xl pt-5" id="questionset-container" style="display:none">
-    {% for category in categoryquestions %}
-        {% set catindex = category.index %}
-        <div class="category-questionset" catindex="{{catindex - 1 }}">
-            {% for sense in category.senses %} 
-                {% set senseindex = loop.index %} 
-                <section class="category-sense-questions" senseindex="{{ senseindex - 1}} ">                    
-                    {% for question in sense.questions %}
-                        <p> {{ question }} </p>
-                    {% endfor %} {# end question loop #}
-                </section>
-            {% endfor %} {# end category loop #}
-        </div>
-    {% endfor %} {# end sense loop #}
-</div> {# end container #}
-
-
-{#============================== END DATA CONTAINERS ==================================#}
-{#=====================================================================================#}
-
 {#=================================  START JAVASCRIPT ===================================#}
 {#======================================================================================#}
+<script type="text/javascript" src="../../js2/generic.js"></script>
+<script type="text/javascript" src="../../js2/progressgrid.js"></script>
 <script>
      // Functions 
     ///////////////////////////////////////////////////////////////////////////////////////
 
-    // Generic Functions
-    ////////////////////////////////////////////////////////////////////////////////////////
-    // create array script copied from internet
-    // usage:
-    //      createArray() creates empty 1D array
-    //      createArray(2) creates 1D array of length 2
-    //      createArray(3, 2) creates 2D array, first dimension length 3, second dimension length 2
-    //      createArray(3,3,3,3) creates a 4D array where all dimensions have length 3
-    function createArray(length) {
-        var arr = new Array(length || 0),
-            i = length;
-
-        if (arguments.length > 1) {
-            var args = Array.prototype.slice.call(arguments, 1);
-            while(i--) arr[length-1 - i] = createArray.apply(this, args);
-        }
-
-        return arr;
-    }
-
-    // function to add the same event listener to every element in an array. 
-    Array.prototype.addEventListener = function(eventname, eventfunction) {
-        for (i=0 ; i<this.length ; i++)
-            this[i].addEventListener(eventname, eventfunction);
-    };
-
-    // create a function to console log every element in an array
-    Array.prototype.consolelog = function() {
-        for (i=0 ; i<this.length ; i++)
-            console.log(this[i]);
-    };
-
-    // convert Nodelists and HTLMCollections (and any other array like objects to an array.
-    function convertToArray(arrayLikeObject) {
-        var newArray = createArray(arrayLikeObject.length)
-        for (var i=0 ; i<newArray.length; i++)
-            newArray[i] = arrayLikeObject[i];
-
-        return newArray;
-    }
 
     // Functions that manipulate html elements in some way
     /////////////////////////////////////////////////////////////////////
 
-    // create an array of Sense names
-    function createSenseArray() {
-        // grab all the options from choosesense
-        var options = document.querySelectorAll("#choosesense option");
-        var senseArray = createArray(options.length);
-        for (var i=0; i<options.length; i++)
-            senseArray[i] = options[i].innerHTML.trim();
+    // getCategoryVariables
+    // This is an sync function that fetches the json file and sets
+    // various global variables.
+    // Note async means that it returns immediately and before tasks are completed.
+    async function getCategoryVariables(){
 
-        return senseArray;
-    }
+        categoryArray = await fetchJson("../../json/allQuestions.json");
 
-    // create an array of Category. This should match categoryquestions.json:
-    //      - category (category name)
-    //      - index
-    //      - senses (Array)
-    //              sense  (sense name)
-    //              questions (array of question)
-    function createCategoryArray(nameArray) {
+        maxCategoryIndex = categoryArray.length - 1;
+        maxSenseIndex = categoryArray[0].senses.length - 1;
 
-        // (local) constructor for Sense
-        function Sense(name,questionset){
-            this.sense = name;
-            if (questionset){
-                var qset = questionset.getElementsByTagName('p');
-                this.questions = createArray(qset.length);
-                for (var k=0; k<qset.length; k++)
-                    this.questions[k] = qset[k].innerHTML.trim();
-            }
-            else this.questions = [];
-        }
-
-        // (local) constructor for Category
-        function Category(name,catindex,questionSets){
-            this.category = name.innerHTML;
-            this.index = catindex;
-
-            // create an array of questions grouped by sense
-            var senseArray = createArray(questionSets.length);
-            for (var j=0; j<questionSets.length; j++){
-                qset = questionSets[j];
-                senseindex = qset.getAttribute('senseindex');
-                senseArray[+senseindex] = new Sense(nameArray[+senseindex],qset);
-            }
-            this.senses = senseArray;
-        }
-
-        // function to add a new sense to a category
-        Category.prototype.addNewSense = function(newSense,questionSet){
-           this.senses.push(new Sense(newSense,questionSet));
-        };
-
-        // Grab the categoryContainer and create (DOM) arrays of headers and descriptions
-        const categoryContainer = document.getElementById("category-container")
-        const headers = categoryContainer.getElementsByTagName("h2");
-
-        // Grab the questionset container and create a DOM array of category questionsets
-        const categoryQuestionsets = document.querySelectorAll('#questionset-container .category-questionset');
-
-        // create and fill an array of Category
-        catArray = createArray(headers.length);
-        for (i=0 ; i<headers.length ; i++) {
-            senseQSets = categoryQuestionsets[i].querySelectorAll('.category-sense-questions');
-            catindex = headers[i].getAttribute('catindex');
-            catArray[i] = new Category(headers[i], catindex, senseQSets);
-            //console.log(catArray[i]);
-        }
-        return catArray;
-    }
-
-    //function to set or remove the progress grid highlight:
-    //  just set the color
-    //      - LightGray for no highlight
-    //      - Black for highlight
-    // or change colours to suit
-    function setProgressGridHighlight(catindex, colour){
-        var item = progressGrid[+catindex].column;
-        item.style.borderColor = colour;
-    }
-
-    // Create progress grid column array
-    //  This is a list of the columns of the grid where each item contains
-    //      a progress-column
-    //      an array of progress-item
-    // An array of ProgressGrid is returned
-    function createProgressGrid() {
-
-        // (local) constructor for ProgressGrid
-        // column is a DOM object with class progress-column
-        function ProgressGrid(column, catindex){
-            this.column = column;
-
-            items = column.querySelectorAll(".progress-item");
-            itemsArray = createArray(items, length);
-            for (i=0 ; i<items.length ; i++) {
-                item = items[i];
-                itemsArray[+item.getAttribute("senseindex")] = item;
-                item.addEventListener("click", function(){
-                    if (catindex != +currentCategoryIndex) {
-                        display(catindex,currentSenseIndex);
-                    }
-                });
-            }
-
-            this.senseboxes = itemsArray
-        }
-
-        const pGrid = document.getElementById("progress-grid");
-        const progressColumnList = pGrid.querySelectorAll(".progress-column");
-        const progressArray = createArray(progressColumnList.length);
-        for (j=0 ; j<progressArray.length ; j++){
-            item = progressColumnList[j];
-            catindex = item.getAttribute("catindex");
-            progressArray[+catindex] = new ProgressGrid(item, catindex);
-        }
-
-        return progressArray;
+        questionArea.value = categoryArray[currentCategoryIndex].senses[currentSenseIndex].questions.join('\n');
+        jsonView.innerHTML = '<pre>' + JSON.stringify(categoryArray, null, 3) + '</pre>';
     }
 
     function saveChanges() {
         categoryArray[currentCategoryIndex].senses[currentSenseIndex].questions = questionArea.value.split("\n");
+        questionsChanged = false;
     }
 
     function undoChanges() {
@@ -371,7 +179,7 @@ eleventyNavigation:
             return;
         
         for (let i=0 ; i<categoryArray.length ; i++)
-            categoryArray[i].addNewSense(newSense);
+            categoryArray[i].senses.push({sense: newSense, questions: []});
 
         maxSenseIndex++;
 
@@ -404,24 +212,25 @@ eleventyNavigation:
     const categoryTitle = document.getElementById('category-name');
     const questionArea = document.getElementById('questions-textarea')
 
-    // constants for structures of html elements
-    const senseNameArray = createSenseArray();
-    //senseNameArray.consolelog();
-    const categoryArray = createCategoryArray(senseNameArray);
-    const progressGrid = createProgressGrid();
-    //categoryArray.consolelog();
-    //progressGrid.consolelog();
+    // Category Variables 
+    // note getCategoryVariables is async and will thus return before tasks are completed.
+    // DO NOT put console.log after this function.
+    // All console.log should be inside the function.
 
-    // Other variables
-    const maxCategoryIndex = categoryArray.length - 1;
-    let maxSenseIndex = categoryArray[0].senses.length - 1;
+    let categoryArray;
+    let maxCategoryIndex;
+    let maxSenseIndex
+    getCategoryVariables();
+    
     let currentCategoryIndex = 0;
     let currentSenseIndex = 0;
     let questionsChanged = false;
 
+    // constants for structures of html elements
+    const progressGrid = createProgressGrid();
+    //progressGrid.consolelog();
+
     // set things up
-    jsonView.innerHTML = '<pre>' + JSON.stringify(categoryArray, null, 3) + '</pre>';
-    questionArea.value = categoryArray[currentCategoryIndex].senses[currentSenseIndex].questions.join('\n');
     setProgressGridHighlight(currentCategoryIndex,'Black');
     previousCategoryButton.style.color = 'LightGray';
     previousSenseButton.style.color = 'LightGray';
@@ -499,7 +308,8 @@ eleventyNavigation:
         [fileHandle] = await window.showOpenFilePicker(options);
         const file = await fileHandle.getFile();
         const contents = await file.text();
-        jsonView.innerHTML = contents;
+        categoryArray = JSON.parse(contents);
+        jsonView.innerHTML = stringify(categoryArray,null,3);
     });
 
     // works but not in debugger
@@ -515,6 +325,6 @@ eleventyNavigation:
             console.log(e); 
         };
     });
-
-    
+   
 </script>
+
