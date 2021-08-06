@@ -22,8 +22,10 @@
     //  filename should be the complete path. 
     //      Can be a URL for a file or can be relative to the webpage.
     async function fetchJson(filename){
+        console.log('fetching ' + filename);
         const response = await fetch(filename);
         const result = await response.json();
+        console.log('returning');
         
         return result;
     }

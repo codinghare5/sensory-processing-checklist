@@ -222,9 +222,13 @@ eleventyNavigation:
     // Functions 
     ///////////////////////////////////////////////////////////////////////////////////////
     async function getCategoryVariables() {
-        categoryInfoArray = await fetchJson("../../json/categoryinfo.json");
+        console.log('reading categoryinfo.json');
+        const infoArray = await fetchJson("../../json/categoryinfo.json");
+        console.log(JSON.stringify(infoArray,null,3));
 
-        maxCategoryIndex = categoryInfoArray.length - 1;
+        const maxIndex = infoArray.length - 1;
+
+        return {infoArray, maxIndex};
     }
 
     function buttonEventListener(parent,thisButton){      
@@ -233,7 +237,7 @@ eleventyNavigation:
         let thisvalue = thisButton.value;
 
         if (!thisButton.checked) { // button was checked before the change
-            if (thisButton == falsebutton) { // if false button do nothing else
+            if (thisButton == parent.falsebutton) { // if false button do nothing else
                 parent.falsebutton.checked=true;
             }
             else {
@@ -249,7 +253,7 @@ eleventyNavigation:
         }
         else { // the button was not active
             //console.log(this.checked);
-            if (thisbutton === parent.falsebutton) {
+            if (thisButton === parent.falsebutton) {
                 //console.log("It is false button.");
                 parent.value = 0;
                 for (j=0; j<parent.buttons.length - 1 ; j++)
@@ -285,23 +289,31 @@ eleventyNavigation:
         constructor(fieldset){
             const buttons = fieldset.getElementsByTagName('input');
 
-            value: 0;  
-            buttons: buttons;          
-            wastruebutton: buttons[0];
-            truebutton: buttons[1];
-            notsurebutton: button[2]
-            falsebutton: button[3]
+            this.value = 0;  
+            this.buttons = buttons;          
+            this.wastruebutton = buttons[0];
+            this.truebutton = buttons[1];
+            this.notsurebutton = buttons[2]
+            this.falsebutton = buttons[3]
 
             for (let i=0; i<4; i++)
-                buttons[i].addeventlistener('change', buttonEventListener(parent, buttons[i]));           
+                buttons[i].addEventListener('change', () => {
+                                buttonEventListener(this, buttons[i])});           
         }
     }
 
     class QuestionSet {
         constructor(catindex,senseindex,qset){
-            catindex: catindex;
-            senseindex: senseindex;
-            html: qset;
+            this.catindex = catindex;
+            this.senseindex = senseindex;
+            this.html = qset;
+
+            let questions = qset.querySelectorAll('fieldset');
+            let questionArray = createArray(questions.length);
+            for (let i=0 ; i<questions.length ; i++)
+                questionArray[i] = new Question(questions[i]);
+
+            this.questions = questionArray;
         }
 
         getValues(){
@@ -338,15 +350,46 @@ eleventyNavigation:
         }
         return questionSetArray;
     }
+
+    class DisplayClass {
+        constructor(){
+            // Category information elements
+            this.categoryTitle = document.getElementById('category-name');
+            this.categoryButton = document.getElementById('category-description-button');
+            this.categoryDescription = document.getElementById('category-description-body');
+
+            // Body
+            this.accordionBodies = document.querySelectorAll('#bodyaccordion .accordion-body');
+            this.accordionCollapses = document.querySelectorAll('#bodyaccordion .accordion-collapse');
+        }
+
+        setAccordionBodies(catindex) {
+            for (i=0; i<this.accordionBodies.length ; i++)
+                this.accordionBodies[i].replaceChild(questionSetArray[catindex][i].html, 
+                                                        this.accordionBodies[i].children[0]);
+        }
+
+        displayCategory(catindex){
+            let categoryName = categoryInfoArray[catindex].name
+            this.categoryTitle.innerText = categoryName;
+            this.categoryButton.innerText = 'About ' + categoryName;  
+
+            setAccordionBodies(catindex);  
+        }
+    }
   
     // Variables
     /////////////////////////////////////////////////////////////////////////////////////
-    let categoryInfoArray;
-    let maxCategoryIndex;
-    getCategoryVariables(); // async function: returns immediately with a promise
-
-    
+    const {maxCategoryIndex, categoryInfoArray} = getCategoryVariables(); // async function: returns immediately with a promise
+   
     const questionSetArray = setQuestionSetArray();
     questionSetArray.consolelog();
+
+    let currentCategory = 0;
+
+    // HTML display elements
+    displayElements = new DisplayClass();
+
+    displayElements.setAccordionBodies(0);
 
 </script>
