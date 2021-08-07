@@ -230,20 +230,15 @@ eleventyNavigation:
     }
 
     function columnListener(column){
-        if (column.catindex != currentCategory) {
-            progressGrid[currentCategory].setProgressGridHighlight('LightGray');
-            if (currentCategory == maxCategoryIndex)
-                nextButton.innerText = "Next";
-            else if (currentCategory == 0)
-                prevButton.style.color = 'Black';
-
-            displayElements.displayCategory(column.catindex); // updates currentCategory
-
-            column.setProgressGridHighlight('Black');
-            if (currentCategory == 0)
-                prevButton.style.color = 'LightGray';
-            else if (currentCategory == maxCategoryIndex)
-                nextButton.innerText = "Show Results";
+        const catindex = +column.catindex;
+        if (catindex != currentCategory) {
+            // colour in current column
+            let currentColumn = progressGrid[currentCategory];
+            let sensequestions = questionSetArray[currentCategory];
+            currentColumn.senseboxes.forEach((cell, index) => 
+                currentColumn.colourCell(index,sensequestions[index].getValues().max));
+            
+            displayElements.displayCategory(catindex); // updates currentCategory   
         }
     }
 
@@ -315,6 +310,34 @@ eleventyNavigation:
             buttons.forEach(item => item.addEventListener('change', () => {
                                 buttonEventListener(this,item)}));           
         }
+
+        setFalse() {
+            this.value = 0;
+            this.buttons.forEach(button => button.checked = false);
+            this.falsebutton.checked = true;
+        }
+
+        setValue(value){
+            this.value = +value;
+            this.buttons.forEach(button => button.checked = false);
+            switch (+value)
+            {
+                case 0: this.falsebutton.checked = true;
+                        break;
+                case 1: this.notsurebutton.checked = true;
+                        break;
+                case 2: this.wastruebutton.checked = true;
+                        break;
+                case 3: this.truebutton.checked = true;
+                        break;
+                case 5: this.wastruebutton.checked = true;
+                        this.truebutton.checked = true;
+                        break;
+                default: this.value=0; // in case val was not recognised so set to 0
+                        this.falsebutton.checked = true ;
+                        console.log('default val now 0: False');  
+            }
+        }
     }
 
     class QuestionSet {
@@ -342,6 +365,22 @@ eleventyNavigation:
             else
                 return {max: max, values: values};
         }
+
+        setFalse(){
+            this.questions.forEach(item => item.setFalse());
+        }
+
+        setValues(valueArray) {
+            let max = 0;
+            this.questions.forEach((item,index) => {
+                    const val = valueArray[index];
+                    item.setValue(val);
+                    if (max < val)
+                        max = val;
+            });
+            if (max > 0)
+                progressGrid[this.catindex].colourCell(this.senseindex,max);
+        }
     }
 
     function setQuestionSetArray() {
@@ -363,7 +402,7 @@ eleventyNavigation:
     function createJsonAnswers(){
         let jsonstruct = {"type": "SPCR", 
                                 "version": 1, 
-                                "currentIndex": this.currentIndex,
+                                "currentIndex": currentCategory,
                                 "questionStatus": []};
 
         function Status(senseindex,catindex,values){
@@ -386,6 +425,18 @@ eleventyNavigation:
         return jsonstruct;
     }
 
+    function setJsonAnswers(jsonAnswers){
+        progressGrid.forEach(item => item.clear());
+        jsonAnswers.questionStatus.forEach(status => {
+            qset = questionSetArray[+status.categoryindex][+status.senseindex];
+            if (status.values == 0)
+                qset.setFalse();
+            else 
+                qset.setValues(status.values);
+        });
+        displayElements.displayCategory(jsonAnswers.currentIndex);
+    }
+
     class DisplayClass {
         constructor(){
             // Category information elements
@@ -405,13 +456,24 @@ eleventyNavigation:
         }
 
         displayCategory(catindex){
+            progressGrid[currentCategory].setProgressGridHighlight('LightGray');
+            if (currentCategory == maxCategoryIndex)
+                nextButton.innerText = "Next";
+            else if (currentCategory == 0)
+                prevButton.style.color = 'Black';
+
             let categoryName = categoryInfoArray[+catindex].name
             this.categoryTitle.innerText = categoryName;
             this.categoryButton.innerText = 'About ' + categoryName;  
-
             this.setAccordionBodies(catindex);  
 
             currentCategory = +catindex;
+
+            progressGrid[currentCategory].setProgressGridHighlight('Black');
+            if (currentCategory == 0)
+                prevButton.style.color = 'LightGray';
+            else if (currentCategory == maxCategoryIndex)
+                nextButton.innerText = "Show Results";    
         }
     }
 
@@ -469,7 +531,13 @@ eleventyNavigation:
 
     loadButton.addEventListener("click", async () => {
         let answers = await readJson();
-        setAnswers(answers);
-    })   
-
+        if (answers) {
+            //console.log("type: " + answers.type + " version: "+ answers.version)
+            if (answers && answers.type && answers.type == "SPCR" && answers.version == "1") {
+                //console.log(answers);
+                setJsonAnswers(answers);
+            }
+            else alert("File is not the right kind of file.");
+        }
+    });  
 </script>
