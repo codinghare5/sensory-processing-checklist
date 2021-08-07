@@ -13,7 +13,7 @@ eleventyNavigation:
     <nav class="d-flex justify-content-around py-4">
         {# button to read question answers #}
         {# input type='file' is best for loading a file in #}
-        <input class="p-2 bg-info rounded" id="readbutton" id="readfile" type="file" accept="application/json"/>
+        <button class="p-2 bg-info rounded" id="readbutton" accept="application/json">Load</button>
     </nav>
 </section>
 
@@ -70,4 +70,5 @@ eleventyNavigation:
 {#====================================== JAVASCRIPT =======================================================#}
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script type="text/javascript" src="../../js/readwrite.js"></script>
 <script type="text/javascript" src="../../js/results.js"></script>

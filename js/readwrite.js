@@ -14,6 +14,13 @@ function saveToFile(){
 }
 
 // Loading the answers
+async function loadFile() {
+    [fileHandle] = await window.showOpenFilePicker();
+    const file = await fileHandle.getFile();
+    const contents = await file.text();
+    return contents;
+};
+
 async function loadFromFile() {
     let fileHandle;
     [fileHandle] = await window.showOpenFilePicker();
