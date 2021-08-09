@@ -425,6 +425,30 @@ eleventyNavigation:
         return jsonstruct;
     }
 
+    function createJsonAnswers2(){
+        let jsonstruct = {"type": "SPCR", 
+                                "version": 1,
+                                "nCategories": maxCategoryIndex + 1,
+                                "nSenses": maxSenseIndex + 1, 
+                                "currentIndex": currentCategory,
+                                "answers": createArray(maxCategoryIndex + 1, maxSenseIndex + 1)};
+
+        function Status(max,values){
+            this.max = max
+            this.values = values;
+        }
+
+        for (let i=0 ; i<=maxCategoryIndex ; i++){
+            for (let j=0 ; j<=maxSenseIndex ; j++){
+                let qset = questionSetArray[i][j];
+                let {max, values} = qset.getValues();
+                    jsonstruct.answers[i][j] = new Status(max,values);
+            }
+        }
+
+        return jsonstruct;
+    }
+
     function setJsonAnswers(jsonAnswers){
         progressGrid.forEach(item => item.clear());
         jsonAnswers.questionStatus.forEach(status => {
@@ -434,6 +458,20 @@ eleventyNavigation:
             else 
                 qset.setValues(status.values);
         });
+        displayElements.displayCategory(jsonAnswers.currentIndex);
+    }
+
+    function setJsonAnswers2(jsonAnswers){
+        progressGrid.forEach(item => item.clear());
+        for (let i=0 ; i<jsonAnswers.nCategories; i++) {
+            for (let j=0; j<jsonAnswers.nSenses; j++) {
+                const answers = jsonAnswers.answers[i][j];
+                if (answers.max == 0)
+                    questionSetArray[i][j].setFalse();
+                else
+                    questionSetArray[i][j].setValues(answers.values);
+            }
+        }
         displayElements.displayCategory(jsonAnswers.currentIndex);
     }
 
@@ -514,7 +552,7 @@ eleventyNavigation:
 
     // Main thread 
     const questionSetArray = setQuestionSetArray();
-    const maxSenseIndex = questionSetArray[0].length;
+    const maxSenseIndex = questionSetArray[0].length - 1;
     //questionSetArray.consolelog();
 
     // HTML display elements
@@ -526,7 +564,7 @@ eleventyNavigation:
     loadButton = document.getElementById("readbutton");
 
     saveButton.addEventListener('click', async () => {
-        await saveJson(createJsonAnswers());
+        await saveJson(createJsonAnswers2());
     });
 
     loadButton.addEventListener("click", async () => {
@@ -535,7 +573,7 @@ eleventyNavigation:
             //console.log("type: " + answers.type + " version: "+ answers.version)
             if (answers && answers.type && answers.type == "SPCR" && answers.version == "1") {
                 //console.log(answers);
-                setJsonAnswers(answers);
+                setJsonAnswers2(answers);
             }
             else alert("File is not the right kind of file.");
         }
