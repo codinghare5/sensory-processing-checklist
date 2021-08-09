@@ -1,0 +1,581 @@
+---
+layout: layouts/base.njk
+title: Simple View
+eleventyNavigation:
+  key: Simple View 2
+  parent: Views
+  order: 9
+---
+<section class="container-xl p-4">
+    <h1 class="text-center"> Sensory Processing Checklist Questions</h1>
+
+    {# Instructions #}
+    <h2>Instructions</h2>
+    <p>Please answer the question according to the following options:</p>
+    <ul>
+        <li><strong>Was True</strong>: was true at any time in the past.</li>
+        <li><strong>True</strong>: True now (if it was true and is true now tick both answers)</li>
+        <li><strong>Not Sure</strong>: Not sure or don't know</li>
+         <li><strong>False</strong>: False (if the statement is not true)</li>
+    </ul>
+    <p>Please try to answer all the questions.</p>
+
+    <h3>Navigation</h3>
+    <p>The simplest way to work your way through the questions is simply to answer them in order presented, clicking the next button when you are ready to move forward. The progress grid highlights the column for the questions that are currently being answered.</p>
+
+    <p>The progress grid will be coloured in as you answer the questions. This will provide you with an interim indication of the results.</p>
+
+    <p>If you want to move to a different set of answers, simply click on the appropriate column of the progress grid.</p>
+
+    <h3>Saving results</h3>
+    <p>It is possible to save answers and read them in again. To do so, click the save and read buttons below.<br>
+    Files will be downloaded to your download folder. The default file name is answers-spcr.json</p>
+</section>
+
+<!-- Context menu ---------------------------------------------------------------------------- -->
+{# context menu #}
+<section class="container-xl card mb-2">
+    <nav class="d-flex justify-content-around py-4">
+        {# button to save question answers #}
+        <button class="p-2 bg-info rounded" id="savebutton" type="button">Save Answer File</button>
+        {# button to save question answers #}
+        {# input type='file' is best for loading a file in #}
+        <button class="p-2 bg-info rounded" id="readbutton" type="button">Read File</button>
+        {# button to show results #}
+        <button class="p-2 bg-info rounded" id="resultsbutton" type="button">Show Results</button>
+    </nav>
+</section>
+
+<!-- Category name ---------------------------------------------------------------------------- -->
+{# wrap everything into a card class #}
+<div class='container-xl card py-2 mb-4'>
+    {# Create Category name placeholder #}
+    <h2 class="p-3" id="category-name"> {{ categorysummary[0].name }} </h2>
+<!-- Progress bar ---------------------------------------------------------------------------- -->
+{# create progress grid #}
+{% include "progressgrid.njk"%}
+
+<!-- Information about the category ---------------------------------------------------------------------------- -->
+{# Wrap it inside a container, so it desn't stand out #}
+<section class="container-xl">
+    {# Create Area to hold information about the category - put the text for the first category in it 
+        This should be an accordion #}
+    <div class="accordion py-3" id="category-description">
+      <div class="accordion-item">
+        <h2 class="accordion-header">
+          <button class="accordion-button" type="button" data-bs-toggle="collapse" 
+                    data-bs-target="#category-collapse" aria-expanded="true" 
+                    aria-controls="categorycollapse"
+                    id="category-description-button">
+                About {{ categoryinfo[0].name }}
+          </button>
+        </h2>
+        <div id="category-collapse" class="accordion-collapse collapse show" 
+                aria-labelledby="category-description-header" 
+                data-bs-parent="#category-description">
+          <div class="accordion-body" id="category-description-body">
+            {{ categoryinfo[0].description}}
+          </div>
+        </div>
+      </div>
+    </div>
+</section>
+
+<!-- END Information about the category ---------------------------------------------------------------------------- -->
+
+{# body #}
+<!-- Container with the set of questions #questionset ---------------------------------------------------------------------------- -->
+<section class="container-xl" id="questionset">
+    {# body accordion of sets of questions labelled by sense #}
+    <div class="accordion" id="bodyaccordion">
+        {# create a set of sense accordions #}
+        {% for sense in allQuestions[0].senses %}
+            <div class="accordion-item">
+                {% set sensestr = sense.sense | lower %}
+                <h2 class="accordion-header" id="{{ sensestr }}-accordion-header">
+                    <button class="accordion-button collapsed" type="button" 
+                            data-bs-toggle="collapse" 
+                            data-bs-target="#{{ sensestr }}-collapse" 
+                            aria-expanded="false" 
+                            aria-controls="{{ sensestr }}-collapse">
+                        {{ sense.sense }} Questions
+                    </button>
+                </h2>
+                 <div id="{{ sensestr }}-collapse" class="accordion-collapse collapse" 
+                        aria-labelledby="{{ sensestr }}-accordion-header" data-bs-parent="#bodyaccordion"
+                        senseindex="{{ loop.index - 1 }}">
+                    <div class="accordion-body">
+                        <p>{{ sense.sense }} questions for this category will go here.</p>
+                    </div>
+                </div>
+            </div> {# end accordion item #}
+        {% endfor %}
+    </div> {# end accordion #}
+
+    {# next and previous buttons #}
+    <div>
+        <nav class="d-flex justify-content-between py-3">
+            <button class="p-2 bg-info rounded" id="previousbutton" type="button">Previous</button>
+            <button class="p-2 bg-info rounded" id="nextbutton" type="button">Next</button>
+        </nav>
+    </div>
+</section> {# end container#}
+</div>
+
+
+{#=============================== END BASIC PAGE LAYOUT =================================================#}
+
+
+
+{#=======================================================================================================#}
+
+
+
+{#===================== START COMPONENTS TO BE USED WITH JAVASCRIPT =====================================#}
+
+{# Create a container to hold groups of questions along with the short description #}
+
+{# macro work out and return the summary text for a category and sense #}
+{% macro get_category_summary(catindex, senseindex) %}
+    {% set catsenses = categorysummary[catindex].senses %}
+    {% if senseindex == 1 %}
+        {% set text = catsenses.vision %}
+    {% elseif senseindex == 2 %}
+        {% set text = catsenses.hearing %}
+    {% elseif senseindex == 3 %}
+        {% set text = catsenses.touch %}
+    {% elseif senseindex == 4 %}
+        {% set text = catsenses.smell %}
+    {% elseif senseindex == 5 %}
+        {% set text = catsenses.taste %}
+    {% elseif senseindex == 6 %}
+        {% set text = catsenses.proprioception %}
+    {% elseif senseindex == 7 %}
+        {% set text = catsenses.balance %}
+  {% endif %}
+
+  {{ text }}
+{% endmacro%}
+
+{% set questionOptions = [ {"label": "Was True", "id": "was-true", "value": 2},
+                          {"label": "True Now", "id": "true-now", "value": 3},
+                          {"label": "Not Sure", "id": "not-sure", "value": 1},
+                          {"label": "False", "id": "false", "value": 0}] %}
+{# create question sets  #}
+<div class="container-xl pt-5" id="questionset-container" 
+            ncategories="{{ allQuestions | length }}" 
+            nsenses="{{ allQuestions[0].senses | length }}" 
+            style="display:none">
+    {% for category in allQuestions %}
+        {% set catindex = category.index %}
+
+        {% for sense in category.senses %} 
+            {% set senseindex = loop.index %} 
+            {% set base_id = sense.sense + '_' + catindex %}
+
+            <div class="category-sense-questions" senseindex="{{ loop.index0 }}"
+                                                    catindex="{{ catindex - 1 }}">
+                <p><strong>{{ get_category_summary(catindex,senseindex) }}</strong></p>
+                
+                {% for question in sense.questions %}
+                    {% set questionName = base_id + '-' + senseindex + '-' + loop.index %}
+                    <fieldset class="pb-3" id="{{ questionName }}" value=0>
+                        <legend class="fs-6">{{ question }}</legend>
+                        {# use class=row to spread radio inputs #}
+                        <div class="row row-cols-auto justify-content-center">
+                            {% for opt in  questionOptions %}
+                                <div class="form-check form-check-inline col border border-1 rounded">
+                                    <input class="form-check-input ps-2" type="checkbox" 
+                                                name="{{ questionName }}-{{ opt.id }}" 
+                                                question_id="{{ questionName }}"
+                                                id="{{ questionName }}-{{opt.id}}" 
+                                                value="{{ opt.value }}"
+                                                {% if opt.id == "false" %} checked="checked"{% endif %}>
+                                    <label class="form-check-label fs-6" for="{{ questionName }}-{{ opt.id }}">
+                                        {{ opt.label }}
+                                    </label>
+                                </div>
+                            {% endfor %}
+                        </div> <!-- end row of checkboxes-->
+                    </fieldset>
+                {% endfor %} {# end question loop #}
+            </div>
+        {% endfor %} {# end sense loop #}   
+    {% endfor %} {# end category loop #}
+</div> {# end container #}
+
+
+{#===================== END COMPONENTS TO BE USED WITH JAVASCRIPT =====================================#}
+
+
+
+{#=======================================================================================================#}
+
+
+
+{#====================================== JAVASCRIPT =======================================================#}
+
+<script type="text/javascript" src="../../js2/generic.js"></script>
+<script type="text/javascript" src="../../js2/progressgrid.js"></script>
+
+<script>
+    // Functions 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    async function setCategoryVariables() {
+        console.log('reading categoryinfo.json');
+        categoryInfoArray = await fetchJson("../../json/categoryinfo.json");
+        //console.log(JSON.stringify(categoryInfoArray,null,3));
+        maxCategoryIndex = categoryInfoArray.length - 1;
+        console.log('getCategoryVariables returning');
+    }
+
+    function columnListener(column){
+        const catindex = +column.catindex;
+        if (catindex != currentCategory) {
+            // colour in current column
+            let currentColumn = progressGrid[currentCategory];
+            let sensequestions = questionSetArray[currentCategory];
+            currentColumn.senseboxes.forEach((cell, index) => 
+                currentColumn.colourCell(index,sensequestions[index].getValues().max));
+            
+            displayElements.displayCategory(catindex); // updates currentCategory   
+        }
+    }
+
+    function buttonEventListener(parent,thisButton){      
+        let newvalue;
+        let currentvalue = parent.value;
+        let thisvalue = thisButton.value;
+
+        if (!thisButton.checked) { // button was checked before the change
+            if (thisButton == parent.falsebutton) { // if false button do nothing else
+                parent.falsebutton.checked=true;
+            }
+            else {
+                newvalue = +currentvalue - +thisvalue; //+thisvalue converts thisvalue to an int
+                if (newvalue == 0){ // no buttons are active
+                    parent.falsebutton.checked=true;
+                    parent.value = 0;
+                }
+                else { // one other button is active (can't be more than one)
+                    parent.value = newvalue;
+                }
+            } 
+        }
+        else { // the button was not active
+            //console.log(this.checked);
+            if (thisButton === parent.falsebutton) {
+                //console.log("It is false button.");
+                parent.value = 0;
+                for (j=0; j<parent.buttons.length - 1 ; j++)
+                    parent.buttons[j].checked=false;
+            }
+            else {
+                //console.log("It is NOT false button.");
+                parent.falsebutton.checked=false;
+                if (thisButton === parent.notsurebutton) {
+                    //console.log("It is not-sure button.");
+                    parent.truebutton.checked=false;
+                    parent.wastruebutton.checked=false;
+                    parent.value = 1;
+                }
+                else { // button is either wastruebutton or nowtruebutton
+                    //console.log("First two buttons.");
+                    if (parent.notsurebutton.checked){
+                        //console.log("It is not-sure button.");
+                        parent.notsurebutton.checked=false;
+                        parent.falsebutton.checked=false;
+                        currentvalue = 0;
+                    }
+                    newvalue = +currentvalue + +thisvalue;
+                    //console.log('currentvalue: ' + currentvalue + ' thisvalue: ' + thisvalue + ' newvalue: ' + newvalue);
+                    parent.value = newvalue;
+                }
+            }
+        } 
+        console.log('form value:' + parent.value);
+    }
+
+    class Question {
+        constructor(fieldset){
+            const buttons = [...fieldset.getElementsByTagName('input')];
+
+            this.value = 0;  
+            this.buttons = buttons;          
+            this.wastruebutton = buttons[0];
+            this.truebutton = buttons[1];
+            this.notsurebutton = buttons[2]
+            this.falsebutton = buttons[3]
+
+            buttons.forEach(item => item.addEventListener('change', () => {
+                                buttonEventListener(this,item)}));           
+        }
+
+        setFalse() {
+            this.value = 0;
+            this.buttons.forEach(button => button.checked = false);
+            this.falsebutton.checked = true;
+        }
+
+        setValue(value){
+            this.value = +value;
+            this.buttons.forEach(button => button.checked = false);
+            switch (+value)
+            {
+                case 0: this.falsebutton.checked = true;
+                        break;
+                case 1: this.notsurebutton.checked = true;
+                        break;
+                case 2: this.wastruebutton.checked = true;
+                        break;
+                case 3: this.truebutton.checked = true;
+                        break;
+                case 5: this.wastruebutton.checked = true;
+                        this.truebutton.checked = true;
+                        break;
+                default: this.value=0; // in case val was not recognised so set to 0
+                        this.falsebutton.checked = true ;
+                        console.log('default val now 0: False');  
+            }
+        }
+    }
+
+    class QuestionSet {
+        constructor(catindex,senseindex,qset){
+            this.catindex = catindex;
+            this.senseindex = senseindex;
+            this.html = qset;
+
+            let questions = [...qset.querySelectorAll('fieldset')];
+            this.questions = questions.map(item => new Question(item));
+        }
+
+        getValues(){
+            let max=0;
+            const values = []
+            for (let i=0; i<this.questions.length; i++){
+                const val = this.questions[i].value;
+                values[i] = +val;
+                if (+max < +val)
+                    max = val;
+            }
+
+            if (max == 0)
+                return {max: 0, values:[]};
+            else
+                return {max: max, values: values};
+        }
+
+        setFalse(){
+            this.questions.forEach(item => item.setFalse());
+        }
+
+        setValues(valueArray) {
+            let max = 0;
+            this.questions.forEach((item,index) => {
+                    const val = valueArray[index];
+                    item.setValue(val);
+                    if (max < val)
+                        max = val;
+            });
+            if (max > 0)
+                progressGrid[this.catindex].colourCell(this.senseindex,max);
+        }
+    }
+
+    function setQuestionSetArray() {
+        const questionSetContainer = document.querySelector('#questionset-container');
+        const ncategories = questionSetContainer.getAttribute('ncategories');
+        const nsenses = questionSetContainer.getAttribute('nsenses');
+        const questionSets = questionSetContainer.querySelectorAll('.category-sense-questions');
+
+        const questionSetArray = createArray(ncategories, nsenses);
+        for (let i=0; i<questionSets.length ; i++){
+            let qSet = questionSets[i];
+            let catindex = qSet.getAttribute('catindex');
+            let senseindex = qSet.getAttribute('senseindex');
+            questionSetArray[catindex][senseindex] = new QuestionSet(catindex,senseindex,qSet);
+        }
+        return questionSetArray;
+    }
+
+    function createJsonAnswers(){
+        let jsonstruct = {"type": "SPCR", 
+                                "version": 1, 
+                                "currentIndex": currentCategory,
+                                "questionStatus": []};
+
+        function Status(senseindex,catindex,values){
+            this.senseindex = senseindex;
+            this.categoryindex = catindex;
+            this.values = values;
+        }
+
+        for (let i=0 ; i<maxCategoryIndex ; i++){
+            for (let j=0 ; j<maxSenseIndex ; j++){
+                let qset = questionSetArray[i][j];
+                let {max, values} = qset.getValues();
+                if (max == 0)
+                    jsonstruct.questionStatus.push(new Status(j,i,0));
+                else
+                    jsonstruct.questionStatus.push(new Status(j,i,values));
+            }
+        }
+
+        return jsonstruct;
+    }
+
+    function createJsonAnswers2(){
+        let jsonstruct = {"type": "SPCR", 
+                                "version": 1,
+                                "nCategories": maxCategoryIndex + 1,
+                                "nSenses": maxSenseIndex + 1, 
+                                "currentIndex": currentCategory,
+                                "answers": createArray(maxCategoryIndex + 1, maxSenseIndex + 1)};
+
+        function Status(max,values){
+            this.max = max
+            this.values = values;
+        }
+
+        for (let i=0 ; i<=maxCategoryIndex ; i++){
+            for (let j=0 ; j<=maxSenseIndex ; j++){
+                let qset = questionSetArray[i][j];
+                let {max, values} = qset.getValues();
+                    jsonstruct.answers[i][j] = new Status(max,values);
+            }
+        }
+
+        return jsonstruct;
+    }
+
+    function setJsonAnswers(jsonAnswers){
+        progressGrid.forEach(item => item.clear());
+        jsonAnswers.questionStatus.forEach(status => {
+            qset = questionSetArray[+status.categoryindex][+status.senseindex];
+            if (status.values == 0)
+                qset.setFalse();
+            else 
+                qset.setValues(status.values);
+        });
+        displayElements.displayCategory(jsonAnswers.currentIndex);
+    }
+
+    function setJsonAnswers2(jsonAnswers){
+        progressGrid.forEach(item => item.clear());
+        for (let i=0 ; i<jsonAnswers.nCategories; i++) {
+            for (let j=0; j<jsonAnswers.nSenses; j++) {
+                const answers = jsonAnswers.answers[i][j];
+                if (answers.max == 0)
+                    questionSetArray[i][j].setFalse();
+                else
+                    questionSetArray[i][j].setValues(answers.values);
+            }
+        }
+        displayElements.displayCategory(jsonAnswers.currentIndex);
+    }
+
+    class DisplayClass {
+        constructor(){
+            // Category information elements
+            this.categoryTitle = document.getElementById('category-name');
+            this.categoryButton = document.getElementById('category-description-button');
+            this.categoryDescription = document.getElementById('category-description-body');
+
+            // Body
+            this.accordionBodies = [...document.querySelectorAll('#bodyaccordion .accordion-body')];
+            this.accordionCollapses = document.querySelectorAll('#bodyaccordion .accordion-collapse');
+        }
+
+        setAccordionBodies(catindex) {
+            this.accordionBodies.forEach((item, index) => 
+                            item.replaceChild(questionSetArray[+catindex][index].html, 
+                                                item.children[0]));
+        }
+
+        displayCategory(catindex){
+            progressGrid[currentCategory].setProgressGridHighlight('LightGray');
+            if (currentCategory == maxCategoryIndex)
+                nextButton.innerText = "Next";
+            else if (currentCategory == 0)
+                prevButton.style.color = 'Black';
+
+            let categoryName = categoryInfoArray[+catindex].name
+            this.categoryTitle.innerText = categoryName;
+            this.categoryButton.innerText = 'About ' + categoryName;  
+            this.setAccordionBodies(catindex);  
+
+            currentCategory = +catindex;
+
+            progressGrid[currentCategory].setProgressGridHighlight('Black');
+            if (currentCategory == 0)
+                prevButton.style.color = 'LightGray';
+            else if (currentCategory == maxCategoryIndex)
+                nextButton.innerText = "Show Results";    
+        }
+    }
+
+    function setUpNavigation(){
+        // Progress grid
+        progressGrid = createProgressGrid(columnListener);
+        //progressGrid.consolelog();
+        progressGrid[0].setProgressGridHighlight('Black');
+
+        // previous button
+        prevButton.style.color = 'LightGray';
+        prevButton.addEventListener("click", ()=> {
+            if (currentCategory != 0)
+                columnListener(progressGrid[currentCategory - 1]);            
+        });
+
+        // next button
+        nextButton.addEventListener('click', () => {
+            if (currentCategory != maxCategoryIndex)
+                columnListener(progressGrid[currentCategory + 1]); 
+        });
+    }
+
+  
+    // Variables
+    /////////////////////////////////////////////////////////////////////////////////////
+    
+    // Category and Navigation Thread
+    let categoryInfoArray = [];
+    let maxCategoryIndex = 0;
+    let currentCategory = 0;
+    const prevButton = document.getElementById('previousbutton')
+    const nextButton = document.getElementById('nextbutton');
+    // async function: returns immediately with a promise
+    setCategoryVariables().then(setUpNavigation());
+
+    //////////////////////////////////////////////////////////////////////////////
+
+    // Main thread 
+    const questionSetArray = setQuestionSetArray();
+    const maxSenseIndex = questionSetArray[0].length - 1;
+    //questionSetArray.consolelog();
+
+    // HTML display elements
+    displayElements = new DisplayClass();
+    displayElements.setAccordionBodies(0);
+
+    // save and read buttons and functionality
+    saveButton = document.getElementById("savebutton");
+    loadButton = document.getElementById("readbutton");
+
+    saveButton.addEventListener('click', async () => {
+        await saveJson(createJsonAnswers2());
+    });
+
+    loadButton.addEventListener("click", async () => {
+        let answers = await readJson();
+        if (answers) {
+            //console.log("type: " + answers.type + " version: "+ answers.version)
+            if (answers && answers.type && answers.type == "SPCR" && answers.version == "1") {
+                //console.log(answers);
+                setJsonAnswers2(answers);
+            }
+            else alert("File is not the right kind of file.");
+        }
+    });  
+</script>
