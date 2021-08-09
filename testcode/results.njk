@@ -1,0 +1,117 @@
+---
+layout: layouts/base.njk
+title: Display Results 
+templateClass: tmpl-post
+eleventyNavigation:
+  key: Results
+  parent: Test Code
+  order: 4
+---
+
+<h2>Rainbow Results</h2>
+
+<!-- Draw rectangle and rainbow -->
+<canvas id="RectangleCanvas" width="145" height="445">
+    Your browser does not support the HTML5 canvas tag. Try upgrading.
+</canvas>
+
+<canvas id="RainbowCanvas" width="540" height="275">
+</canvas>
+
+<script type="text/javascript" src="../../js2/generic.js"></script>
+
+<script>
+    // create a 21 x 7 array of random numbers between 0 and 5 to simulate max values
+    const data = createArray(21,7);
+    for (i=0; i<21; i++) {
+        for (j=0; j<7; j++){
+            let val = Math.floor(Math.random()  * 5); // returns value between 0 and 4
+            if (val == 4) val = 5; // don't want 4, but do want 5
+            data[i][j] = val;
+        }
+    }
+
+    // filter data so values only 0 and 1
+    const filteredData = data.map(item => item.map(val => val>2? 1 : 0));
+
+    const colours = ["#FF0000","#FB8F01","#FFFF00","#00FF00","#14D5E3","#AC26AA","#04139E"];
+
+    // draw rectangle and rainbow
+    const rectangleCanvas = document.getElementById("RectangleCanvas");
+    
+    let context = rectangleCanvas.getContext("2d");
+    context.font = "17px Arial";
+    context.fillText("V  H Tc  S  T  P Vs",0,18);
+
+    var senses = [0,0,0,0,0,0,0];
+    context.strokeRect(0,20,140,420);
+    for (var c=0; c<7 ; c++){
+        context.fillStyle = colours[c];
+        for (var r=0; r<21; r++){
+            if (filteredData[r][c] > 0)
+            {
+                context.fillRect(c*20,r*20+20,20,20);
+                senses[c]+=1;
+            }
+        }     
+    }                 
+    //draw grid
+    for (var i=0; i<=140; i+= 20)
+    {
+        context.moveTo(i,20);
+        context.lineTo(i,440);
+    }
+    for (var i=20; i<=440; i+=20)
+    {
+        context.moveTo(0,i);
+        context.lineTo(140,i);
+    }
+    
+    context.strokeStyle = "black";
+    context.stroke();
+    
+    // now do rainbow
+    const rainbowCanvas = document.getElementById("RainbowCanvas");
+    context = rainbowCanvas.getContext("2d");
+    //context.strokeRect(0,0,540,270);
+            
+    //Draw full arcs
+    for (let i=240; i>0; i-=30)
+    {
+        context.beginPath();
+        context.arc(270,270,i,Math.PI,0);
+        context.stroke();
+    }
+            
+    //Fill in colour to right angles
+    var c=0;
+    for (var i=240; i>30; i-=30)
+    {
+        console.log(senses[c]);
+        context.beginPath();
+        var angle=Math.PI + Math.PI*senses[c]/21;
+        console.log(angle*180/Math.PI);
+        context.arc(270,270,i,Math.PI,angle);
+        context.lineTo(270+(i-30)*Math.cos(angle) ,270+(i-30)*Math.sin(angle));
+        context.arc(270,270,i-30,angle,Math.PI,true);
+        context.closePath();
+        context.fillStyle=colours[c];
+        context.fill();
+        context.stroke();
+        
+        c++;
+    }
+            
+    //draw radials
+    var a = 0;
+    for (var i=0; i<=21 ; i++)
+    {
+        //console.log(a*180/Math.PI);
+        context.moveTo(270+30*Math.cos(a),270-30*Math.sin(a));
+        //context.moveTo(270,270);
+        context.lineTo(270+240*Math.cos(a),270-240*Math.sin(a));
+        context.stroke();
+        a += Math.PI/21;
+    }
+
+</script>
