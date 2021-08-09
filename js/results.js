@@ -121,7 +121,7 @@ class View {
         const aChartLine = document.getElementById('lineChart');
         const aChartPolarArea = document.getElementById('polarAreaChart');
         const allChartsForSenses = document.getElementById('polar-area-charts');
-        const allChartsForCategories = document.getElementById('categorycharts');
+        this.allChartsForCategories = document.getElementById('categorycharts');
 
         this.container = document.createElement('div');
         this.textArea = document.createElement("textarea");
@@ -160,9 +160,9 @@ class View {
                 //TODO: start here
                 [ ...result.questionStatus ]
                     .map(res => {
-                        const firstTimeInCategory = !(this.answers[res.categoryindex]&&this.answers[res.categoryindex].length);
+                        const firstTimeInCategory = !(this.answers[res.senseindex]&&this.answers[res.senseindex].length);
 
-                        if (firstTimeInCategory) this.answers[res.categoryindex] = [];
+                        if (firstTimeInCategory) this.answers[res.senseindex] = [];
                         const counts = {0: 0, 1: 0, 2: 0, 3: 0, 5: 0};
 
                         if(res.values.length) {
@@ -171,22 +171,44 @@ class View {
                             }
                         }
 
-                        this.answers[res.categoryindex][res.senseindex] = counts;   
+                        this.answers[res.senseindex][res.categoryindex] = counts;
                     });
                 console.log(this.answers);
+                this.linearChartsDatasets = this.setDatasetsForChartBy('sensesToCategories', SenseUtils.getName('all'), this.answers);
+                this.lineChartFromClass = new ChartFactory('Line Chart', 'line', labelsForCategories, this.linearChartsDatasets, this.allChartsForCategories);
             }
         }
     }
 
-    setDatasetsForChart(labels, answers){
+    calculateDataFrom(sense){
+        let normals = sense.map(values => 
+            {
+                let numberOfQuestions = 0;
+                let normalized = 0;
+                let sum = Object.entries(values).reduce( (acc, value) => 
+                {
+                    if(value[1] === 0) return acc + 0;
+                    
+                    numberOfQuestions += value[1];
+                    return acc + (+value[0] * value[1]);
+                }, 0);
+                return numberOfQuestions > 0 ? normalized = sum/(numberOfQuestions*5) : 0;
+            });
+
+        return normals;
+    }
+
+    setDatasetsForChartBy(dataType, labels, answers){
         const colours = 'rgba(255, 255, 255, 0.1)';
         const borderColours = SenseUtils.getColour(-1);
         var dataset = [];
-        [ ...answers ].map((sense, index) => {
+        //dataType === 'category'
+        [ ... Object.values(answers) ].map((sense, index) => {
             dataset.push({
                 order: index,
                 label: labels[index],
-                data: sense.filter(answer => answer >= 0),
+                // this.random[s][i] = (this.random[s][i]/15).toFixed(3);
+                data: this.calculateDataFrom(sense),
                 fill: true,
                 backgroundColor: colours,
                 borderColor: borderColours[index],
@@ -194,7 +216,6 @@ class View {
             });
         });
         
-        console.log(dataset);
         return dataset;
     }
 
@@ -221,9 +242,9 @@ class View {
 
     // createChartsForSensesFrom
 
-    // createChartsForCategoriesFrom
+    createChartsForCategoriesFrom(datasets){
 
-    // createDatasets()
+    }
 
     // canvasSetHeight()
 
