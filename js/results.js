@@ -109,7 +109,7 @@ class SenseUtils{
     }
 
     static getAnswerNameBy(answerId){
-        const names = ["False", "Not Sure", "Was True", "True Now", '', "Always True"];
+        const names = ["False", "Not Sure", "Was True", "True Now", "Always True"];
         return answerId < 0 ? names : names[answerId];
     }
 }
@@ -120,7 +120,7 @@ class View {
         this.aChartRadar = document.getElementById('myChart');
         const aChartLine = document.getElementById('lineChart');
         const aChartPolarArea = document.getElementById('polarAreaChart');
-        const allChartsForSenses = document.getElementById('polar-area-charts');
+        this.allChartsForSenses = document.getElementById('polar-area-charts');
         this.allChartsForCategories = document.getElementById('categorycharts');
 
         this.container = document.createElement('div');
@@ -148,7 +148,6 @@ class View {
         // resultTab[]
         // containerForChartsInsideTab
         // const defaultChartContainerHeight
-        //this.addDummyCharts();
     }
 
     callback = async (mutationsList) => {
@@ -157,30 +156,38 @@ class View {
             if (mutation.type === 'childList') {
                 const result = await JSON.parse(mutation.target.innerText);
                 this.answers = {};
-                //TODO: start here
-                [ ...result.questionStatus ]
-                    .map(res => {
-                        const firstTimeInCategory = !(this.answers[res.senseindex]&&this.answers[res.senseindex].length);
 
-                        if (firstTimeInCategory) this.answers[res.senseindex] = [];
-                        const counts = {0: 0, 1: 0, 2: 0, 3: 0, 5: 0};
+                this.extractAnswersFromLoaded(result);
 
-                        if(res.values.length) {
-                            for(const num of res.values){
-                                counts[num] = counts[num] ? ++counts[num] : 1;
-                            }
-                        }
-
-                        this.answers[res.senseindex][res.categoryindex] = counts;
-                    });
-                console.log(this.answers);
-                this.linearChartsDatasets = this.setDatasetsForChartBy('sensesToCategories', SenseUtils.getName('all'), this.answers);
+                this.linearChartsDatasets = this.setDatasetsForChartBy('line', SenseUtils.getName('all'), this.answers);
+                this.radarChartsDatasets = this.setDatasetsForChartBy('radar', SenseUtils.getName('all'), this.answers);
                 this.lineChartFromClass = new ChartFactory('Line Chart', 'line', labelsForCategories, this.linearChartsDatasets, this.allChartsForCategories);
+                this.radarChartFromClass = new ChartFactory('Radar Chart', 'radar', SenseUtils.getAnswerNameBy(-1), this.radarChartsDatasets, this.allChartsForSenses);
+                this.canvasSetHeight();
             }
         }
     }
 
-    calculateDataFrom(sense){
+    extractAnswersFromLoaded(result) {
+        [...result.questionStatus]
+            .map(res => {
+                const firstTimeInCategory = !(this.answers[res.senseindex] && this.answers[res.senseindex].length);
+
+                if (firstTimeInCategory)
+                    this.answers[res.senseindex] = [];
+
+                const counts = { 0: 0, 1: 0, 2: 0, 3: 0, 5: 0 };
+                if (res.values.length) {
+                    for (const num of res.values) {
+                        counts[num] = counts[num] ? ++counts[num] : 1;
+                    }
+                }
+
+                this.answers[res.senseindex][res.categoryindex] = counts;
+            });
+    }
+
+    calculateNormalizedVectorFrom(sense){
         let normals = sense.map(values => 
             {
                 let numberOfQuestions = 0;
@@ -198,17 +205,29 @@ class View {
         return normals;
     }
 
-    setDatasetsForChartBy(dataType, labels, answers){
+    calculateAnswerPopularityFrom(senseAnswers){
+        let popularity = senseAnswers.reduce( (acc, values) =>
+            Object.fromEntries(
+                Object.entries(values)
+                    .map(
+                        ( [ key, val ] ) =>  [ key, val + acc[key] ]
+                    )
+            ), { "0": 0, "1": 0, "2": 0, "3": 0, "5": 0} );
+        return Object.values(popularity);
+    }
+
+    setDatasetsForChartBy(chartType, labels, answers){
         const colours = 'rgba(255, 255, 255, 0.1)';
         const borderColours = SenseUtils.getColour(-1);
         var dataset = [];
-        //dataType === 'category'
-        [ ... Object.values(answers) ].map((sense, index) => {
+        [ ... Object.values(answers) ].map((senseAnswers, index) => {
+            let data = chartType === 'radar' 
+                        ? this.calculateAnswerPopularityFrom(senseAnswers) 
+                        : this.calculateNormalizedVectorFrom(senseAnswers);
             dataset.push({
                 order: index,
                 label: labels[index],
-                // this.random[s][i] = (this.random[s][i]/15).toFixed(3);
-                data: this.calculateDataFrom(sense),
+                data: data,
                 fill: true,
                 backgroundColor: colours,
                 borderColor: borderColours[index],
@@ -219,34 +238,16 @@ class View {
         return dataset;
     }
 
-    addDummyCharts(){
-        var myChart = new Chart(
-            this.aChartRadar,
-            config
-        );
-        
-        var lineChart = new Chart(
-            aChartLine,
-            config2
-        );
-        
-        var polarAreaChart = new Chart(
-            aChartPolarArea,
-            config3
-        );
-    }
-
     // answersFromFile()
 
     // createRawDataCharts
 
     // createChartsForSensesFrom
 
-    createChartsForCategoriesFrom(datasets){
-
+    //TODO: fix
+    canvasSetHeight(){
+        [ ... document.querySelectorAll('canvas') ].map(chart => chart.style.height = '375px');
     }
-
-    // canvasSetHeight()
 
     // addEventListenersToCharts
 
@@ -270,6 +271,7 @@ class ResultTab {
 
 class ChartFactory{
     constructor(name, type, labels, datasets, container) {
+        this.name = name;
         this.data = {
             labels: labels,
             datasets : datasets
@@ -282,15 +284,15 @@ class ChartFactory{
                 plugins: {
                     title: {
                         display: true,
-                        text: 'Line Chart'
+                        text: this.name
                     }
                 },
-                scales: verticalCategoryNames
+                scales: type === 'line' ? verticalCategoryNames : {}
             }
         }
         this.container = container;
         // create chart and container holding it
-        this.name = `${type}${name}`;
+        
         this.parentDiv = document.createElement('div');
         this.canvas = document.createElement('canvas');
 
@@ -313,27 +315,7 @@ class ChartFactory{
         );
     }
 
-    setDatasetsForChart(labels, answers){
-        const colours = 'rgba(255, 255, 255, 0.1)';
-        const borderColours = SenseUtils.getColour(-1);
-        var dataset = [];
-        [ ...answers.random ].map((sense, index) => {
-            dataset.push({
-                order: index,
-                label: labels[index],
-                data: sense.filter(answer => answer >= 0),
-                fill: true,
-                backgroundColor: colours,
-                borderColor: borderColours[index],
-                tension: 0.1
-            });
-        });
-        
-        console.log(dataset);
-        return dataset;
-    }
-
-    getColoursByChart(type){
+    static getColoursByChart(type){
         const Colours = {
             'line': {'backgroundColor' : 'rgba(255, 255, 255, 0.1)', 'borderColor' : SenseUtils.getColour(-1)},
             'polarArea': {'backgroundColor' : 'rgba(255, 255, 255, 0.1)', 'borderColor' : SenseUtils.getColour(-1)},
@@ -342,232 +324,23 @@ class ChartFactory{
 
         return Colours[type];
     }
+
+    // TODO: fix
+    enlargeChartOnClick(){
+        var lastClickedChartNode;
+        [ ...polarChartsContainer.querySelectorAll('canvas') ].map(chart => chart.addEventListener('click', (event) => {
+            if(event.target.parentNode.classList.contains('selected')) return;
+            if(lastClickedChartNode) {
+                lastClickedChartNode.classList.toggle('selected');
+            }
+            lastClickedChartNode = event.target.parentNode;
+            lastClickedChartNode.classList.toggle('selected');
+        }));
+    }
     
 }
 // Functions that manipulate html elements in some way
 /////////////////////////////////////////////////////////////////////
-
-
-function setDatasetsForChart(labels, answers){
-    const colours = 'rgba(255, 255, 255, 0.1)';
-    const borderColours = SenseUtils.getColour(-1);
-    var dataset = [];
-    [ ...answers.random ].map((sense, index) => {
-        dataset.push({
-            order: index,
-            label: labels[index],
-            data: sense.filter(answer => answer >= 0),
-            fill: true,
-            backgroundColor: colours,
-            borderColor: borderColours[index],
-            tension: 0.1
-        });
-    });
-    
-    console.log(dataset);
-    return dataset;
-}
-
-var lastClickedChartNode;
-// setQuestionValues(answers) answers is a JSON structure.
-// fills in appropriate values in categoryArray
-// colours in the progress grid appropriately
-function drawCharts(answers){
-    // initialize document model
-    const aChartRadar = document.getElementById('myChart');
-    const aChartLine = document.getElementById('lineChart');
-    const aChartPolarArea = document.getElementById('polarAreaChart');
-    const allChartsForCategories = document.getElementById('categorycharts');
-    var myChart = new Chart(
-        aChartRadar,
-        config
-    );
-    
-    var lineChart = new Chart(
-        aChartLine,
-        config2
-    );
-    
-    var polarAreaChart = new Chart(
-        aChartPolarArea,
-        config3
-    );
-    
-    const newAnswers = new Answers();
-    const newCategoryAnswers = new CategoryAnswers();
-    //console.log(newCategoryAnswers);
-    //console.log(labelsForCategories);
-    
-    var polarChartsDatasets = setDatasetsForChart(SenseUtils.getName('all'), newAnswers);
-    let polarChartsContainer = document.getElementById('polar-area-charts');
-    var linearChartsDatasets = setDatasetsForChart(SenseUtils.getName('all'), newCategoryAnswers);
-    let linearChartsContainer = document.getElementById('categorycharts');
-
-    prepareChart('polarArea', SenseUtils.getAnswerNameBy(-1), polarChartsDatasets, polarChartsContainer);
-    const polarAreaCharts = [ ...polarChartsDatasets ].map(dataset => console.log(dataset));
-    const lineChartFromClass = new ChartFactory('Line Chart', 'line', labelsForCategories, linearChartsDatasets, allChartsForCategories);
-    // adjust charts height
-    [ ...linearChartsContainer.querySelectorAll('canvas') ].map(chart => chart.style.height = '375px');
-    [ ...polarChartsContainer.querySelectorAll('canvas') ].map(chart => chart.style.height = '375px');
-    
-    // enlargeChartsOnClick
-    var lastClickedChartNode;
-    [ ...polarChartsContainer.querySelectorAll('canvas') ].map(chart => chart.addEventListener('click', (event) => {
-        if(event.target.parentNode.classList.contains('selected')) return;
-        if(lastClickedChartNode) {
-            lastClickedChartNode.classList.toggle('selected');
-        }
-        lastClickedChartNode = event.target.parentNode;
-        lastClickedChartNode.classList.toggle('selected');
-    }));
-        
-    return newAnswers;
-}
-
-function prepareChart(chartType, labels, datasets, container) {
-    let configs = [];
-    // prepare charts from datasets
-    [...datasets].map((dataset, index) => {
-        // set chart data
-        let data = setChartData(labels, dataset);
-        // set chart configs
-        configs.push(setChartConfigs(chartType, chartType, data, dataset));
-
-        // create container holding a chart and chart itself
-        var currentName = `${chartType}${dataset.label}`;
-        let newDiv = document.createElement('div');
-        let newCanvas = document.createElement('canvas');
-        newCanvas.id = currentName;
-
-        // set appropriate class
-        newCanvas.classList.add('generated');
-        newDiv.classList.add('col-xl-4', 'col-lg-6', 'col-md-6', 'col-sm-12');
-        // add canvas to div container
-        newDiv.appendChild(newCanvas);
-
-        displayChart(container, newDiv, currentName, configs, index);
-
-    });
-}
-
-function displayChart(container, newDiv, currentName, configs, index) {
-    // fill in container
-    container.appendChild(newDiv);
-    
-    // get container node for chart
-    let newCanvasNode = document.getElementById(`${currentName}`);
-    
-    // append chart to a list
-    let names = [];
-    names[currentName] = new Chart(
-        newCanvasNode,
-        configs[index]
-    );
-}
-
-function setChartConfigs(chartName, chartType, data, dataset) {
-    return {
-        type: chartType,
-        data: data,
-        options: {
-            maintainAspectRatio: false,
-            plugins: {
-                title: {
-                    display: true,
-                    text: chartName
-                }
-            },
-            scales: chartType === 'line' ? verticalCategoryNames : {}
-        }
-    };
-}
-
-function setChartData(labels, dataset) {
-    return {
-        labels: labels.filter(label => label.length),
-        datasets: [dataset]
-    };
-}
-
-/////////////////////////////////   End Functions  /////////////////////////////////////////////
-
-// Variables
-////////////////////////////////////////////////
-var data = {
-    labels: [
-        "Vision",
-        "Hearing",
-        "Touch",
-        "Smell",
-        "Taste",
-        "Proprioception",
-        "Balance"
-    ],
-    datasets: [{
-        order: 2,
-        label: 'Average',
-        data: [50, 50, 50, 50, 50, 50, 50],
-        fill: true,
-        backgroundColor: 'rgba(0, 0, 0, 0)',
-        borderColor: 'rgba(54, 162, 235, 0)',
-        pointBackgroundColor: 'rgb(54, 162, 235)',
-        pointBorderColor: '#fff',
-        pointHoverBackgroundColor: '#fff',
-        pointHoverBorderColor: 'rgb(54, 162, 235)'
-    },{
-        order: 1,
-        label: 'My First Dataset',
-        data: [65, 59, 80, 81, 56, 55, 60],
-        fill: true,
-        backgroundColor: 'rgba(251, 190, 251, 0.3)',
-        borderColor: 'rgb(221,160,221)',
-        tension: 0.1
-    }]
-};
-
-var data2 = {
-    labels: [
-        "Vision",
-        "Hearing",
-        "Touch",
-        "Smell",
-        "Taste",
-        "Proprioception",
-        "Balance"
-    ],
-    datasets: [{
-        order: 1,
-        label: 'My First Dataset',
-        data: [65, 59, 80, 81, 56, 55, 60],
-        fill: true,
-        backgroundColor: SenseUtils.getColour(-1),
-        borderColor: SenseUtils.getColour(-2),
-        tension: 0.1
-    }]
-};
-
-const config = {
-    type: 'radar',
-    data: data,
-    options: {
-        elements: {
-            line: {
-                borderWidth: 3
-            }
-        }
-    },
-};
-
-const config2 = {
-    type: 'line',
-    data: data,
-};
-
-const config3 = {
-    type: 'polarArea',
-    data: data2,
-    options: {}
-  };
 
 //////////////////////////// END GLOBAL VARIABLES ///////////////////////////////////
 
