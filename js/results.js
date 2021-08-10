@@ -47,43 +47,6 @@ const verticalCategoryNames = {
 }
 
 
-const rnd = num => Math.floor(Math.random() * num);
-
-
-class Answers{
-    constructor(){
-        this.random = [];
-        for(let i = 0; i < data2.labels.length; i++){
-            this.random[i] = [0];
-            for(let j = 0; j < 59; j++){
-                let ans = 4;
-                while(ans == 4) ans = rnd(6);
-                this.random[i][ans] >= 0 ? ++this.random[i][ans] : this.random[i][ans] = 0;
-            }
-        }
-    }
-}
-
-
-class CategoryAnswers{
-    constructor(){
-        this.random = [];
-        for(let s=0; s < 7 ; s++){
-            this.random[s] = [];
-            for(let i = 0; i < 21; i++){
-                this.random[s][i] = 0;
-                for(let j = 0; j < 3; j++){
-                    let ans = 4;
-                    while(ans == 4) ans = rnd(6);
-                    this.random[s][i] += ans;
-                }
-                this.random[s][i] = (this.random[s][i]/15).toFixed(3);
-            }
-        }
-    }
-}
-
-
 class SenseUtils{
     static getColour(senseIndex){
         const senseColours = ["Red", "Orange", "Yellow", "Green", "Blue", "Indigo", "Violet"];
@@ -95,16 +58,7 @@ class SenseUtils{
     }
 
     static getName(senseIndex){
-        const Names = [
-            "Vision",
-            "Hearing",
-            "Touch",
-            "Smell",
-            "Taste",
-            "Proprioception",
-            "Balance"
-        ]
-
+        const Names = ["Vision", "Hearing", "Touch", "Smell", "Taste", "Proprioception", "Balance"];
         return senseIndex === 'all' ? Names : Names[senseIndex];
     }
 
@@ -169,21 +123,24 @@ class View {
     }
 
     extractAnswersFromLoaded(result) {
-        [...result.questionStatus]
-            .map(res => {
-                const firstTimeInCategory = !(this.answers[res.senseindex] && this.answers[res.senseindex].length);
+        [...result.answers]
+            .map( (category, categoryindex) => {
 
-                if (firstTimeInCategory)
-                    this.answers[res.senseindex] = [];
+                category.map( (sense, senseindex) => {
+                    const firstTimeInCategory = !(this.answers[senseindex] && this.answers[senseindex].length);
 
-                const counts = { 0: 0, 1: 0, 2: 0, 3: 0, 5: 0 };
-                if (res.values.length) {
-                    for (const num of res.values) {
-                        counts[num] = counts[num] ? ++counts[num] : 1;
+                    if (firstTimeInCategory)
+                        this.answers[senseindex] = [];
+
+                    const counts = { 0: 0, 1: 0, 2: 0, 3: 0, 5: 0 };
+                    if (sense.values.length) {
+                        for (const num of sense.values) {
+                            counts[num] = counts[num] ? ++counts[num] : 1;
+                        }
                     }
-                }
 
-                this.answers[res.senseindex][res.categoryindex] = counts;
+                    this.answers[senseindex][categoryindex] = counts;
+                })
             });
     }
 

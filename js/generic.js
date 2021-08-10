@@ -42,3 +42,40 @@ function convertToArray(arrayLikeObject) {
 
     return newArray;
 }
+
+// Random number rnd(num)
+const rnd = num => Math.floor(Math.random() * num);
+
+// Random count pool of 59 answers (was true, true now etc)
+class RandomAnswers{
+    constructor(){
+        this.random = [];
+        for(let i = 0; i < data2.labels.length; i++){
+            this.random[i] = [0];
+            for(let j = 0; j < 59; j++){
+                let ans = 4;
+                while(ans == 4) ans = rnd(6);
+                this.random[i][ans] >= 0 ? ++this.random[i][ans] : this.random[i][ans] = 0;
+            }
+        }
+    }
+}
+
+// Random pool of normalised vectors (0 - 1) for senses -> categories
+class RandomCategoryAnswers{
+    constructor(){
+        this.random = [];
+        for(let s=0; s < 7 ; s++){
+            this.random[s] = [];
+            for(let i = 0; i < 21; i++){
+                this.random[s][i] = 0;
+                for(let j = 0; j < 3; j++){
+                    let ans = 4;
+                    while(ans == 4) ans = rnd(6);
+                    this.random[s][i] += ans;
+                }
+                this.random[s][i] = (this.random[s][i]/15).toFixed(3);
+            }
+        }
+    }
+}
