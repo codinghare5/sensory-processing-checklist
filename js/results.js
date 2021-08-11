@@ -47,14 +47,17 @@ const verticalCategoryNames = {
 }
 
 
-class SenseUtils{
+class Static{
     static getColour(senseIndex){
         const senseColours = ["Red", "Orange", "Yellow", "Green", "Blue", "Indigo", "Violet"];
         const senseColoursHex = ["#FF0000", "#FFA500", "#FFFF00", "#008000", "#0000FF", "#4B0082", "#EE82EE"];
         const senseColoursBorderHex = ["#FF5555", "#555555", "#555555", "#558055", "#5555FF", "#4B5582", "#EEBBEE"];
         const senseColoursRGBA = senseColoursHex.map(hex => hexToRgbA(hex));
         const senseColoursBorderRGBA = senseColoursBorderHex.map(hex => hexToRgbA(hex));
-        return +senseIndex < 0 ? +senseIndex < -1 ? senseColoursBorderRGBA : senseColoursRGBA : senseColours[+senseIndex];
+        return +senseIndex < -1 ? senseColoursBorderRGBA 
+                : +senseIndex < 0 ?  senseColoursRGBA 
+                : senseIndex === 'all' ? senseColours 
+                : senseColours[+senseIndex];
     }
 
     static getName(senseIndex){
@@ -66,28 +69,28 @@ class SenseUtils{
         const names = ["False", "Not Sure", "Was True", "True Now", "Always True"];
         return answerId < 0 ? names : names[answerId];
     }
+
+    static get(what){
+        const senseNames = () => this.getName('all');
+        const answerNames = () => this.getAnswerNameBy(-1);
+        const senseColours = () => this.getColour('all');
+        const senseRGBA = () => this.getColour(-1);
+        if(what === 'all'){
+            return {senseNames: senseNames(), answerNames: answerNames(), senseColours: senseColours(), senseRGBA: senseRGBA()}
+        }
+    }
 }
 
 
 class View {
     constructor(){
-        this.aChartRadar = document.getElementById('myChart');
-        const aChartLine = document.getElementById('lineChart');
-        const aChartPolarArea = document.getElementById('polarAreaChart');
+        this.lastClickedChartNode;
+        this.answers = {};
         this.allChartsForSenses = document.getElementById('polar-area-charts');
         this.allChartsForCategories = document.getElementById('categorycharts');
 
-        this.container = document.createElement('div');
-        this.textArea = document.createElement("textarea");
-        this.container.style.display = 'none';
-        this.container.appendChild(this.textArea);
-        this.body = document.body;
-        this.body.appendChild(this.container);
+        this.createTextAreaObserver();
 
-        const config = { attributes: true, childList: true, subtree: true, characterData: true };
-        this.observer = new MutationObserver(this.callback);
-        this.observer.observe(this.container, config);
-        this.textArea.value = '';
         this.loadButton = document.getElementById('readbutton');
         this.textArea.addEventListener('change', async () => new Promise(this.callback).then(result => console.log(result)));
         this.loadButton.addEventListener('click', async () => {
@@ -109,104 +112,150 @@ class View {
         for(const mutation of mutationsList) {
             if (mutation.type === 'childList') {
                 const result = await JSON.parse(mutation.target.innerText);
-                this.answers = {};
+                this.answers = this.extractAnswersFromLoaded(result);
 
-                this.extractAnswersFromLoaded(result);
+                this.linearChartsDatasets = this.prepareDatasetsForChart('line', Static.get('all').senseNames, this.answers);
+                this.radarChartsDatasets = this.prepareDatasetsForChart('radar', Static.get('all').senseNames, this.answers);
 
-                this.linearChartsDatasets = this.setDatasetsForChartBy('line', SenseUtils.getName('all'), this.answers);
-                this.radarChartsDatasets = this.setDatasetsForChartBy('radar', SenseUtils.getName('all'), this.answers);
-                this.lineChartFromClass = new ChartFactory('Line Chart', 'line', labelsForCategories, this.linearChartsDatasets, this.allChartsForCategories);
-                this.radarChartFromClass = new ChartFactory('Radar Chart', 'radar', SenseUtils.getAnswerNameBy(-1), this.radarChartsDatasets, this.allChartsForSenses);
-                this.canvasSetHeight();
+                this.lineChartFromClass = new ChartFactory('line', labelsForCategories, this.linearChartsDatasets, this.allChartsForCategories);
+                this.radarChartFromClass = new ChartFactory('radar', Static.get('all').answerNames, this.radarChartsDatasets, this.allChartsForSenses);
+                
+                this.canvasFixHeight();
+                this.enlargeChartOnClickEvent();
             }
         }
     }
 
+    createTextAreaObserver() {
+        this.parentContainer = document.createElement('div');
+        this.textArea = document.createElement("textarea");
+
+        this.parentContainer.style.display = 'none';
+        this.parentContainer.appendChild(this.textArea);
+
+        this.body = document.body;
+        this.body.appendChild(this.parentContainer);
+        this.textArea.value = '';
+
+        const observerConfig = { attributes: true, childList: true, subtree: true, characterData: true };
+        this.textAreaObserver = new MutationObserver(this.callback);
+        this.textAreaObserver.observe(this.parentContainer, observerConfig);
+    }
+
     extractAnswersFromLoaded(result) {
+        let _answers = {};
         [...result.answers]
-            .map( (category, categoryindex) => {
+            .map( (category, categoryindex) => 
+                {
+                    category.map( (sense, senseindex) => 
+                    {
+                        const firstTimeInCategory = !(_answers[senseindex] && _answers[senseindex].length);
 
-                category.map( (sense, senseindex) => {
-                    const firstTimeInCategory = !(this.answers[senseindex] && this.answers[senseindex].length);
+                        if (firstTimeInCategory)
+                            _answers[senseindex] = [];
 
-                    if (firstTimeInCategory)
-                        this.answers[senseindex] = [];
-
-                    const counts = { 0: 0, 1: 0, 2: 0, 3: 0, 5: 0 };
-                    if (sense.values.length) {
-                        for (const num of sense.values) {
-                            counts[num] = counts[num] ? ++counts[num] : 1;
+                        const counts = { 0: 0, 1: 0, 2: 0, 3: 0, 5: 0 };
+                        if (sense.values.length) {
+                            for (const num of sense.values) {
+                                counts[num] = counts[num] ? ++counts[num] : 1;
+                            }
                         }
-                    }
 
-                    this.answers[senseindex][categoryindex] = counts;
-                })
-            });
+                        _answers[senseindex][categoryindex] = counts;
+                    })
+                });
+        
+        return _answers;
     }
 
     calculateNormalizedVectorFrom(sense){
         let normals = sense.map(values => 
             {
-                let numberOfQuestions = 0;
-                let normalized = 0;
-                let sum = Object.entries(values).reduce( (acc, value) => 
-                {
-                    if(value[1] === 0) return acc + 0;
-                    
-                    numberOfQuestions += value[1];
-                    return acc + (+value[0] * value[1]);
-                }, 0);
-                return numberOfQuestions > 0 ? normalized = sum/(numberOfQuestions*5) : 0;
+                let numberOfAnsweredQuestions = 0;
+
+                const sumOfValues = 
+                    Object.entries(values)
+                        .reduce( (acc, value) =>
+                            {
+                                if (value[1] === 0)
+                                    return acc + 0;
+
+                                numberOfAnsweredQuestions += value[1];
+                                return acc + (+value[0] * value[1]);
+                            }, 0);
+                
+                let sum = sumOfValues;
+                        
+                return numberOfAnsweredQuestions > 0 ? sum/(numberOfAnsweredQuestions*5) : 0;
             });
 
         return normals;
     }
 
     calculateAnswerPopularityFrom(senseAnswers){
-        let popularity = senseAnswers.reduce( (acc, values) =>
-            Object.fromEntries(
-                Object.entries(values)
-                    .map(
-                        ( [ key, val ] ) =>  [ key, val + acc[key] ]
-                    )
-            ), { "0": 0, "1": 0, "2": 0, "3": 0, "5": 0} );
+        let popularity = 
+            senseAnswers.reduce( (accumulator, values) =>
+
+                Object.fromEntries(
+
+                    Object.entries(values)
+                        .map(
+                            ( [ key, val ] ) =>  [ key, val + accumulator[key] ]
+                        )
+
+                ),
+                { "0": 0, "1": 0, "2": 0, "3": 0, "5": 0}
+            );
+
         return Object.values(popularity);
     }
 
-    setDatasetsForChartBy(chartType, labels, answers){
-        const colours = 'rgba(255, 255, 255, 0.1)';
-        const borderColours = SenseUtils.getColour(-1);
+    prepareDatasetsForChart(chartType, labels, answers){
+        const borderColours = Static.get('all').senseColours;
         var dataset = [];
-        [ ... Object.values(answers) ].map((senseAnswers, index) => {
-            let data = chartType === 'radar' 
-                        ? this.calculateAnswerPopularityFrom(senseAnswers) 
-                        : this.calculateNormalizedVectorFrom(senseAnswers);
-            dataset.push({
-                order: index,
-                label: labels[index],
-                data: data,
-                fill: true,
-                backgroundColor: colours,
-                borderColor: borderColours[index],
-                tension: 0.1
-            });
-        });
+
+        [ ... Object.values(answers) ]
+            .map( (senseAnswers, index) => 
+                {
+                    let data = 
+                        chartType === 'radar' 
+                                ? this.calculateAnswerPopularityFrom(senseAnswers) 
+                                : this.calculateNormalizedVectorFrom(senseAnswers);
+
+                    dataset.push({
+                        order: index,
+                        label: labels[index],
+                        data: data,
+                        fill: false,
+                        borderColor: borderColours[index],
+                        tension: 0.1
+                    });
+                });
         
         return dataset;
     }
 
-    // answersFromFile()
+    enlargeChartOnClickEvent(){
+        [ ...document.querySelectorAll('canvas') ]
+            .map(chart => chart.addEventListener('click', 
+                (event) => {
+                    if (event.target.parentNode.classList.contains('selected')) 
+                        return;
+                    
+                    if (this.lastClickedChartNode) {
+                        this.lastClickedChartNode.classList.toggle('selected');
+                        this.lastClickedChartNode.style.height = '375px';
+                    }
 
-    // createRawDataCharts
-
-    // createChartsForSensesFrom
-
-    //TODO: fix
-    canvasSetHeight(){
-        [ ... document.querySelectorAll('canvas') ].map(chart => chart.style.height = '375px');
+                    this.lastClickedChartNode = event.target.parentNode;
+                    this.lastClickedChartNode.classList.toggle('selected');
+                }
+            ));
     }
 
-    // addEventListenersToCharts
+    canvasFixHeight(){
+        [ ... document.querySelectorAll('canvas') ].map( chart => chart.style.height = '375px' );
+    }
 
 }
 
@@ -217,6 +266,8 @@ class ResultTab {
         this.parentNode = parentNode;
         this.navTabsContainerNode = this.parentNode.querySelector(".nav-tabs");
         this.charts = [];
+
+
     }
 
     // createChart()
@@ -227,8 +278,8 @@ class ResultTab {
 
 
 class ChartFactory{
-    constructor(name, type, labels, datasets, container) {
-        this.name = name;
+    constructor(type, labels, datasets, container) {
+        this.name = type ==='line' ? 'Line Chart' : type ==='radar' ? 'Radar Chart' : `${type} Chart`;
         this.data = {
             labels: labels,
             datasets : datasets
@@ -271,34 +322,8 @@ class ChartFactory{
             this.config
         );
     }
-
-    static getColoursByChart(type){
-        const Colours = {
-            'line': {'backgroundColor' : 'rgba(255, 255, 255, 0.1)', 'borderColor' : SenseUtils.getColour(-1)},
-            'polarArea': {'backgroundColor' : 'rgba(255, 255, 255, 0.1)', 'borderColor' : SenseUtils.getColour(-1)},
-            'radar': {'backgroundColor' : 'rgba(255, 255, 255, 0.1)', 'borderColor' : SenseUtils.getColour(-1)}
-        }
-
-        return Colours[type];
-    }
-
-    // TODO: fix
-    enlargeChartOnClick(){
-        var lastClickedChartNode;
-        [ ...polarChartsContainer.querySelectorAll('canvas') ].map(chart => chart.addEventListener('click', (event) => {
-            if(event.target.parentNode.classList.contains('selected')) return;
-            if(lastClickedChartNode) {
-                lastClickedChartNode.classList.toggle('selected');
-            }
-            lastClickedChartNode = event.target.parentNode;
-            lastClickedChartNode.classList.toggle('selected');
-        }));
-    }
     
 }
-// Functions that manipulate html elements in some way
-/////////////////////////////////////////////////////////////////////
 
-//////////////////////////// END GLOBAL VARIABLES ///////////////////////////////////
-
+//////////////// Initialize View ///////////////
 const view = new View();
