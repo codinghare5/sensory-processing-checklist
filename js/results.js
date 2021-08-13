@@ -86,25 +86,21 @@ class View {
     constructor(){
         this.lastClickedChartNode;
         this.answers = {};
+        this.rawDataCharts = document.getElementById('raw-data-charts');
         this.allChartsForSenses = document.getElementById('polar-area-charts');
         this.allChartsForCategories = document.getElementById('categorycharts');
 
         this.createTextAreaObserver();
 
-        this.loadButton = document.getElementById('readbutton');
-        this.textArea.addEventListener('change', async () => new Promise(this.callback).then(result => console.log(result)));
-        this.loadButton.addEventListener('click', async () => {
-            await loadFile()
-                .then( async (result) => {
-                    this.textArea.innerText = await result;
-                })
-                .catch(error => console.error(error));
-        });
-        // lastClickedChartNode
-        // answers
-        // resultTab[]
-        // containerForChartsInsideTab
-        // const defaultChartContainerHeight
+        // this.loadButton = document.getElementById('readbutton');
+        // this.loadButton.addEventListener('click', async () => {
+        //     await loadFile()
+        //         .then( async (result) => {
+        //             this.textArea.innerText = await result;
+        //         })
+        //         .catch(error => console.error(error));
+        // });
+
     }
 
     callback = async (mutationsList) => {
@@ -114,13 +110,10 @@ class View {
                 const result = await JSON.parse(mutation.target.innerText);
                 this.answers = this.extractAnswersFromLoaded(result);
 
-                this.linearChartsDatasets = this.prepareDatasetsForChart('line', Static.get('all').senseNames, this.answers);
-                this.radarChartsDatasets = this.prepareDatasetsForChart('radar', Static.get('all').senseNames, this.answers);
-
-                this.lineChartFromClass = new ChartFactory('line', labelsForCategories, this.linearChartsDatasets, this.allChartsForCategories);
-                this.radarChartFromClass = new ChartFactory('radar', Static.get('all').answerNames, this.radarChartsDatasets, this.allChartsForSenses);
+                this.lineChartFromClass = new ChartFactory('line', this.answers, this.allChartsForCategories);
+                this.barChartFromClass = new ChartFactory('bar', this.answers, this.rawDataCharts);
+                this.radarChartFromClass = new ChartFactory('radar', this.answers, this.allChartsForSenses);
                 
-                this.canvasFixHeight();
                 this.enlargeChartOnClickEvent();
             }
         }
@@ -168,8 +161,78 @@ class View {
         return _answers;
     }
 
-    calculateNormalizedVectorFrom(sense){
-        let normals = sense.map(values => 
+    enlargeChartOnClickEvent(){
+        [ ...document.querySelectorAll('canvas') ]
+            .map(chart => chart.addEventListener('click', 
+                (event) => {
+                    if (event.target.parentNode.classList.contains('selected')) 
+                        return;
+                    
+                    if (this.lastClickedChartNode) {
+                        this.lastClickedChartNode.classList.toggle('selected');
+                        this.lastClickedChartNode.firstChild.style.height = '39vh';
+                    }
+
+                    this.lastClickedChartNode = event.target.parentNode;
+                    this.lastClickedChartNode.classList.toggle('selected');
+                }
+            ));
+    }
+
+}
+
+
+class ChartFactory{
+    constructor(type, answers, container) {
+        this.type= type;
+        this.name = this.type ==='line' ? 'Line Chart' : this.type ==='radar' ? 'Radar Chart' : `${this.type} Chart`;
+        this.data = {
+            labels: this.type === 'radar' ? Static.get('all').answerNames : labelsForCategories,
+            datasets : this.prepareDatasetsForChart(answers)
+        }
+        this.config = {
+            type: this.type,
+            data: this.data,
+            options: {
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: this.name
+                    }
+                },
+                scales: this.type === 'radar' ? {} : verticalCategoryNames
+            }
+        }
+        this.container = container;
+        
+        this.parentDiv = document.createElement('div');
+        this.canvas = document.createElement('canvas');
+        
+        this.canvas.id = this.name;
+        this.canvas.classList.add('generated');
+    
+        this.parentDiv.classList.add('col-xl-4', 'col-lg-6', 'col-md-6', 'col-sm-12');
+        this.parentDiv.appendChild(this.canvas);
+    
+        // append chart
+        this.chartBody = this.appendChart();
+    }
+
+    appendChart() {
+        if(this.container.firstChild){
+            this.container.firstChild.remove()
+        }
+        this.container.appendChild(this.parentDiv);
+
+        return new Chart(
+            this.canvas,
+            this.config
+        );
+    }
+
+    calculateNormalizedVectorFrom(senseAnswers){
+        let normals = senseAnswers.map(values => 
             {
                 let numberOfAnsweredQuestions = 0;
 
@@ -210,15 +273,16 @@ class View {
         return Object.values(popularity);
     }
 
-    prepareDatasetsForChart(chartType, labels, answers){
+    prepareDatasetsForChart(answers){
         const borderColours = Static.get('all').senseColours;
+        const labels = Static.get('all').senseNames;
         var dataset = [];
 
         [ ... Object.values(answers) ]
             .map( (senseAnswers, index) => 
                 {
                     let data = 
-                        chartType === 'radar' 
+                        this.type === 'radar' 
                                 ? this.calculateAnswerPopularityFrom(senseAnswers) 
                                 : this.calculateNormalizedVectorFrom(senseAnswers);
 
@@ -227,6 +291,7 @@ class View {
                         label: labels[index],
                         data: data,
                         fill: false,
+                        backgroundColor: borderColours[index],
                         borderColor: borderColours[index],
                         tension: 0.1
                     });
@@ -234,96 +299,5 @@ class View {
         
         return dataset;
     }
-
-    enlargeChartOnClickEvent(){
-        [ ...document.querySelectorAll('canvas') ]
-            .map(chart => chart.addEventListener('click', 
-                (event) => {
-                    if (event.target.parentNode.classList.contains('selected')) 
-                        return;
-                    
-                    if (this.lastClickedChartNode) {
-                        this.lastClickedChartNode.classList.toggle('selected');
-                        this.lastClickedChartNode.style.height = '375px';
-                    }
-
-                    this.lastClickedChartNode = event.target.parentNode;
-                    this.lastClickedChartNode.classList.toggle('selected');
-                }
-            ));
-    }
-
-    canvasFixHeight(){
-        [ ... document.querySelectorAll('canvas') ].map( chart => chart.style.height = '375px' );
-    }
-
-}
-
-
-class ResultTab {
-    constructor(tabHeader, parentNode){
-        this.header = tabHeader;
-        this.parentNode = parentNode;
-        this.navTabsContainerNode = this.parentNode.querySelector(".nav-tabs");
-        this.charts = [];
-
-
-    }
-
-    // createChart()
-    // prepareCharts()
-    // selectChart()
-
-}
-
-
-class ChartFactory{
-    constructor(type, labels, datasets, container) {
-        this.name = type ==='line' ? 'Line Chart' : type ==='radar' ? 'Radar Chart' : `${type} Chart`;
-        this.data = {
-            labels: labels,
-            datasets : datasets
-        }
-        this.config = {
-            type: type,
-            data: this.data,
-            options: {
-                maintainAspectRatio: false,
-                plugins: {
-                    title: {
-                        display: true,
-                        text: this.name
-                    }
-                },
-                scales: type === 'line' ? verticalCategoryNames : {}
-            }
-        }
-        this.container = container;
-        // create chart and container holding it
-        
-        this.parentDiv = document.createElement('div');
-        this.canvas = document.createElement('canvas');
-
-        this.canvas.id = this.name;
-        this.canvas.classList.add('generated');
-    
-        this.parentDiv.classList.add('col-xl-4', 'col-lg-6', 'col-md-6', 'col-sm-12');
-        this.parentDiv.appendChild(this.canvas);
-    
-        // append chart
-        this.chartBody = this.appendChart();
-    }
-
-    appendChart() {
-        this.container.appendChild(this.parentDiv);
-
-        return new Chart(
-            this.canvas,
-            this.config
-        );
-    }
     
 }
-
-//////////////// Initialize View ///////////////
-const view = new View();

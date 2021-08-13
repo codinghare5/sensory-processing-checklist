@@ -21,9 +21,7 @@ eleventyNavigation:
     <p>Please try to answer all the questions.</p>
 
     <h3>Navigation</h3>
-    <p>The simplest way to work your way through the questions is simply to answer them in order presented, 
-        clicking the next button when you are ready to move forward. 
-        The progress grid highlights the column for the questions that are currently being answered.</p>
+    <p>The simplest way to work your way through the questions is simply to answer them in order presented, clicking the next button when you are ready to move forward. The progress grid highlights the column for the questions that are currently being answered.</p>
 
     <p>The progress grid will be coloured in as you answer the questions. This will provide you with an interim indication of the results.</p>
 
@@ -48,33 +46,14 @@ eleventyNavigation:
     </nav>
 </section>
 
-<!-- Category name ---------------------------------------------------------------------------- -->
+<!-- Questions Card ---------------------------------------------------------------------------- -->
 {# wrap everything into a card class #}
-<div class='container-xl card py-2 mb-4'>
+<section id="questions-card" class='container-xl card py-2 mb-4'>
     {# Create Category name placeholder #}
     <h2 class="p-3" id="category-name"> {{ categorysummary[0].name }} </h2>
 <!-- Progress bar ---------------------------------------------------------------------------- -->
 {# create progress bar #}
-<section class="container-xl py-3 px-4" id="progress-grid">
-    <div class="row bg-white">
-        {% for metacat in meta %}
-            {% for category in metacat.categories %}
-                {% set catindex = category.index %}
-        
-                <div class="col p-0 progress-column" style="border: 2px solid LightGray" 
-                            catindex="{{ catindex - 1 }}">
-                    {% for sense in category.senses %}
-                    <div class="progress-item" 
-                        style="width: auto; height:20px; border: 1px solid; border-color: LightGray;"
-                        senseindex="{{ loop.index - 1 }}">
-                    </div>
-                    {% endfor %}
-                </div>
-
-            {% endfor %}
-        {% endfor %}
-    </div>
-</section>
+{% include "progressgrid.njk"%}
 
 <!-- Information about the category ---------------------------------------------------------------------------- -->
 {# Wrap it inside a container, so it desn't stand out #}
@@ -110,7 +89,7 @@ eleventyNavigation:
     {# body accordion of sets of questions labelled by sense #}
     <div class="accordion" id="bodyaccordion">
         {# create a set of sense accordions #}
-        {% for sense in questions %}
+        {% for sense in allQuestions[0].senses %}
             <div class="accordion-item">
                 {% set sensestr = sense.sense | lower %}
                 <h2 class="accordion-header" id="{{ sensestr }}-accordion-header">
@@ -141,20 +120,21 @@ eleventyNavigation:
         </nav>
     </div>
 </section> {# end container#}
-</div>
-
+</section>
+<!-- End Questions Card ---------------------------------------------------------------------------- -->
+<!-- Results Card ---------------------------------------------------------------------------- -->
+{% include "resultsview.njk" %}
+<!-- End Results Card ---------------------------------------------------------------------------- -->
 
 {#=============================== END BASIC PAGE LAYOUT =====================#}
 
 
-
 {#=====================================================================#}
-
-
 
 {#===================== START COMPONENTS TO BE USED WITH JAVASCRIPT ==============#}
 
 {# Create header for category names and paragraphs for category descriptions #}
+
 {# Creating them together inside a <div> with and id makes them easy to extract in javascript #}
 <div id="category-container" style="display:none"> 
 {# simply holds <p> elements of category descriptions for easy retrieval #}
@@ -193,43 +173,44 @@ eleventyNavigation:
                           {"label": "Not Sure", "id": "not-sure", "value": 1},
                           {"label": "False", "id": "false", "value": 0}] %}
 {# create question sets  #}
-<div class="container-xl pt-5" id="questionset-container" style="display:none">
-    {% for category in categoryquestions %}
+<div class="container-xl pt-5" id="questionset-container"
+            ncategories="{{ allQuestions | length }}" 
+            nsenses="{{ allQuestions[0].senses | length }}" 
+            style="display:none">
+    {% for category in allQuestions %}
         {% set catindex = category.index %}
 
-        <div class="category-questionset" catindex="{{catindex - 1 }}">
-            {% for sense in category.senses %} 
-                {% set senseindex = loop.index %} 
-                {% set base_id = sense.sense + '_' + catindex %}
+        {% for sense in category.senses %} 
+            {% set senseindex = loop.index %} 
+            {% set base_id = sense.sense + '_' + catindex %}
 
-                <div class="category-sense-questions" senseindex="{{ senseindex - 1}} ">
-                    <p><strong>{{ get_category_summary(catindex,senseindex) }}</strong></p>
-                    
-                    {% for question in sense.questions %}
-                        {% set questionName = base_id + '-' + senseindex + '-' + loop.index %}
-                        <fieldset class="pb-3" id="{{ questionName }}" value=0>
-                            <legend class="fs-6">{{ question }}</legend>
-                            {# use class=row to spread radio inputs #}
-                            <div class="row row-cols-auto justify-content-center">
-                                {% for opt in  questionOptions %}
-                                    <div class="form-check form-check-inline col border border-1 rounded">
-                                        <input class="form-check-input ps-2" type="checkbox" 
-                                                    name="{{ questionName }}-{{ opt.id }}" 
-                                                    question_id="{{ questionName }}"
-                                                    id="{{ questionName }}-{{opt.id}}" 
-                                                    value="{{ opt.value }}"
-                                                    {% if opt.id == "false" %} checked="checked"{% endif %}>
-                                        <label class="form-check-label fs-6" for="{{ questionName }}-{{ opt.id }}">
-                                            {{ opt.label }}
-                                        </label>
-                                    </div>
-                                {% endfor %}
-                            </div> <!-- end row of checkboxes-->
-                        </fieldset>
-                    {% endfor %} {# end question loop #}
-                </div>
-            {% endfor %} {# end category loop #}
-        </div>
+            <div class="category-sense-questions" senseindex="{{ senseindex - 1}} ">
+                <p><strong>{{ get_category_summary(catindex,senseindex) }}</strong></p>
+                
+                {% for question in sense.questions %}
+                    {% set questionName = base_id + '-' + senseindex + '-' + loop.index %}
+                    <fieldset class="pb-3" id="{{ questionName }}" value=0>
+                        <legend class="fs-6">{{ question }}</legend>
+                        {# use class=row to spread radio inputs #}
+                        <div class="row row-cols-auto justify-content-center">
+                            {% for opt in  questionOptions %}
+                                <div class="form-check form-check-inline col border border-1 rounded">
+                                    <input class="form-check-input ps-2" type="checkbox" 
+                                                name="{{ questionName }}-{{ opt.id }}" 
+                                                question_id="{{ questionName }}"
+                                                id="{{ questionName }}-{{opt.id}}" 
+                                                value="{{ opt.value }}"
+                                                {% if opt.id == "false" %} checked="checked"{% endif %}>
+                                    <label class="form-check-label fs-6" for="{{ questionName }}-{{ opt.id }}">
+                                        {{ opt.label }}
+                                    </label>
+                                </div>
+                            {% endfor %}
+                        </div> <!-- end row of checkboxes-->
+                    </fieldset>
+                {% endfor %} {# end question loop #}
+            </div>
+        {% endfor %} {# end category loop #}
     {% endfor %} {# end sense loop #}
 </div> {# end container #}
 
@@ -244,7 +225,6 @@ eleventyNavigation:
 
 {#====================================== JAVASCRIPT ============================#}
 
-<script type="text/javascript" src="../../js/readwrite.js"></script>
 <script type="text/javascript" src="../../js/generic.js"></script>
 <script type="text/javascript" src="../../js/class.js"></script>
 <script>

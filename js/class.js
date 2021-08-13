@@ -165,6 +165,8 @@ class Display{
         this.loadButton = document.getElementById("readbutton");
 
         // Category information elements
+        this.questionsSection = document.getElementById('questions-card');
+        this.resultsSection = document.getElementById('results-card');
         this.categoryTitle = document.getElementById('category-name');
         this.categoryButton = document.getElementById('category-description-button');
         this.catedoryDescription = document.getElementById('category-description-body');
@@ -187,10 +189,24 @@ class Display{
 
         // categoryArray
         this.categoryArray = createArray(this.headers.length);
+
+        this.categoryInfoArray = [];
+        this.setCategoryVariables()
+            .then( async (result) => {
+                this.categoryInfoArray = await result;
+                if(result) console.log(this.categoryInfoArray)
+                this.maxCategoryIndex = this.categoryInfoArray.length - 1;
+                this.maxSenseIndex = questionSetArray[0].length - 1;
+            })
+            .catch(error => console.error(error))
+
         this.currentIndex = 0;
 
         // Progress Grid
         this.progressGrid = this.createProgressGrid();
+
+        // Results View
+        this.view = new View();
     }
 
     createProgressGrid() {
@@ -218,8 +234,11 @@ class Display{
     }
 
     initializeReadWriteButtons(){
-        this.saveButton.addEventListener('click', event => this.saveToFile());
-        this.loadButton.addEventListener('click', event => this.loadFromFile());
+        this.saveButton.addEventListener('click', event => this.saveFile());
+    }
+
+    initializeResultsQuestionsToggleButton(){
+        this.resultsButton.addEventListener('click', event => this.toggleResultButton());
     }
 
     initializeAccordionCollapses(){
@@ -234,6 +253,7 @@ class Display{
     initialize(){
         this.getCurrentProgressGridColumn().highlight("Black");
         this.initializeReadWriteButtons();
+        this.initializeResultsQuestionsToggleButton();
         this.initializeCategoryNavigationButtons();
         this.initializeAccordionCollapses();
         this.setSensesDataToDisplay(this.currentIndex);
@@ -283,6 +303,11 @@ class Display{
         }
         this.categoryArray = catArray;
     }
+
+    setCategoryVariables = async () => {
+        return await fetchJson("../../json/categoryinfo.json");
+    }
+
     // old name was setAccordionBodiesData
     setSensesDataToDisplay(newIndex){
         for (let sense = 0; sense < this.sensesDataContainers.length; sense++){
@@ -327,6 +352,23 @@ class Display{
         }
     
         this.setPrevButtonStyleColor(+newIndex == 0 ? "LightGray" : "Black");
+    }
+
+    toggleResultButton(){
+        if(this.resultsButton.innerText === 'Show Results') {
+            this.resultsButton.innerText = 'Show Questions';
+            this.resultsButton.setAttribute('nextevent', 'results');
+            this.view.textArea = JSON.stringify(this.createJsonAnswers2());
+            this.questionsSection.style.display = 'none';
+            this.resultsSection.style.display = 'block';
+        }
+        else {
+            this.resultsButton.innerText = 'Show Results';
+            this.resultsButton.setAttribute('nextevent', 'questions');
+
+            this.resultsSection.style.display = 'none';
+            this.questionsSection.style.display = 'block';
+        }
     }
 
     isLastCategoryIndex(newIndex) {
@@ -392,6 +434,30 @@ class Display{
         return jsonstruct;
     }
 
+    createJsonAnswers2(){
+        let jsonstruct = {"type": "SPCR", 
+                                "version": 1,
+                                "nCategories": maxCategoryIndex + 1,
+                                "nSenses": maxSenseIndex + 1, 
+                                "currentIndex": currentCategory,
+                                "answers": createArray(maxCategoryIndex + 1, maxSenseIndex + 1)};
+
+        function Status(max,values){
+            this.max = max
+            this.values = values;
+        }
+
+        for (let i=0 ; i<=maxCategoryIndex ; i++){
+            for (let j=0 ; j<=maxSenseIndex ; j++){
+                let qset = questionSetArray[i][j];
+                let {max, values} = qset.getValues();
+                    jsonstruct.answers[i][j] = new Status(max,values);
+            }
+        }
+
+        return jsonstruct;
+    }
+
     displayCategory(newIndex){
         this.goThroughCurrentSensesAndColourProgressGrid();
         this.changeDisplayedDataTo(+newIndex);
@@ -409,37 +475,8 @@ class Display{
         }
     }
 
-    saveToFile(){
-        const answers = JSON.stringify(this.createJsonAnswers());
-        console.log(answers);
-        
-        // download answers as a json file. The below is convoluted but 
-        // there does not seem to be a simpler way.
-        const a = document.createElement("a"); // create an empty link
-        let file = new Blob([answers],{type: "application/json"});
-        //console.log(file);
-        a.href = URL.createObjectURL(file);
-        a.download = "answers-spcr.json"; //download to answers-spcr.json
-        a.click();
-    }
-
-    async loadFromFile(){
-        let fileHandle;
-        [fileHandle] = await window.showOpenFilePicker();
-        const file = await fileHandle.getFile();
-        var answers = await file.text();
-
-        if (answers) {
-            answers = JSON.parse(answers);
-            //console.log("==================================================================")
-            //console.log("type: " + answers.type + " version: "+ answers.version)
-            if (answers && answers.type && answers.type == "SPCR" && answers.version == "1") {
-                //console.log(answers);
-                this.display(answers);
-            }
-            else alert("File is not the right kind of file.");
-        }
-
-    }
+    saveFile = async () => {
+        await saveJson(this.createJsonAnswers2());
+    };
 
 }

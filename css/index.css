@@ -408,12 +408,13 @@ h1, .h1, h2, .h2, h3, .h3, h4, .h4, h5, .h5, h6, .h6 {
 }
 
 .card canvas {
-  margin: 1.25rem 0;
+  margin: 1.5rem 0;
+  min-height: 375px;
 }
 
 .selected {
-  width: 99vw !important;
-  height: 99vh !important;
+  width: 99% !important;
+  height: 99vmin !important;
 }
 
 .card-header {
@@ -442,6 +443,10 @@ h1, .h1, h2, .h2, h3, .h3, h4, .h4, h5, .h5, h6, .h6 {
   max-width: 45ch;
   margin: 0;
   padding: 1rem 1.25rem;
+}
+
+#results-card {
+  min-height: 50vh;
 }
 
 .page-header {

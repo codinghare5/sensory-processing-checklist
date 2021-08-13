@@ -1,16 +1,45 @@
-// Saving the answers
-function saveToFile(){
-    answers = JSON.stringify(createJsonAnswers(categoryArray, "save"));
-    console.log(answers);
+// function to fetch a resourse on the internet.
+//  filename should be the complete path. 
+//      Can be a URL for a file or can be relative to the webpage.
+async function fetchJson(filename){
+    const response = await fetch(filename);
+    const result = await response.json();
     
-    // download answers as a json file. The below is convoluted but 
-    // there does not seem to be a simpler way.
-    const a = document.createElement("a"); // create an empty link
-    file = new Blob([answers],{type: "application/json"});
-    //console.log(file);
-    a.href = URL.createObjectURL(file);
-    a.download = "answers-spcr.json"; //download to answers.json
-    a.click();
+    return result;
+}
+
+// Generic Read and Write JSON functionality
+const options = {
+    types: [
+        {
+            description: 'JSON Files',
+            accept: {
+            'application/json': ['.json'],
+            },
+        },
+    ],
+};
+
+let fileHandle;
+async function readJson() { 
+    [fileHandle] = await window.showOpenFilePicker(options);
+    const file = await fileHandle.getFile();
+    const contents = await file.text(); 
+    
+    return JSON.parse(contents);
+}
+
+async function saveJson(jsonStruct) {
+    try {
+        let savehandle = await window.showSaveFilePicker(options);;
+        const writable = await savehandle.createWritable();
+        console.log(writable);
+        await writable.write(JSON.stringify(jsonStruct, null, 3));
+        await writable.close();
+    }
+    catch(e) {
+        console.log(e);
+    };
 }
 
 // Loading the answers
@@ -20,22 +49,3 @@ async function loadFile() {
     const contents = await file.text();
     return contents;
 };
-
-async function loadFromFile() {
-    let fileHandle;
-    [fileHandle] = await window.showOpenFilePicker();
-    const file = await fileHandle.getFile();
-    var answers = await file.text();
-    
-    if (answers) {
-        answers = JSON.parse(answers);
-        //console.log(answers);
-        console.log("==================================================================")
-        console.log("type: " + answers.type + " version: "+ answers.version)
-        if (answers && answers.type && answers.type == "SPCR" && answers.version == "1") {
-            console.log(answers);
-            setQuestionValues(answers);
-        }
-        else alert("File is not the right kind of file.");
-    }
-}

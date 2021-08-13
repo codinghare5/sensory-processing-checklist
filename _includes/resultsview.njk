@@ -1,24 +1,5 @@
----
-layout: layouts/base.njk
-title: Results
-eleventyNavigation:
-  key: Results View
-  parent: Views
-  order: 8
----
-
-<!-- Context menu ---------------------------------------------------------------------------- -->
-{# context menu #}
-<section class="container-xl card mb-2">
-    <nav class="d-flex justify-content-around py-4">
-        {# button to read question answers #}
-        <button class="p-2 bg-info rounded" id="readbutton" accept="application/json">Load</button>
-    </nav>
-</section>
-
-<!-- Card with results ---------------------------------------------------------------------------- -->
 {# Wrap it inside a container, so it desn't stand out #}
-<section id="results-card" class="container-xl card">
+<section id="results-card" class="container-xl card" style="display: none">
     <div class="card-body">
         <h2 class="card-title mb-3">Results</h2>
         <div id="tabs">
@@ -60,10 +41,9 @@ eleventyNavigation:
 
 {#=============================== END BASIC PAGE LAYOUT =================================================#}
 
-{#=======================================================================================================#}
+{#=================================================================================================#}
 
-{#====================================== JAVASCRIPT =======================================================#}
+{#=================================== JAVASCRIPT =====================================================#}
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script type="text/javascript" src="../../js/readwrite.js"></script>
 <script type="text/javascript" src="../../js/results.js"></script>
