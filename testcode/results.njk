@@ -7,19 +7,19 @@ eleventyNavigation:
   parent: Test Code
   order: 4
 ---
+<section class="mb-4 container-xl">
+    <h2>Rainbow Results (random)</h2>
 
-<h2>Rainbow Results</h2>
+    <!-- Draw rectangle and rainbow -->
+    <canvas id="RectangleCanvas" width="145" height="445">
+        Your browser does not support the HTML5 canvas tag. Try upgrading.
+    </canvas>
 
-<!-- Draw rectangle and rainbow -->
-<canvas id="RectangleCanvas" width="145" height="445">
-    Your browser does not support the HTML5 canvas tag. Try upgrading.
-</canvas>
+    <canvas id="RainbowCanvas" width="540" height="275">
+    </canvas>
 
-<canvas id="RainbowCanvas" width="540" height="275">
-</canvas>
-
-<script type="text/javascript" src="../../js2/generic.js"></script>
-
+    <script type="text/javascript" src="../../js2/generic.js"></script>
+</section>
 <script>
     // create a 21 x 7 array of random numbers between 0 and 5 to simulate max values
     const data = createArray(21,7);
