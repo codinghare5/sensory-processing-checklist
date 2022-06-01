@@ -16,16 +16,20 @@
 </head>
 
 <body>
-  <header class="container-xl">
+    <header class="container-xl">
     {% include "navbar.njk" %}
-  </header>
-  <main {% if templateClass %} class="d-block {{ templateClass }}" {% endif %}>
-    {{ content | safe }}
-  </main>
-  <footer>
-
-  </footer>
-  <!-- Current page: {{ page.url | url }} -->
+    </header>
+    <main {% if templateClass %} class="d-block {{ templateClass }}" {% endif %}>
+        {{ content | safe }}
+    </main>
+    <footer class="container-xl mb-3">
+        <div class="d-flex flex-column justify-content-center">
+            <p class="d-flex justify-content-center">
+                © 2022 Prepared by Marcin Mukosiej.
+            </p>
+        </div>
+    </footer>
+    <!-- Current page: {{ page.url | url }} -->
 </body>
 
 </html>
